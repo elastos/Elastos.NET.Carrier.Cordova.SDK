@@ -1,0 +1,34 @@
+{
+  "name": "carrier",
+  "version": "0.0.1",
+  "description": "Elastos Carrier Plugin",
+  "cordova": {
+    "id": "elastos-trinity-plugins-carrier",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elastos/Elastos.Trinity.Plugins.Carrier.git"
+  },
+  "keywords": [
+    "cordova",
+    "carrier",
+    "elastos",
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios",
+    "cordova-browser"
+  ],
+  "author": "Dongxiao Chen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/elastos/Elastos.Trinity.Plugins.Carrier/issues"
+  },
+  "homepage": "https://github.com/elastos/Elastos.Trinity.Plugins.Carrier#README.md",
+  "scripts": {
+    "gen-docs": "jsdoc2md --template \"jsdoc2md/README.hbs\" \"www/carrier.js\" > README.md"
+  }
+}

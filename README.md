@@ -20,7 +20,7 @@ function onDeviceReady() {
 ## Installation
 
 ```bash
-    cordova plugin add elastos-plugin-carrier
+    cordova plugin add elastos-trinity-plugins-carrier
 ```
 
 ## Supported Platforms

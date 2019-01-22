@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plugin id="elastos-trinity-plugins-carrier" version="0.0.1" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
+    <name>Carrier</name>
+    <js-module name="CarrierPlugin" src="www/carrier.js">
+        <clobbers target="carrierPlugin" />
+    </js-module>
+
+    <!-- <hook type="after_plugin_add" src="hooks/after_plugin_add.js" /> -->
+    <platform name="browser">
+        <config-file target="config.xml" parent="/*">
+            <feature name="Carrier">
+                <param name="browser-package" value="Carrier" />
+            </feature>
+        </config-file>
+
+        <js-module src="src/browser/CarrierProxy.js" name="CarrierProxy">
+            <runs />
+        </js-module>
+    </platform>
+	<platform name="android">
+		<config-file target="config.xml" parent="/*">
+			<feature name="CarrierPlugin">
+				<param name="android-package" value="org.elastos.trinity.plugins.carrier.CarrierPlugin" />
+			</feature>
+		</config-file>
+        <source-file src="src/android/CarrierPlugin.java" target-dir="src/org/elastos/trinity/plugins/carrier" />
+        <source-file src="src/android/PluginCarrierHandler.java" target-dir="src/org/elastos/trinity/plugins/carrier" />
+        <source-file src="src/android/PluginStreamHandler.java" target-dir="src/org/elastos/trinity/plugins/carrier" />
+        <source-file src="src/android/FIRHandler.java" target-dir="src/org/elastos/trinity/plugins/carrier" />
+        <source-file src="src/android/SRCHandler.java" target-dir="src/org/elastos/trinity/plugins/carrier" />
+        <framework src="src/android/carrier.gradle" custom="true" type="gradleReference"/>
+        <resource-file src="src/android/libs/org.elastos.carrier-debug.aar" target="libs/org.elastos.trinity.carrier-debug.aar"/>
+	</platform>
+    <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+            <feature name="CarrierPlugin">
+                <param name="ios-package" value="CarrierPlugin" />
+            </feature>
+        </config-file>
+        <!-- <dependency id="cordova-plugin-add-swift-support" version="1.7.2"/> -->
+        <source-file src="src/ios/CarrierPlugin.swift" />
+        <source-file src="src/ios/PluginCarrierHandler.swift" />
+        <source-file src="src/ios/PluginStreamHandler.swift" />
+        <source-file src="src/ios/FIRHandler.swift" />
+        <source-file src="src/ios/SRCHandler.swift" />
+        <framework src="src/ios/libs/ElastosCarrier.framework" custom="true" />
+        <!-- <source-file src="src/ios/libs/ElastosCarrier.framework" target-dir="src/libs" framework="true" /> -->
+    </platform>
+</plugin>
+

@@ -1,0 +1,10 @@
+repositories {
+    jcenter()
+    flatDir{
+        dirs 'src/main/libs'
+    }
+}
+
+dependencies {
+    implementation(name: 'org.elastos.trinity.carrier-debug', ext: 'aar')
+}

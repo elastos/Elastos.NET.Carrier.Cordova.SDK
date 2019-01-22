@@ -1,0 +1,34 @@
+---
+title: Carrier
+description: The carrier javascript API.
+---
+
+# elastos-trinity-plugins-carrier
+
+This plugin defines a global `cordova.carrierPlugin` object, which provides an API for carrier library.
+
+Although in the global scope, it is not available until after the `deviceready` event.
+
+```js
+document.addEventListener("deviceready", onDeviceReady, false);
+function onDeviceReady() {
+    console.log(carrierPlugin);
+}
+```
+---
+
+## Installation
+
+```bash
+    cordova plugin add elastos-trinity-plugins-carrier
+```
+
+## Supported Platforms
+
+- Android
+- iOS
+
+# API Reference <a name="reference"></a>
+
+{{>main}}
+
