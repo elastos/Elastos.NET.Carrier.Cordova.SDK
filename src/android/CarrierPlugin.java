@@ -20,7 +20,7 @@
   * SOFTWARE.
   */
   
-package org.elastos.plugin;
+package org.elastos.trinity.plugins.carrier;
 
 import android.util.Base64;
 
@@ -30,6 +30,7 @@ import org.apache.cordova.CallbackContext;
 import org.apache.cordova.PluginResult;
 import org.elastos.carrier.session.PortForwardingProtocol;
 import org.elastos.carrier.session.Session;
+import org.elastos.trinity.dapprt.TrinityPlugin;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,13 +40,13 @@ import java.util.Map;
 import java.util.HashMap;
 
 import org.elastos.carrier.*;
-import org.elastos.carrier.exceptions.ElastosException;
+import org.elastos.carrier.exceptions.CarrierException;
 
 
 /**
  * This class echoes a string called from JavaScript.
  */
-public class CarrierPlugin extends CordovaPlugin {
+public class CarrierPlugin extends TrinityPlugin {
 
     private static String TAG = "CarrierPlugin";
 
@@ -213,7 +214,7 @@ public class CarrierPlugin extends CordovaPlugin {
                     return false;
             }
         }
-        catch (ElastosException e) {
+        catch (CarrierException e) {
             String error = String.format("%s error (0x%x)", action, e.getErrorCode());
             callbackContext.error(error);
         }
@@ -284,9 +285,11 @@ public class CarrierPlugin extends CordovaPlugin {
         callbackContext.sendPluginResult(pluginResult);
     }
 
-    private void createObject(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void createObject(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         String dir = args.getString(0);
         String config = args.getString(1);
+
+        dir = cordova.getActivity().getFilesDir() + "/data/carrier/" + dir;
 
         PluginCarrierHandler carrierHandler = PluginCarrierHandler.createInstance(dir, config, mCarrierCallbackContext);
         if (carrierHandler != null) {
@@ -320,7 +323,7 @@ public class CarrierPlugin extends CordovaPlugin {
         }
     }
 
-    private void getSelfInfo(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void getSelfInfo(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
         PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
         if (carrierHandler != null) {
@@ -333,7 +336,7 @@ public class CarrierPlugin extends CordovaPlugin {
         }
     }
 
-    private void setSelfInfo(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void setSelfInfo(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
         String name = args.getString(1);
         String value = args.getString(2);
@@ -381,7 +384,7 @@ public class CarrierPlugin extends CordovaPlugin {
         }
     }
 
-    private void getNospam(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void getNospam(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
         PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
         if (carrierHandler != null) {
@@ -394,7 +397,7 @@ public class CarrierPlugin extends CordovaPlugin {
         }
     }
 
-    private void setNospam(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void setNospam(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
         int nospam = args.getInt(1);
 
@@ -410,7 +413,7 @@ public class CarrierPlugin extends CordovaPlugin {
         }
     }
 
-    private void getPresence(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void getPresence(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
         PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
         if (carrierHandler != null) {
@@ -423,7 +426,7 @@ public class CarrierPlugin extends CordovaPlugin {
         }
     }
 
-    private void setPresence(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void setPresence(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
         int presence = args.getInt(1);
 
@@ -452,7 +455,7 @@ public class CarrierPlugin extends CordovaPlugin {
         }
     }
 
-    private void getFriends(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void getFriends(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
         PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
         if (carrierHandler != null) {
@@ -466,7 +469,7 @@ public class CarrierPlugin extends CordovaPlugin {
         }
     }
 
-    private void getFriend(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void getFriend(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
         String userId = args.getString(1);
         PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
@@ -480,7 +483,7 @@ public class CarrierPlugin extends CordovaPlugin {
         }
     }
 
-    private void labelFriend(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void labelFriend(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
         String userId = args.getString(1);
         String label = args.getString(2);
@@ -497,7 +500,7 @@ public class CarrierPlugin extends CordovaPlugin {
         }
     }
 
-    private void isFriend(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void isFriend(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
         String userId = args.getString(1);
         PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
@@ -512,7 +515,7 @@ public class CarrierPlugin extends CordovaPlugin {
         }
     }
 
-    private void acceptFriend(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void acceptFriend(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
         String userId = args.getString(1);
         PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
@@ -527,7 +530,7 @@ public class CarrierPlugin extends CordovaPlugin {
         }
     }
 
-    private void addFriend(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void addFriend(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
         String address = args.getString(1);
         String hello = args.getString(2);
@@ -543,7 +546,7 @@ public class CarrierPlugin extends CordovaPlugin {
         }
     }
 
-    private void removeFriend(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void removeFriend(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
         String userId = args.getString(1);
         PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
@@ -558,7 +561,7 @@ public class CarrierPlugin extends CordovaPlugin {
         }
     }
 
-    private void sendFriendMessage(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void sendFriendMessage(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
         String to = args.getString(1);
         String message = args.getString(2);
@@ -572,7 +575,7 @@ public class CarrierPlugin extends CordovaPlugin {
         }
     }
 
-    private void inviteFriend(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void inviteFriend(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
         String to = args.getString(1);
         String data = args.getString(2);
@@ -591,7 +594,7 @@ public class CarrierPlugin extends CordovaPlugin {
         }
     }
 
-    private void replyFriendInvite(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void replyFriendInvite(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
         String to = args.getString(1);
         int status = args.getInt(2);
@@ -625,7 +628,7 @@ public class CarrierPlugin extends CordovaPlugin {
         }
     }
 
-    private void newSession(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void newSession(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
         String to = args.getString(1);
         PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
@@ -674,7 +677,7 @@ public class CarrierPlugin extends CordovaPlugin {
         }
     }
 
-    private void sessionRequest(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void sessionRequest(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
         int handlerId = args.getInt(1);
         Session session = mSessionMap.get(id);
@@ -688,7 +691,7 @@ public class CarrierPlugin extends CordovaPlugin {
         }
     }
 
-    private void sessionReplyRequest(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void sessionReplyRequest(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
         int status = args.getInt(1);
         String reason = args.getString(2);
@@ -705,7 +708,7 @@ public class CarrierPlugin extends CordovaPlugin {
         }
     }
 
-    private void sessionStart(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void sessionStart(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
         String sdp = args.getString(1);
         Session session = mSessionMap.get(id);
@@ -720,7 +723,7 @@ public class CarrierPlugin extends CordovaPlugin {
         }
     }
 
-    private void addStream(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void addStream(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
         int type = args.getInt(1);
         int options = args.getInt(2);
@@ -746,7 +749,7 @@ public class CarrierPlugin extends CordovaPlugin {
             callbackContext.error("error");
         }
     }
-    private void removeStream(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void removeStream(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
         Integer streamId = args.getInt(1);
 
@@ -761,7 +764,7 @@ public class CarrierPlugin extends CordovaPlugin {
         }
     }
 
-    private void addService(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void addService(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
         String service = args.getString(1);
         int protocol = args.getInt(2);
@@ -799,7 +802,7 @@ public class CarrierPlugin extends CordovaPlugin {
         }
     }
 
-    private void getTransportInfo(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void getTransportInfo(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
 
         PluginStreamHandler streamHandler = mStreamMap.get(id);
@@ -812,7 +815,7 @@ public class CarrierPlugin extends CordovaPlugin {
         }
     }
 
-    private void streamWrite(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void streamWrite(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
         String data = args.getString(1);
         byte[] rawData = Base64.decode(data, Base64.DEFAULT);
@@ -829,7 +832,7 @@ public class CarrierPlugin extends CordovaPlugin {
         }
     }
 
-    private void openChannel(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void openChannel(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
         String cookie = args.getString(1);
 
@@ -845,7 +848,7 @@ public class CarrierPlugin extends CordovaPlugin {
         }
     }
 
-    private void closeChannel(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void closeChannel(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
         int channel = args.getInt(1);
 
@@ -861,7 +864,7 @@ public class CarrierPlugin extends CordovaPlugin {
         }
     }
 
-    private void writeChannel(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void writeChannel(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
         int channel = args.getInt(1);
         String data = args.getString(2);
@@ -880,7 +883,7 @@ public class CarrierPlugin extends CordovaPlugin {
         }
     }
 
-    private void pendChannel(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void pendChannel(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
         int channel = args.getInt(1);
 
@@ -896,7 +899,7 @@ public class CarrierPlugin extends CordovaPlugin {
         }
     }
 
-    private void resumeChannel(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void resumeChannel(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
         int channel = args.getInt(1);
 
@@ -912,7 +915,7 @@ public class CarrierPlugin extends CordovaPlugin {
         }
     }
 
-    private void openPortForwarding(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void openPortForwarding(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
         String service = args.getString(1);
         int protocol = args.getInt(2);
@@ -935,7 +938,7 @@ public class CarrierPlugin extends CordovaPlugin {
         }
     }
 
-    private void closePortForwarding(JSONArray args, CallbackContext callbackContext) throws JSONException, ElastosException {
+    private void closePortForwarding(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
         int pfId = args.getInt(1);
 

@@ -19,8 +19,8 @@
   * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   * SOFTWARE.
   */
-  
-package org.elastos.plugin;
+
+ package org.elastos.trinity.plugins.carrier;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.PluginResult;
@@ -34,10 +34,8 @@ import java.util.ArrayList;
 import java.io.File;
 
 import org.elastos.carrier.*;
-import org.elastos.carrier.exceptions.ElastosException;
+import org.elastos.carrier.exceptions.CarrierException;
 import org.elastos.carrier.session.Manager;
-
-import org.elastos.carrier.im.MainActivity;
 
 public class PluginCarrierHandler extends AbstractCarrierHandler implements ManagerHandler {
 	private static String TAG = "PluginCarrierHandler";
@@ -54,11 +52,11 @@ public class PluginCarrierHandler extends AbstractCarrierHandler implements Mana
 		mCallbackContext = callbackContext;
 	}
 
-	private Carrier createCarrier(String dir, String configString) throws ElastosException {
-		String elaCarrierPath = MainActivity.getAppContext().getFilesDir().getAbsolutePath() + "/" + dir;
-		File elaCarrierDir = new File(elaCarrierPath);
-		if (!elaCarrierDir.exists()) {
-			elaCarrierDir.mkdirs();
+	private Carrier createCarrier(String dir, String configString) throws CarrierException {
+
+		File carrierDir = new File(dir);
+		if (!carrierDir.exists()) {
+			carrierDir.mkdirs();
 		}
 
 		boolean udpEnabled = false;
@@ -93,7 +91,7 @@ public class PluginCarrierHandler extends AbstractCarrierHandler implements Mana
 		}
 
 		Carrier.Options options = new Carrier.Options();
-		options.setPersistentLocation(elaCarrierPath).
+		options.setPersistentLocation(dir).
 				setUdpEnabled(udpEnabled).
 				setBootstrapNodes(bootstraps);
 
@@ -104,7 +102,8 @@ public class PluginCarrierHandler extends AbstractCarrierHandler implements Mana
 			return null;
 		}
 
-		mSessionManager = Manager.getInstance(mCarrier,  this);
+		Manager.initializeInstance(mCarrier,  this);
+		mSessionManager = Manager.getInstance();
 		Log.i(TAG, "Agent session manager created successfully");
 
 //		mCarrier.start(50);
@@ -114,7 +113,7 @@ public class PluginCarrierHandler extends AbstractCarrierHandler implements Mana
 		return mCarrier;
 	}
 
-	public static PluginCarrierHandler createInstance(String dir, String configString, CallbackContext callbackContext) throws ElastosException {
+	public static PluginCarrierHandler createInstance(String dir, String configString, CallbackContext callbackContext) throws CarrierException {
 		PluginCarrierHandler handler = new PluginCarrierHandler(callbackContext);
 		if (handler != null) {
 			Carrier carrier = handler.createCarrier(dir, configString);
@@ -158,7 +157,7 @@ public class PluginCarrierHandler extends AbstractCarrierHandler implements Mana
 		return ret;
 	}
 
-//	public JSONObject getCarrierInfoJson() throws JSONException, ElastosException {
+//	public JSONObject getCarrierInfoJson() throws JSONException, CarrierException {
 //		UserInfo selfInfo = mCarrier.getSelfInfo();
 //		List<FriendInfo> friends = mCarrier.getFriends();
 //
@@ -196,7 +195,7 @@ public class PluginCarrierHandler extends AbstractCarrierHandler implements Mana
 		return mSessionManager;
 	}
 
-	public UserInfo getInfo() throws ElastosException {
+	public UserInfo getInfo() throws CarrierException {
 		return mCarrier.getSelfInfo();
 	}
 
@@ -361,7 +360,7 @@ public class PluginCarrierHandler extends AbstractCarrierHandler implements Mana
 	}
 
 	@Override
-	public void onFriendMessage(Carrier carrier, String from, String message) {
+	public void onFriendMessage(Carrier carrier, String from, byte[] message) {
 		JSONObject r = new JSONObject();
 		try {
 			r.put("name", "onFriendMessage");

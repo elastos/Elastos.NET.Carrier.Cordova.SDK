@@ -19,8 +19,8 @@
   * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   * SOFTWARE.
   */
-  
-package org.elastos.plugin;
+
+ package org.elastos.trinity.plugins.carrier;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.PluginResult;

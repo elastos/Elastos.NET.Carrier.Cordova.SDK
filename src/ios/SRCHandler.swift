@@ -23,7 +23,7 @@
 import Foundation
 import ElastosCarrier
 
-class SRCHandler: SessionRequestCompleteDelegate {
+class SRCHandler {
 //    private static String TAG = "FIRHandler";
 
     var code:Int = 0
@@ -39,7 +39,7 @@ class SRCHandler: SessionRequestCompleteDelegate {
     private func sendEvent(_ ret: NSMutableDictionary) {
         ret["id"] = code
         let result = CDVPluginResult(status: CDVCommandStatus_OK,
-                                     messageAs: ret as! [AnyHashable : Any]);
+                                     messageAs: ret as? [AnyHashable : Any]);
         result?.setKeepCallbackAs(true);
         self.commandDelegate?.send(result, callbackId:self.callbackId);
 

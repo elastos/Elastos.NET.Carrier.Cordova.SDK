@@ -77,10 +77,10 @@ class PluginCarrierHandler: CarrierDelegate {
 
             options.persistentLocation = carrierDirectory
 
-            try Carrier.initializeInstance(options: options, delegate: self)
+            try Carrier.initializeSharedInstance(options: options, delegate: self)
             print("carrier instance created")
 
-            mCarrier = Carrier.getInstance()
+            mCarrier = Carrier.sharedInstance()
 
             //            try! mCarrier.start(iterateInterval: 1000)
             //            print("carrier started, waiting for ready")
@@ -142,7 +142,7 @@ class PluginCarrierHandler: CarrierDelegate {
     private func sendEvent(_ ret: NSMutableDictionary) {
         ret["id"] = mCode
         let result = CDVPluginResult(status: CDVCommandStatus_OK,
-                                     messageAs: ret as! [AnyHashable : Any]);
+                                     messageAs: ret as? [AnyHashable : Any]);
         result?.setKeepCallbackAs(true);
         self.commandDelegate?.send(result, callbackId:self.callbackId);
 
@@ -270,7 +270,7 @@ class PluginCarrierHandler: CarrierDelegate {
         sendEvent(ret);
     }
 
-    func didReceiveFriendMessage(_ carrier: Carrier,
+    private func didReceiveFriendMessage(_ carrier: Carrier,
                                  _ from: String,
                                  _ message: String) {
         let ret: NSMutableDictionary = [

@@ -23,7 +23,7 @@
 import Foundation
 import ElastosCarrier
 
-class FIRHandler: FriendInviteResponseDelegate {
+class FIRHandler {
 //    private static String TAG = "FIRHandler";
 
     var handlerId:Int = 0
@@ -56,4 +56,3 @@ class FIRHandler: FriendInviteResponseDelegate {
         sendEvent(ret);
     }
 }
-

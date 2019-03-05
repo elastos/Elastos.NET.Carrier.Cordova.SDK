@@ -26,8 +26,9 @@ import ElastosCarrier
 typealias Carrier = ElastosCarrier.Carrier
 typealias Session = ElastosCarrier.CarrierSession
 
+
 @objc(CarrierPlugin)
-class CarrierPlugin : CDVPlugin {
+class CarrierPlugin : TrinityPlugin {
 
     //        let test = Test()
 
@@ -52,44 +53,44 @@ class CarrierPlugin : CDVPlugin {
     //        super.init();
     //    }
 
-    func initVal(_ command: CDVInvokedUrlCommand) {
+    @objc func initVal(_ command: CDVInvokedUrlCommand) {
 
     }
 
-    func success(_ command: CDVInvokedUrlCommand, retAsString: String) {
+    @objc func success(_ command: CDVInvokedUrlCommand, retAsString: String) {
         let result = CDVPluginResult(status: CDVCommandStatus_OK,
                                      messageAs: retAsString);
 
         self.commandDelegate.send(result, callbackId: command.callbackId)
     }
 
-    func success(_ command: CDVInvokedUrlCommand, retAsDict: NSDictionary) {
+    @objc func success(_ command: CDVInvokedUrlCommand, retAsDict: NSDictionary) {
         let result = CDVPluginResult(status: CDVCommandStatus_OK,
-                                     messageAs: retAsDict as! [AnyHashable : Any]);
+                                     messageAs: (retAsDict as! [AnyHashable : Any]));
 
         self.commandDelegate.send(result, callbackId: command.callbackId)
     }
 
-    func error(_ command: CDVInvokedUrlCommand, retAsString: String) {
+    @objc func error(_ command: CDVInvokedUrlCommand, retAsString: String) {
         let result = CDVPluginResult(status: CDVCommandStatus_ERROR,
                                      messageAs: retAsString);
 
         self.commandDelegate.send(result, callbackId: command.callbackId)
     }
 
-    func test(_ command: CDVInvokedUrlCommand) {
+    @objc func test(_ command: CDVInvokedUrlCommand) {
 
     }
 
-    func getVersion(_ command: CDVInvokedUrlCommand) {
+    @objc func getVersion(_ command: CDVInvokedUrlCommand) {
         let version = ElastosCarrier.Carrier.getVersion()
         self.success(command, retAsString: version);
     }
 
-    func getIdFromAddress(_ command: CDVInvokedUrlCommand) {
+    @objc func getIdFromAddress(_ command: CDVInvokedUrlCommand) {
         let address = command.arguments[0] as? String ?? ""
         if (!address.isEmpty) {
-            let usrId = ElastosCarrier.Carrier.getIdFromAddress(address);
+            let usrId = ElastosCarrier.Carrier.getUserIdFromAddress(address);
             self.success(command, retAsString: usrId!);
         }
         else {
@@ -97,7 +98,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func isValidAddress(_ command: CDVInvokedUrlCommand) {
+    @objc func isValidAddress(_ command: CDVInvokedUrlCommand) {
         let address = command.arguments[0] as? String ?? ""
         if (!address.isEmpty) {
             let ret = Carrier.isValidAddress(address);
@@ -108,10 +109,10 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func isValidId(_ command: CDVInvokedUrlCommand) {
+    @objc func isValidId(_ command: CDVInvokedUrlCommand) {
         let userId = command.arguments[0] as? String ?? ""
         if (!userId.isEmpty) {
-            let ret = ElastosCarrier.Carrier.isValidId(userId);
+            let ret = ElastosCarrier.Carrier.isValidUserId(userId);
             self.success(command, retAsString: String(ret));
         }
         else {
@@ -119,7 +120,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func setListener(_ command: CDVInvokedUrlCommand) {
+    @objc func setListener(_ command: CDVInvokedUrlCommand) {
         let type = command.arguments[0] as? Int ?? 0
 
         switch (type) {
@@ -142,7 +143,7 @@ class CarrierPlugin : CDVPlugin {
         self.commandDelegate.send(result, callbackId: command.callbackId)
     }
 
-    func createObject(_ command: CDVInvokedUrlCommand) {
+    @objc func createObject(_ command: CDVInvokedUrlCommand) {
         let dir = command.arguments[0] as? String ?? ""
         let config = command.arguments[1] as? String ?? ""
 
@@ -169,7 +170,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func carrierStart(_ command: CDVInvokedUrlCommand) {
+    @objc func carrierStart(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let iterateleterval = command.arguments[1] as? Int ?? 0
 
@@ -186,7 +187,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func getSelfInfo(_ command: CDVInvokedUrlCommand) {
+    @objc func getSelfInfo(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         if let carrierHandler: PluginCarrierHandler = mCarrierDict[id] {
             do {
@@ -202,7 +203,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func setSelfInfo(_ command: CDVInvokedUrlCommand) {
+    @objc func setSelfInfo(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let name = command.arguments[1] as? String ?? ""
         let value = command.arguments[2] as? String ?? ""
@@ -246,7 +247,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func getNospam(_ command: CDVInvokedUrlCommand) {
+    @objc func getNospam(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         if let carrierHandler: PluginCarrierHandler = mCarrierDict[id] {
             do {
@@ -265,7 +266,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func setNospam(_ command: CDVInvokedUrlCommand) {
+    @objc func setNospam(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let nospam = command.arguments[1] as? UInt32 ?? 0
 
@@ -286,7 +287,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func getPresence(_ command: CDVInvokedUrlCommand) {
+    @objc func getPresence(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         if let carrierHandler: PluginCarrierHandler = mCarrierDict[id] {
             do {
@@ -305,7 +306,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func setPresence(_ command: CDVInvokedUrlCommand) {
+    @objc func setPresence(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let presence = command.arguments[1] as? Int ?? 0
 
@@ -326,7 +327,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func isReady(_ command: CDVInvokedUrlCommand) {
+    @objc func isReady(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         if let carrierHandler: PluginCarrierHandler = mCarrierDict[id] {
             let ret: NSDictionary = [
@@ -339,7 +340,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func getFriends(_ command: CDVInvokedUrlCommand) {
+    @objc func getFriends(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         if let carrierHandler: PluginCarrierHandler = mCarrierDict[id] {
             do {
@@ -358,7 +359,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func getFriend(_ command: CDVInvokedUrlCommand) {
+    @objc func getFriend(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let userId = command.arguments[1] as? String ?? ""
         if let carrierHandler: PluginCarrierHandler = mCarrierDict[id] {
@@ -376,7 +377,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func labelFriend(_ command: CDVInvokedUrlCommand) {
+    @objc func labelFriend(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let userId = command.arguments[1] as? String ?? ""
         let label = command.arguments[2] as? String ?? ""
@@ -398,7 +399,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func isFriend(_ command: CDVInvokedUrlCommand) {
+    @objc func isFriend(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let userId = command.arguments[1] as? String ?? ""
         if let carrierHandler: PluginCarrierHandler = mCarrierDict[id] {
@@ -413,7 +414,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func acceptFriend(_ command: CDVInvokedUrlCommand) {
+    @objc func acceptFriend(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let userId = command.arguments[1] as? String ?? ""
         if let carrierHandler: PluginCarrierHandler = mCarrierDict[id] {
@@ -433,7 +434,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func addFriend(_ command: CDVInvokedUrlCommand) {
+    @objc func addFriend(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let address = command.arguments[1] as? String ?? ""
         let hello = command.arguments[2] as? String ?? ""
@@ -454,7 +455,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func removeFriend(_ command: CDVInvokedUrlCommand) {
+    @objc func removeFriend(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let userId = command.arguments[1] as? String ?? ""
         if let carrierHandler: PluginCarrierHandler = mCarrierDict[id] {
@@ -474,7 +475,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func sendFriendMessage(_ command: CDVInvokedUrlCommand) {
+    @objc func sendFriendMessage(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let to = command.arguments[1] as? String ?? ""
         let message = command.arguments[2] as? String ?? ""
@@ -492,7 +493,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func inviteFriend(_ command: CDVInvokedUrlCommand) {
+    @objc func inviteFriend(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let to = command.arguments[1] as? String ?? ""
         let data = command.arguments[2] as? String ?? ""
@@ -500,7 +501,7 @@ class CarrierPlugin : CDVPlugin {
         if let carrierHandler: PluginCarrierHandler = mCarrierDict[id] {
             do {
                 let handler = FIRHandler(handlerId, FIRCallbackId, self.commandDelegate);
-                try carrierHandler.mCarrier.sendInviteFriendRequest(to: to, withData: data, delegate: handler);
+                try carrierHandler.mCarrier.sendInviteFriendRequest(to: to, withData: data, responseHandler: handler.onReceived(_:_:_:_:_:));
                 let ret: NSDictionary = [
                     "to": to,
                     "data": data,
@@ -516,7 +517,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func replyFriendInvite(_ command: CDVInvokedUrlCommand) {
+    @objc func replyFriendInvite(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let to = command.arguments[1] as? String ?? ""
         let status = command.arguments[2] as? Int ?? 0
@@ -542,11 +543,11 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func destroy(_ command: CDVInvokedUrlCommand) {
+    @objc func destroy(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         if let carrierHandler: PluginCarrierHandler = mCarrierDict[id] {
             carrierHandler.mCarrier.kill();
-            let ret: NSDictionary = [:];                 ]
+            let ret: NSDictionary = [:];
             self.success(command, retAsDict: ret);
         }
         else {
@@ -554,12 +555,12 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func newSession(_ command: CDVInvokedUrlCommand) {
+    @objc func newSession(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let to = command.arguments[1] as? String ?? ""
         if let carrierHandler: PluginCarrierHandler = mCarrierDict[id] {
             do {
-                let session: Session = try carrierHandler.mSessionManager.newSession(to: to);
+                let session: Session = try carrierHandler.mSessionManager.createSession(to: to);
 
                 count += 1;
                 mSessionDict[count] = session;
@@ -578,7 +579,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func sessionClose(_ command: CDVInvokedUrlCommand) {
+    @objc func sessionClose(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         if let session: Session = mSessionDict[id] {
             session.close();
@@ -589,7 +590,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func getPeer(_ command: CDVInvokedUrlCommand) {
+    @objc func getPeer(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         if let session: Session = mSessionDict[id] {
             let peer = session.getPeer();
@@ -603,13 +604,13 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func sessionRequest(_ command: CDVInvokedUrlCommand) {
+    @objc func sessionRequest(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let handlerId = command.arguments[1] as? Int ?? 0
         if let session: Session = mSessionDict[id] {
             do {
                 let handler = SRCHandler(handlerId, sessionCallbackId, self.commandDelegate);
-                try session.sendInviteRequest(delegate: handler);
+                try session.sendInviteRequest(handler: handler.onCompletion(_:_:_:_:));
                 self.success(command, retAsString: "success!");
             }
             catch {
@@ -621,7 +622,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func sessionReplyRequest(_ command: CDVInvokedUrlCommand) {
+    @objc func sessionReplyRequest(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let status = command.arguments[1] as? Int ?? 0
         let reason = command.arguments[2] as? String ?? ""
@@ -644,7 +645,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func sessionStart(_ command: CDVInvokedUrlCommand) {
+    @objc func sessionStart(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let sdp = command.arguments[1] as? String ?? ""
         //
@@ -665,7 +666,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func addStream(_ command: CDVInvokedUrlCommand) {
+    @objc func addStream(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let type = command.arguments[1] as? Int ?? 0
         let options = command.arguments[2] as? Int ?? 0
@@ -678,7 +679,7 @@ class CarrierPlugin : CDVPlugin {
             mStreamDict[count] = streamHandler;
             let ret: NSDictionary = [
                 "objId": streamHandler.mCode,
-                "id": streamHandler.mStream.getStreamId(),
+//                "id": streamHandler.mStream.getStreamId(),
                 "type": type,
                 "options": options,
                 "transportInfo": streamHandler.getTransportInfoDict(),
@@ -690,7 +691,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func removeStream(_ command: CDVInvokedUrlCommand) {
+    @objc func removeStream(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let streamId = command.arguments[1] as? Int ?? 0
 
@@ -708,7 +709,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func addService(_ command: CDVInvokedUrlCommand) {
+    @objc func addService(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let service = command.arguments[1] as? String ?? ""
         let _protocol = command.arguments[2] as? Int ?? 0
@@ -735,7 +736,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func removeService(_ command: CDVInvokedUrlCommand) {
+    @objc func removeService(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let service = command.arguments[1] as? String ?? ""
 
@@ -751,7 +752,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func getTransportInfo(_ command: CDVInvokedUrlCommand) {
+    @objc func getTransportInfo(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
 
         if let streamHandler: PluginStreamHandler = mStreamDict[id] {
@@ -763,7 +764,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func streamWrite(_ command: CDVInvokedUrlCommand) {
+    @objc func streamWrite(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let data = command.arguments[1] as? String ?? ""
         let rawData = data.data(using: String.Encoding.utf8)
@@ -785,7 +786,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func openChannel(_ command: CDVInvokedUrlCommand) {
+    @objc func openChannel(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let cookie = command.arguments[1] as? String ?? ""
 
@@ -807,7 +808,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func closeChannel(_ command: CDVInvokedUrlCommand) {
+    @objc func closeChannel(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let channel = command.arguments[1] as? Int ?? 0
 
@@ -828,7 +829,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func writeChannel(_ command: CDVInvokedUrlCommand) {
+    @objc func writeChannel(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let channel = command.arguments[1] as? Int ?? 0
         let data = command.arguments[2] as? String ?? ""
@@ -852,7 +853,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func pendChannel(_ command: CDVInvokedUrlCommand) {
+    @objc func pendChannel(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let channel = command.arguments[1] as? Int ?? 0
 
@@ -874,7 +875,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func resumeChannel(_ command: CDVInvokedUrlCommand) {
+    @objc func resumeChannel(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let channel = command.arguments[1] as? Int ?? 0
 
@@ -896,7 +897,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func openPortForwarding(_ command: CDVInvokedUrlCommand) {
+    @objc func openPortForwarding(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let service = command.arguments[1] as? String ?? ""
         let _protocol = command.arguments[2] as? Int ?? 0
@@ -924,7 +925,7 @@ class CarrierPlugin : CDVPlugin {
         }
     }
 
-    func closePortForwarding(_ command: CDVInvokedUrlCommand) {
+    @objc func closePortForwarding(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let pfId = command.arguments[1] as? Int ?? 0
 

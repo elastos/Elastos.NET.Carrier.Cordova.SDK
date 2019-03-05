@@ -19,8 +19,8 @@
   * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   * SOFTWARE.
   */
-  
-package org.elastos.plugin;
+
+ package org.elastos.trinity.plugins.carrier;
 
 import android.content.Context;
 import android.content.Intent;
@@ -37,7 +37,7 @@ import org.elastos.carrier.FriendInfo;
 import org.elastos.carrier.PresenceStatus;
 import org.elastos.carrier.UserInfo;
 import org.elastos.carrier.session.*;
-import org.elastos.carrier.exceptions.ElastosException;
+import org.elastos.carrier.exceptions.CarrierException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -52,7 +52,7 @@ public class PluginStreamHandler extends AbstractStreamHandler {
 		this.mCallbackContext = callbackContext;
 	}
 
-	public static PluginStreamHandler createInstance(Session session, int type, int options, CallbackContext callbackContext) throws ElastosException {
+	public static PluginStreamHandler createInstance(Session session, int type, int options, CallbackContext callbackContext) throws CarrierException {
 		PluginStreamHandler handler = new PluginStreamHandler(callbackContext);
 		if (handler != null) {
 			handler.mStream = session.addStream(StreamType.valueOf(type), options, handler);
@@ -73,7 +73,7 @@ public class PluginStreamHandler extends AbstractStreamHandler {
 		return r;
 	}
 
-	public JSONObject getTransportInfoJson() throws JSONException, ElastosException{
+	public JSONObject getTransportInfoJson() throws JSONException, CarrierException{
 		TransportInfo info = mStream.getTransportInfo();
 		JSONObject r = new JSONObject();
 		r.put("topology", info.getTopology().value());
