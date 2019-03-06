@@ -147,13 +147,13 @@ class CarrierPlugin : TrinityPlugin {
         let dir = command.arguments[0] as? String ?? ""
         let config = command.arguments[1] as? String ?? ""
 
-        let carrierHandler = PluginCarrierHandler.createInstance(dir, config, carrierCallbackId, self.commandDelegate);
-
-        count += 1;
-        carrierHandler.mCode = count;
-        mCarrierDict[count] = carrierHandler;
-
         do {
+        let carrierHandler = try PluginCarrierHandler.createInstance(dir, config, carrierCallbackId, self.commandDelegate);
+
+            count += 1;
+            carrierHandler.mCode = count;
+            mCarrierDict[count] = carrierHandler;
+
             let selfInfo: UserInfo = try carrierHandler.mCarrier.getSelfUserInfo();
             let ret: NSDictionary = [
                 "id": carrierHandler.mCode,
@@ -167,6 +167,7 @@ class CarrierPlugin : TrinityPlugin {
             self.success(command, retAsDict: ret);
         }
         catch {
+            self.error(command, retAsString: error.localizedDescription);
         }
     }
 
@@ -179,11 +180,12 @@ class CarrierPlugin : TrinityPlugin {
                 try carrierHandler.mCarrier.start(iterateInterval: iterateleterval);
             }
             catch {
+                self.error(command, retAsString: error.localizedDescription);
             }
             self.success(command, retAsString: "ok");
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -196,10 +198,11 @@ class CarrierPlugin : TrinityPlugin {
                 self.success(command, retAsDict: ret);
             }
             catch {
+                self.error(command, retAsString: error.localizedDescription);
             }
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -227,7 +230,7 @@ class CarrierPlugin : TrinityPlugin {
                 case "hasAvatar":
                     selfInfo.hasAvatar = (value == "ture");
                 default:
-                    self.error(command, retAsString: "error");
+                    self.error(command, retAsString: "Name invalid!");
                     return;
                 }
 
@@ -240,10 +243,11 @@ class CarrierPlugin : TrinityPlugin {
                 self.success(command, retAsDict: ret);
             }
             catch {
+                self.error(command, retAsString: error.localizedDescription);
             }
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -258,11 +262,11 @@ class CarrierPlugin : TrinityPlugin {
                 self.success(command, retAsDict: ret);
             }
             catch {
-                // self.error(command, retAsString: "error");
+                self.error(command, retAsString: error.localizedDescription);
             }
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -279,11 +283,11 @@ class CarrierPlugin : TrinityPlugin {
                 self.success(command, retAsDict: ret);
             }
             catch {
-                //            self.error(command, retAsString: "error");
+                self.error(command, retAsString: error.localizedDescription);
             }
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -298,11 +302,11 @@ class CarrierPlugin : TrinityPlugin {
                 self.success(command, retAsDict: ret);
             }
             catch {
-                //            self.error(command, retAsString: "error");
+                self.error(command, retAsString: error.localizedDescription);
             }
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -319,11 +323,11 @@ class CarrierPlugin : TrinityPlugin {
                 self.success(command, retAsDict: ret);
             }
             catch {
-                // self.error(command, retAsString: "error");
+                self.error(command, retAsString: error.localizedDescription);
             }
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -336,7 +340,7 @@ class CarrierPlugin : TrinityPlugin {
             self.success(command, retAsDict: ret);
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -351,11 +355,11 @@ class CarrierPlugin : TrinityPlugin {
                 self.success(command, retAsDict: ret);
             }
             catch {
-                self.error(command, retAsString: "error");
+                self.error(command, retAsString: error.localizedDescription);
             }
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -369,11 +373,11 @@ class CarrierPlugin : TrinityPlugin {
                 self.success(command, retAsDict: ret);
             }
             catch {
-                self.error(command, retAsString: "error");
+                self.error(command, retAsString: error.localizedDescription);
             }
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -391,11 +395,11 @@ class CarrierPlugin : TrinityPlugin {
                 self.success(command, retAsDict: ret);
             }
             catch {
-                self.error(command, retAsString: "error");
+                self.error(command, retAsString: error.localizedDescription);
             }
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -410,7 +414,7 @@ class CarrierPlugin : TrinityPlugin {
             self.success(command, retAsDict: ret);
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -426,11 +430,11 @@ class CarrierPlugin : TrinityPlugin {
                 self.success(command, retAsDict: ret);
             }
             catch {
-                self.error(command, retAsString: "error");
+                self.error(command, retAsString: error.localizedDescription);
             }
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -447,11 +451,11 @@ class CarrierPlugin : TrinityPlugin {
                 self.success(command, retAsDict: ret);
             }
             catch {
-                self.error(command, retAsString: "error");
+                self.error(command, retAsString: error.localizedDescription);
             }
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -467,11 +471,11 @@ class CarrierPlugin : TrinityPlugin {
                 self.success(command, retAsDict: ret);
             }
             catch {
-                self.error(command, retAsString: "error");
+                self.error(command, retAsString: error.localizedDescription);
             }
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -485,11 +489,11 @@ class CarrierPlugin : TrinityPlugin {
                 self.success(command, retAsString: "success!");
             }
             catch {
-                self.error(command, retAsString: "error");
+                self.error(command, retAsString: error.localizedDescription);
             }
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -509,11 +513,11 @@ class CarrierPlugin : TrinityPlugin {
                 self.success(command, retAsDict: ret);
             }
             catch {
-                self.error(command, retAsString: "error");
+                self.error(command, retAsString: error.localizedDescription);
             }
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -535,11 +539,11 @@ class CarrierPlugin : TrinityPlugin {
                 self.success(command, retAsDict: ret);
             }
             catch {
-                self.error(command, retAsString: "error");
+                self.error(command, retAsString: error.localizedDescription);
             }
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -551,16 +555,16 @@ class CarrierPlugin : TrinityPlugin {
             self.success(command, retAsDict: ret);
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
     @objc func newSession(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
-        let to = command.arguments[1] as? String ?? ""
+        let toId = command.arguments[1] as? String ?? ""
         if let carrierHandler: PluginCarrierHandler = mCarrierDict[id] {
             do {
-                let session: Session = try carrierHandler.mSessionManager.createSession(to: to);
+                let session: Session = try carrierHandler.mSessionManager.createSession(to: toId);
 
                 count += 1;
                 mSessionDict[count] = session;
@@ -571,11 +575,11 @@ class CarrierPlugin : TrinityPlugin {
                 self.success(command, retAsDict: ret);
             }
             catch {
-                self.error(command, retAsString: "error");
+                self.error(command, retAsString: error.localizedDescription);
             }
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -586,7 +590,7 @@ class CarrierPlugin : TrinityPlugin {
             self.success(command, retAsString: "success!");
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -600,7 +604,7 @@ class CarrierPlugin : TrinityPlugin {
             self.success(command, retAsDict: ret);
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -614,11 +618,11 @@ class CarrierPlugin : TrinityPlugin {
                 self.success(command, retAsString: "success!");
             }
             catch {
-                self.error(command, retAsString: "error");
+                self.error(command, retAsString: error.localizedDescription);
             }
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -637,11 +641,11 @@ class CarrierPlugin : TrinityPlugin {
                 self.success(command, retAsDict: ret);
             }
             catch {
-                self.error(command, retAsString: "error");
+                self.error(command, retAsString: error.localizedDescription);
             }
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -658,11 +662,11 @@ class CarrierPlugin : TrinityPlugin {
                 self.success(command, retAsDict: ret);
             }
             catch {
-                self.error(command, retAsString: "error");
+                self.error(command, retAsString: error.localizedDescription);
             }
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -672,22 +676,27 @@ class CarrierPlugin : TrinityPlugin {
         let options = command.arguments[2] as? Int ?? 0
 
         if let session: Session = mSessionDict[id] {
-            let streamHandler = PluginStreamHandler.createInstance(session, type, options, streamCallbackId, self.commandDelegate);
+            do {
+                let streamHandler = try PluginStreamHandler.createInstance(session, type, options, streamCallbackId, self.commandDelegate);
 
-            count += 1;
-            streamHandler.mCode = count;
-            mStreamDict[count] = streamHandler;
-            let ret: NSDictionary = [
-                "objId": streamHandler.mCode,
-//                "id": streamHandler.mStream.getStreamId(),
-                "type": type,
-                "options": options,
-                "transportInfo": streamHandler.getTransportInfoDict(),
-                ]
-            self.success(command, retAsDict: ret);
+                count += 1;
+                streamHandler.mCode = count;
+                mStreamDict[count] = streamHandler;
+                let ret: NSDictionary = [
+                    "objId": streamHandler.mCode,
+    //                "id": streamHandler.mStream.getStreamId(),
+                    "type": type,
+                    "options": options,
+                    "transportInfo": try streamHandler.getTransportInfoDict(),
+                    ]
+                self.success(command, retAsDict: ret);
+            }
+            catch {
+                self.error(command, retAsString: error.localizedDescription);
+            }
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -701,11 +710,11 @@ class CarrierPlugin : TrinityPlugin {
                 self.success(command, retAsString: "success!");
             }
             catch {
-                self.error(command, retAsString: "error");
+                self.error(command, retAsString: error.localizedDescription);
             }
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -728,11 +737,11 @@ class CarrierPlugin : TrinityPlugin {
                 self.success(command, retAsDict: ret);
             }
             catch {
-                self.error(command, retAsString: "error");
+                self.error(command, retAsString: error.localizedDescription);
             }
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -748,7 +757,7 @@ class CarrierPlugin : TrinityPlugin {
             self.success(command, retAsDict: ret);
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -756,11 +765,16 @@ class CarrierPlugin : TrinityPlugin {
         let id = command.arguments[0] as? Int ?? 0
 
         if let streamHandler: PluginStreamHandler = mStreamDict[id] {
-            let ret: NSDictionary = streamHandler.getTransportInfoDict();
-            self.success(command, retAsDict: ret);
+            do {
+                let ret: NSDictionary = try streamHandler.getTransportInfoDict();
+                self.success(command, retAsDict: ret);
+            }
+            catch {
+                self.error(command, retAsString: error.localizedDescription);
+            }
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -778,11 +792,11 @@ class CarrierPlugin : TrinityPlugin {
                 self.success(command, retAsDict: ret);
             }
             catch {
-                self.error(command, retAsString: "error");
+                self.error(command, retAsString: error.localizedDescription);
             }
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -800,11 +814,11 @@ class CarrierPlugin : TrinityPlugin {
                 self.success(command, retAsDict: ret);
             }
             catch {
-                self.error(command, retAsString: "error");
+                self.error(command, retAsString: error.localizedDescription);
             }
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -821,11 +835,11 @@ class CarrierPlugin : TrinityPlugin {
                 self.success(command, retAsDict: ret);
             }
             catch {
-                self.error(command, retAsString: "error");
+                self.error(command, retAsString: error.localizedDescription);
             }
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -845,11 +859,11 @@ class CarrierPlugin : TrinityPlugin {
                 self.success(command, retAsDict: ret);
             }
             catch {
-                self.error(command, retAsString: "error");
+                self.error(command, retAsString: error.localizedDescription);
             }
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -867,11 +881,11 @@ class CarrierPlugin : TrinityPlugin {
                 self.success(command, retAsDict: ret);
             }
             catch {
-                self.error(command, retAsString: "error");
+                self.error(command, retAsString: error.localizedDescription);
             }
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -889,11 +903,11 @@ class CarrierPlugin : TrinityPlugin {
                 self.success(command, retAsDict: ret);
             }
             catch {
-                self.error(command, retAsString: "error");
+                self.error(command, retAsString: error.localizedDescription);
             }
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -917,11 +931,11 @@ class CarrierPlugin : TrinityPlugin {
                 self.success(command, retAsDict: ret);
             }
             catch {
-                self.error(command, retAsString: "error");
+                self.error(command, retAsString: error.localizedDescription);
             }
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 
@@ -938,11 +952,11 @@ class CarrierPlugin : TrinityPlugin {
                 self.success(command, retAsDict: ret);
             }
             catch {
-                self.error(command, retAsString: "error");
+                self.error(command, retAsString: error.localizedDescription);
             }
         }
         else {
-            self.error(command, retAsString: "error");
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 }

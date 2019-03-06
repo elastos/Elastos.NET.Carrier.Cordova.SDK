@@ -41,13 +41,11 @@ class PluginStreamHandler: CarrierStreamDelegate {
         self.commandDelegate = commandDelegate;
     }
 
-    static func createInstance(_ session: Session, _ type: Int, _ options: Int, _ callbackId:String, _ commandDelegate:CDVCommandDelegate) -> PluginStreamHandler {
+    static func createInstance(_ session: Session, _ type: Int, _ options: Int, _ callbackId:String, _ commandDelegate:CDVCommandDelegate) throws -> PluginStreamHandler {
         let handler = PluginStreamHandler(callbackId, commandDelegate);
-        do {
-            handler.mStream = try session.addStream(type: CarrierStreamType(rawValue: type)!, options: CarrierStreamOptions(rawValue: CarrierStreamOptions.RawValue(options)), delegate: handler);
-        }
-        catch {
-        }
+
+        handler.mStream = try session.addStream(type: CarrierStreamType(rawValue: type)!, options: CarrierStreamOptions(rawValue: CarrierStreamOptions.RawValue(options)), delegate: handler);
+            
         return handler;
     }
 
@@ -62,26 +60,24 @@ class PluginStreamHandler: CarrierStreamDelegate {
         return ret;
     }
 
-    func getTransportInfoDict()  -> NSMutableDictionary {
+    func getTransportInfoDict() throws -> NSMutableDictionary {
         var ret: NSMutableDictionary?
-        do {
-            let info:TransportInfo = try mStream.getTransportInfo();
-            ret = [
-                "topology": info.networkTopology,
-                "local": getAddressInfoDict(info: info.localAddressInfo),
-                "remote": getAddressInfoDict(info: info.remoteAddressInfo),
-                ]
-        }
-        catch {
-        }
+
+        let info:TransportInfo = try mStream.getTransportInfo();
+        ret = [
+            "topology": info.networkTopology,
+            "local": getAddressInfoDict(info: info.localAddressInfo),
+            "remote": getAddressInfoDict(info: info.remoteAddressInfo),
+            ]
+
         return ret!;
     }
 
     private func sendEvent(_ ret: NSMutableDictionary) {
         ret["id"] = mCode
         let result = CDVPluginResult(status: CDVCommandStatus_OK,
-                                     messageAs: ret as! [AnyHashable : Any]);
-        result?.setKeepCallbackAs(true);
+                                     messageAs: ret as? [AnyHashable : Any]);
+        result!.setKeepCallbackAs(true);
         self.commandDelegate?.send(result, callbackId:self.callbackId);
 
     }

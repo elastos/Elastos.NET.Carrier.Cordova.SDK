@@ -215,7 +215,8 @@ public class CarrierPlugin extends TrinityPlugin {
             }
         }
         catch (CarrierException e) {
-            String error = String.format("%s error (0x%x)", action, e.getErrorCode());
+//            String error = String.format("%s error (0x%x)", action, e.getErrorCode());
+            String error = e.getLocalizedMessage();
             callbackContext.error(error);
         }
         return true;
@@ -319,7 +320,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success("ok");
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -332,7 +333,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success(r);
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -368,7 +369,7 @@ public class CarrierPlugin extends TrinityPlugin {
                     else selfInfo.setHasAvatar(false);
                     break;
                 default:
-                    callbackContext.error("error");
+                    callbackContext.error("Name invalid!");
                     return;
             }
 
@@ -380,7 +381,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success(r);
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -393,7 +394,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success(r);
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -409,7 +410,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success(r);
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -422,7 +423,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success(r);
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -438,7 +439,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success(r);
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -451,7 +452,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success(r);
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -465,7 +466,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success(r);
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -479,7 +480,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success(r);
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -496,7 +497,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success(r);
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -511,7 +512,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success(r);
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -526,7 +527,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success(r);
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -542,7 +543,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success(r);
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -557,7 +558,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success(r);
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -571,7 +572,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success("success!");
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -590,7 +591,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success(r);
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -611,7 +612,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success(r);
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -624,7 +625,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success(r);
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -647,7 +648,7 @@ public class CarrierPlugin extends TrinityPlugin {
             }
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -659,7 +660,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success();
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -673,7 +674,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success(r);
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -687,7 +688,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success();
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -704,7 +705,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success(r);
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -719,7 +720,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success(r);
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -746,7 +747,7 @@ public class CarrierPlugin extends TrinityPlugin {
             }
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
     private void removeStream(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
@@ -760,7 +761,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success();
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -782,7 +783,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success(r);
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -798,7 +799,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success(r);
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -811,7 +812,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success(r);
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -828,7 +829,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success(r);
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -844,7 +845,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success(r);
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -860,7 +861,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success(r);
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -879,7 +880,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success(r);
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -895,7 +896,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success(r);
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -911,7 +912,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success(r);
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 
@@ -950,7 +951,7 @@ public class CarrierPlugin extends TrinityPlugin {
             callbackContext.success(r);
         }
         else {
-            callbackContext.error("error");
+            callbackContext.error("Id invalid!");
         }
     }
 }

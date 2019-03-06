@@ -41,67 +41,55 @@ class PluginCarrierHandler: CarrierDelegate {
         self.commandDelegate = commandDelegate;
     }
 
-    func createCarrier(_ dir: String, _ configString: String) -> Carrier {
-        do {
-            let carrierDirectory: String = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)[0] + "/" + dir
-            if !FileManager.default.fileExists(atPath: carrierDirectory) {
-                var url = URL(fileURLWithPath: carrierDirectory)
-                try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
+    func createCarrier(_ dir: String, _ configString: String) throws -> Carrier {
+        let carrierDirectory: String = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)[0] + "/" + dir
+        if !FileManager.default.fileExists(atPath: carrierDirectory) {
+            var url = URL(fileURLWithPath: carrierDirectory)
+            try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
 
-                var resourceValues = URLResourceValues()
-                resourceValues.isExcludedFromBackup = true
-                try url.setResourceValues(resourceValues)
+            var resourceValues = URLResourceValues()
+            resourceValues.isExcludedFromBackup = true
+            try url.setResourceValues(resourceValues)
+        }
+
+
+        let options = CarrierOptions()
+        options.bootstrapNodes = [BootstrapNode]()
+
+        let jsonData = configString.data(using: .utf8)
+        let decodedJsonDict:[String:Any] = (try JSONSerialization.jsonObject(with: jsonData!, options: []) as? [String: Any])!
+        print("decodedJsonDict=\(decodedJsonDict)")
+
+        options.udpEnabled = decodedJsonDict["udpEnabled"] as! Bool
+        if decodedJsonDict["bootstraps"] is Array<AnyObject> {
+            for dict in decodedJsonDict["bootstraps"] as! Array<AnyObject>{
+                let node = dict as! [String:Any]
+                let bootstrapNode = BootstrapNode()
+                bootstrapNode.ipv4 = (node["ipv4"] as AnyObject? as? String) ?? ""
+                bootstrapNode.port = (node["port"] as AnyObject? as? String) ?? ""
+                bootstrapNode.publicKey = (node["publicKey"] as AnyObject? as? String) ?? ""
+
+                options.bootstrapNodes?.append(bootstrapNode)
             }
 
-
-            let options = CarrierOptions()
-            options.bootstrapNodes = [BootstrapNode]()
-
-            let jsonData = configString.data(using: .utf8)
-            let decodedJsonDict:[String:Any] = (try JSONSerialization.jsonObject(with: jsonData!, options: []) as? [String: Any])!
-            print("decodedJsonDict=\(decodedJsonDict)")
-
-            options.udpEnabled = decodedJsonDict["udpEnabled"] as! Bool
-            if decodedJsonDict["bootstraps"] is Array<AnyObject> {
-                for dict in decodedJsonDict["bootstraps"] as! Array<AnyObject>{
-                    let node = dict as! [String:Any]
-                    let bootstrapNode = BootstrapNode()
-                    bootstrapNode.ipv4 = (node["ipv4"] as AnyObject? as? String) ?? ""
-                    bootstrapNode.port = (node["port"] as AnyObject? as? String) ?? ""
-                    bootstrapNode.publicKey = (node["publicKey"] as AnyObject? as? String) ?? ""
-
-                    options.bootstrapNodes?.append(bootstrapNode)
-                }
-
-            }
-
-            options.persistentLocation = carrierDirectory
-
-            try Carrier.initializeSharedInstance(options: options, delegate: self)
-            print("carrier instance created")
-
-            mCarrier = Carrier.sharedInstance()
-
-            //            try! mCarrier.start(iterateInterval: 1000)
-            //            print("carrier started, waiting for ready")
-
-            //            mSessionManager = Manager.getInstance(mCarrier,  this);
-            //            Log.i(TAG, "Agent session manager created successfully",
-
-            //        mCarrier.start(50);
-
-            //        mCarrierMap.put(dir, carrier);
         }
-        catch {
-            NSLog("Start carrier instance error : \(error.localizedDescription)")
-        }
+
+        options.persistentLocation = carrierDirectory
+
+        try Carrier.initializeSharedInstance(options: options, delegate: self)
+        print("carrier instance created")
+
+        mCarrier = Carrier.sharedInstance()
+        
+        try CarrierSessionManager.initializeSharedInstance(carrier: mCarrier);
+        mSessionManager = CarrierSessionManager.sharedInstance();
 
         return mCarrier;
     }
 
-    static func createInstance(_ dir: String, _ configString: String, _ callbackId:String, _ commandDelegate:CDVCommandDelegate) -> PluginCarrierHandler {
+    static func createInstance(_ dir: String, _ configString: String, _ callbackId:String, _ commandDelegate:CDVCommandDelegate) throws -> PluginCarrierHandler {
         let handler: PluginCarrierHandler = PluginCarrierHandler(callbackId, commandDelegate);
-        let _:Carrier = handler.createCarrier(dir, configString);
+        let _:Carrier = try handler.createCarrier(dir, configString);
         return handler;
     }
 
@@ -270,9 +258,10 @@ class PluginCarrierHandler: CarrierDelegate {
         sendEvent(ret);
     }
 
-    private func didReceiveFriendMessage(_ carrier: Carrier,
+    func didReceiveFriendMessage(_ carrier: Carrier,
                                  _ from: String,
-                                 _ message: String) {
+                                 _ data: Data) {
+        let message = String(data: data, encoding: .utf8)!;
         let ret: NSMutableDictionary = [
             "name": "onFriendMessage",
             "from": from,
@@ -280,15 +269,5 @@ class PluginCarrierHandler: CarrierDelegate {
             ]
         sendEvent(ret);
     }
-
-    //func onSessionRequest(_ carrier:Carrier, String from, String sdp) {
-    //
-    //
-    //    // "name": "onSessionRequest",
-    //    // "from": from,
-    //    // "sdp": sdp,
-    // ]
-    // sendEvent(ret);
-    //}
 
 }
