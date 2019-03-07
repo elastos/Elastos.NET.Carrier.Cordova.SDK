@@ -684,10 +684,9 @@ class CarrierPlugin : TrinityPlugin {
                 mStreamDict[count] = streamHandler;
                 let ret: NSDictionary = [
                     "objId": streamHandler.mCode,
-    //                "id": streamHandler.mStream.getStreamId(),
+                    "id": count, //streamHandler.mStream.getStreamId(),
                     "type": type,
                     "options": options,
-                    "transportInfo": try streamHandler.getTransportInfoDict(),
                     ]
                 self.success(command, retAsDict: ret);
             }

@@ -380,10 +380,10 @@ it's ready to start and therefore connect to carrier network.
 * [Stream](#Stream)
     * [new Stream()](#new_Stream_new)
     * [.id](#Stream+id)
-    * [.transportInfo](#Stream+transportInfo)
     * [.carrier](#Stream+carrier)
     * [.session](#Stream+session)
     * [.on(name, callback)](#Stream+on)
+    * [.getTransportInfo(onSuccess, [onError])](#Stream+getTransportInfo)
     * [.write(onSuccess, [onError], data)](#Stream+write)
     * [.openChannel(onSuccess, [onError], cookie)](#Stream+openChannel)
     * [.closeChannel(onSuccess, [onError], channel)](#Stream+closeChannel)
@@ -407,16 +407,6 @@ The class representing Carrier stream.
 | Name | Type | Description |
 | --- | --- | --- |
 | id | <code>number</code> | Stream ID. |
-
-<a name="Stream+transportInfo"></a>
-
-### stream.transportInfo
-**Kind**: instance property of [<code>Stream</code>](#Stream)  
-**Properties**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| transportInfo | [<code>TransportInfo</code>](#TransportInfo) | Tranport info |
 
 <a name="Stream+carrier"></a>
 
@@ -449,6 +439,18 @@ Add or remove Stream callback.
 | --- | --- | --- |
 | name | <code>string</code> | The callback name. |
 | callback | <code>function</code> | The function to add or change callback function. If set to null, will remove callback. |
+
+<a name="Stream+getTransportInfo"></a>
+
+### stream.getTransportInfo(onSuccess, [onError])
+Get tranport info of carrier stream.
+
+**Kind**: instance method of [<code>Stream</code>](#Stream)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| onSuccess | <code>function</code> | The function to call when success, the param is a TransportInfo object |
+| [onError] | <code>function</code> | The function to call when error, the param is a String. Or set to null. |
 
 <a name="Stream+write"></a>
 
