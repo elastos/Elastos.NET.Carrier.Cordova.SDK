@@ -695,7 +695,10 @@
       private void sessionReplyRequest(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           int status = args.getInt(1);
-          String reason = args.getString(2);
+          String reason = null;
+          if (status != 0) {
+              args.getString(2);
+          }
           Session session = mSessionMap.get(id);
           if (session != null) {
               session.replyRequest(status, reason);

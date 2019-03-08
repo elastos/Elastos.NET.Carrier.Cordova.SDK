@@ -28,6 +28,7 @@ import android.content.SharedPreferences;
 import android.util.Base64;
 import android.util.Log;
 
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 
 import org.apache.cordova.CallbackContext;
@@ -68,8 +69,11 @@ public class PluginStreamHandler extends AbstractStreamHandler {
 		r.put("type", info.getCandidateType().value());
 		r.put("address", info.getAddress().getAddress().toString());
 		r.put("port", info.getAddress().getPort());
-		r.put("relatedAddress", info.getRelatedAddress().getAddress().toString());
-		r.put("relatedPort", info.getRelatedAddress().getPort());
+		InetSocketAddress relateAddress = info.getRelatedAddress();
+		if (relateAddress != null) {
+			r.put("relatedAddress", relateAddress.getAddress().toString());
+			r.put("relatedPort", relateAddress.getPort());
+		}
 		return r;
 	}
 
