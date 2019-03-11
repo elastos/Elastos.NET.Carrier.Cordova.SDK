@@ -22,6 +22,8 @@
 
  package org.elastos.trinity.plugins.carrier;
 
+import android.util.Base64;
+
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.PluginResult;
 import org.json.JSONException;
@@ -50,14 +52,14 @@ public class FIRHandler implements FriendInviteResponseHandler {
 	}
 
 	@Override
-	public void onReceived(String from, int status, String reason, String data) {
+	public void onReceived(String from, int status, String reason, byte[] data) {
 		JSONObject r = new JSONObject();
 		try {
 			r.put("name", "onReceived");
 			r.put("from", from);
 			r.put("status", status);
 			r.put("reason", reason);
-			r.put("data", data);
+			r.put("data", Base64.encodeToString(data, Base64.DEFAULT));
 			sendEvent(r);
 		} catch (JSONException e) {
 			e.printStackTrace();

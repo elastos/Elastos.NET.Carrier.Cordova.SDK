@@ -345,12 +345,13 @@
 	  }
   
 	  @Override
-	  public void onFriendInviteRequest(Carrier carrier, String from, String data) {
+	  public void onFriendInviteRequest(Carrier carrier, String from, byte[] data) {
 		  JSONObject r = new JSONObject();
+		  String message = new String(data, StandardCharsets.UTF_8);
 		  try {
 			  r.put("name", "onFriendInviteRequest");
 			  r.put("from", from);
-			  r.put("data", data);
+			  r.put("message", message);
 			  sendEvent(r);
 		  } catch (JSONException e) {
 			  e.printStackTrace();

@@ -30,7 +30,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class SRCHandler implements SessionRequestCompleteHandler {
-	private static String TAG = "FIRHandler";
+	private static String TAG = "SRCHandler";
 
 	private int mHandlerId;
 	public CallbackContext mCallbackContext = null;
