@@ -69,10 +69,10 @@ public class PluginStreamHandler extends AbstractStreamHandler {
 		r.put("type", info.getCandidateType().value());
 		r.put("address", info.getAddress().getAddress().toString());
 		r.put("port", info.getAddress().getPort());
-		InetSocketAddress relateAddress = info.getRelatedAddress();
-		if (relateAddress != null) {
-			r.put("relatedAddress", relateAddress.getAddress().toString());
-			r.put("relatedPort", relateAddress.getPort());
+		InetSocketAddress relatedAddress = info.getRelatedAddress();
+		if (relatedAddress != null) {
+			r.put("relatedAddress", relatedAddress.getAddress().toString());
+			r.put("relatedPort", relatedAddress.getPort());
 		}
 		return r;
 	}

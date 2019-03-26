@@ -30,7 +30,7 @@
   import org.apache.cordova.PluginResult;
   import org.elastos.carrier.session.PortForwardingProtocol;
   import org.elastos.carrier.session.Session;
-  import org.elastos.trinity.dapprt.TrinityPlugin;
+  import org.elastos.trinity.runtime.TrinityPlugin;
   import org.json.JSONArray;
   import org.json.JSONException;
   import org.json.JSONObject;
@@ -697,7 +697,7 @@
           int status = args.getInt(1);
           String reason = null;
           if (status != 0) {
-              args.getString(2);
+              reason = args.getString(2);
           }
           Session session = mSessionMap.get(id);
           if (session != null) {
