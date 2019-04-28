@@ -19,9 +19,9 @@
   * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   * SOFTWARE.
   */
-  
+
 import Foundation
-import ElastosCarrier
+import ElastosCarrierSDK
 
 typealias UserInfo = CarrierUserInfo
 typealias FriendInfo = CarrierFriendInfo
@@ -80,7 +80,7 @@ class PluginCarrierHandler: CarrierDelegate {
         print("carrier instance created")
 
         mCarrier = Carrier.sharedInstance()
-        
+
         try CarrierSessionManager.initializeSharedInstance(carrier: mCarrier);
         mSessionManager = CarrierSessionManager.sharedInstance();
 

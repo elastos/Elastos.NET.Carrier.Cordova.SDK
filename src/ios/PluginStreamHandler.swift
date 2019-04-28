@@ -19,14 +19,14 @@
   * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   * SOFTWARE.
   */
-  
-import Foundation
-import ElastosCarrier
 
-typealias Stream = ElastosCarrier.CarrierStream
-typealias AddressInfo = ElastosCarrier.CarrierAddressInfo
-typealias TransportInfo = ElastosCarrier.CarrierTransportInfo
-//typealias Session = ElastosCarrier.CarrierSession
+import Foundation
+import ElastosCarrierSDK
+
+typealias Stream = ElastosCarrierSDK.CarrierStream
+typealias AddressInfo = ElastosCarrierSDK.CarrierAddressInfo
+typealias TransportInfo = ElastosCarrierSDK.CarrierTransportInfo
+//typealias Session = ElastosCarrierSDK.CarrierSession
 
 class PluginStreamHandler: CarrierStreamDelegate {
     //    let String TAG:String = "PluginStreamHandler";
@@ -45,7 +45,7 @@ class PluginStreamHandler: CarrierStreamDelegate {
         let handler = PluginStreamHandler(callbackId, commandDelegate);
 
         handler.mStream = try session.addStream(type: CarrierStreamType(rawValue: type)!, options: CarrierStreamOptions(rawValue: CarrierStreamOptions.RawValue(options)), delegate: handler);
-            
+
         return handler;
     }
 

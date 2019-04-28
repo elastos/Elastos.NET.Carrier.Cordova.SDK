@@ -19,12 +19,12 @@
   * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   * SOFTWARE.
   */
-  
-import Foundation
-import ElastosCarrier
 
-typealias Carrier = ElastosCarrier.Carrier
-typealias Session = ElastosCarrier.CarrierSession
+import Foundation
+import ElastosCarrierSDK
+
+typealias Carrier = ElastosCarrierSDK.Carrier
+typealias Session = ElastosCarrierSDK.CarrierSession
 
 
 @objc(CarrierPlugin)
@@ -83,14 +83,14 @@ class CarrierPlugin : TrinityPlugin {
     }
 
     @objc func getVersion(_ command: CDVInvokedUrlCommand) {
-        let version = ElastosCarrier.Carrier.getVersion()
+        let version = ElastosCarrierSDK.Carrier.getVersion()
         self.success(command, retAsString: version);
     }
 
     @objc func getIdFromAddress(_ command: CDVInvokedUrlCommand) {
         let address = command.arguments[0] as? String ?? ""
         if (!address.isEmpty) {
-            let usrId = ElastosCarrier.Carrier.getUserIdFromAddress(address);
+            let usrId = ElastosCarrierSDK.Carrier.getUserIdFromAddress(address);
             self.success(command, retAsString: usrId!);
         }
         else {
@@ -112,7 +112,7 @@ class CarrierPlugin : TrinityPlugin {
     @objc func isValidId(_ command: CDVInvokedUrlCommand) {
         let userId = command.arguments[0] as? String ?? ""
         if (!userId.isEmpty) {
-            let ret = ElastosCarrier.Carrier.isValidUserId(userId);
+            let ret = ElastosCarrierSDK.Carrier.isValidUserId(userId);
             self.success(command, retAsString: String(ret));
         }
         else {

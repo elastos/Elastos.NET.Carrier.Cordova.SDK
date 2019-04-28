@@ -19,9 +19,9 @@
   * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   * SOFTWARE.
   */
-  
+
 import Foundation
-import ElastosCarrier
+import ElastosCarrierSDK
 
 class SRCHandler {
 //    private static String TAG = "FIRHandler";
