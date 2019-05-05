@@ -19,9 +19,7 @@ function onDeviceReady() {
 
 ## Installation
 
-```bash
-    cordova plugin add elastos-trinity-plugins-carrier
-```
+    The plugins field of dapp manifest.json adds Carrier values, such as "plugins": ["XXXX", "Carrier", "XXXX"]
 
 ## Supported Platforms
 
@@ -177,7 +175,7 @@ function to interact with friends.</p>
 ### carrierPlugin.ConnectionStatus : <code>enum</code>
 Carrier node connection status to the carrier network.
 
-**Kind**: instance enum of [<code>carrierPlugin</code>](#module_carrierPlugin)  
+**Kind**: instance enum of [<code>carrierPlugin</code>](#module_carrierPlugin)
 **Properties**
 
 | Name | Type | Default | Description |
@@ -190,7 +188,7 @@ Carrier node connection status to the carrier network.
 ### carrierPlugin.PresenceStatus : <code>enum</code>
 Carrier node presence status.
 
-**Kind**: instance enum of [<code>carrierPlugin</code>](#module_carrierPlugin)  
+**Kind**: instance enum of [<code>carrierPlugin</code>](#module_carrierPlugin)
 **Properties**
 
 | Name | Type | Default | Description |
@@ -204,7 +202,7 @@ Carrier node presence status.
 ### carrierPlugin.StreamType : <code>enum</code>
 Carrier stream type. Reference: https://tools.ietf.org/html/rfc4566#section-5.14 https://tools.ietf.org/html/rfc4566#section-8
 
-**Kind**: instance enum of [<code>carrierPlugin</code>](#module_carrierPlugin)  
+**Kind**: instance enum of [<code>carrierPlugin</code>](#module_carrierPlugin)
 **Properties**
 
 | Name | Type | Default | Description |
@@ -220,7 +218,7 @@ Carrier stream type. Reference: https://tools.ietf.org/html/rfc4566#section-5.14
 ### carrierPlugin.StreamState : <code>enum</code>
 Carrier stream state The stream state will be changed according to the phase of the stream.
 
-**Kind**: instance enum of [<code>carrierPlugin</code>](#module_carrierPlugin)  
+**Kind**: instance enum of [<code>carrierPlugin</code>](#module_carrierPlugin)
 **Properties**
 
 | Name | Type | Default | Description |
@@ -239,7 +237,7 @@ Carrier stream state The stream state will be changed according to the phase of 
 ### carrierPlugin.CandidateType : <code>enum</code>
 Carrier Stream's candidate type.
 
-**Kind**: instance enum of [<code>carrierPlugin</code>](#module_carrierPlugin)  
+**Kind**: instance enum of [<code>carrierPlugin</code>](#module_carrierPlugin)
 **Properties**
 
 | Name | Type | Default | Description |
@@ -254,7 +252,7 @@ Carrier Stream's candidate type.
 ### carrierPlugin.NetworkTopology : <code>enum</code>
 Carrier network topology for session peers related to each other.
 
-**Kind**: instance enum of [<code>carrierPlugin</code>](#module_carrierPlugin)  
+**Kind**: instance enum of [<code>carrierPlugin</code>](#module_carrierPlugin)
 **Properties**
 
 | Name | Type | Default | Description |
@@ -268,7 +266,7 @@ Carrier network topology for session peers related to each other.
 ### carrierPlugin.PortForwardingProtocol : <code>enum</code>
 Port forwarding supported protocols.
 
-**Kind**: instance enum of [<code>carrierPlugin</code>](#module_carrierPlugin)  
+**Kind**: instance enum of [<code>carrierPlugin</code>](#module_carrierPlugin)
 **Properties**
 
 | Name | Type | Default | Description |
@@ -280,7 +278,7 @@ Port forwarding supported protocols.
 ### carrierPlugin.CloseReason : <code>enum</code>
 Multiplexing channel close reason mode.
 
-**Kind**: instance enum of [<code>carrierPlugin</code>](#module_carrierPlugin)  
+**Kind**: instance enum of [<code>carrierPlugin</code>](#module_carrierPlugin)
 **Properties**
 
 | Name | Type | Default | Description |
@@ -294,7 +292,7 @@ Multiplexing channel close reason mode.
 ### carrierPlugin.StreamMode : <code>enum</code>
 Carrier stream mode.
 
-**Kind**: instance enum of [<code>carrierPlugin</code>](#module_carrierPlugin)  
+**Kind**: instance enum of [<code>carrierPlugin</code>](#module_carrierPlugin)
 **Properties**
 
 | Name | Type | Default | Description |
@@ -310,7 +308,7 @@ Carrier stream mode.
 ### carrierPlugin.getVersion(onSuccess, [onError], onSuccess)
 Get current version of Carrier node.
 
-**Kind**: instance method of [<code>carrierPlugin</code>](#module_carrierPlugin)  
+**Kind**: instance method of [<code>carrierPlugin</code>](#module_carrierPlugin)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -323,7 +321,7 @@ Get current version of Carrier node.
 ### carrierPlugin.isValidId(onSuccess, [onError], id)
 Check if the ID is Carrier node id.
 
-**Kind**: instance method of [<code>carrierPlugin</code>](#module_carrierPlugin)  
+**Kind**: instance method of [<code>carrierPlugin</code>](#module_carrierPlugin)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -336,7 +334,7 @@ Check if the ID is Carrier node id.
 ### carrierPlugin.isValidAddress(onSuccess, [onError], address)
 Check if the carrier node address is valid.
 
-**Kind**: instance method of [<code>carrierPlugin</code>](#module_carrierPlugin)  
+**Kind**: instance method of [<code>carrierPlugin</code>](#module_carrierPlugin)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -349,7 +347,7 @@ Check if the carrier node address is valid.
 ### carrierPlugin.getIdFromAddress(onSuccess, [onError], address)
 Get carrier ID from carrier node address.
 
-**Kind**: instance method of [<code>carrierPlugin</code>](#module_carrierPlugin)  
+**Kind**: instance method of [<code>carrierPlugin</code>](#module_carrierPlugin)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -363,7 +361,7 @@ Get carrier ID from carrier node address.
 Create a carrier object instance. After initializing the instance,
 it's ready to start and therefore connect to carrier network.
 
-**Kind**: instance method of [<code>carrierPlugin</code>](#module_carrierPlugin)  
+**Kind**: instance method of [<code>carrierPlugin</code>](#module_carrierPlugin)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -375,7 +373,7 @@ it's ready to start and therefore connect to carrier network.
 <a name="Stream"></a>
 
 ## Stream
-**Kind**: global class  
+**Kind**: global class
 
 * [Stream](#Stream)
     * [new Stream()](#new_Stream_new)
@@ -401,7 +399,7 @@ The class representing Carrier stream.
 <a name="Stream+id"></a>
 
 ### stream.id
-**Kind**: instance property of [<code>Stream</code>](#Stream)  
+**Kind**: instance property of [<code>Stream</code>](#Stream)
 **Properties**
 
 | Name | Type | Description |
@@ -411,7 +409,7 @@ The class representing Carrier stream.
 <a name="Stream+carrier"></a>
 
 ### stream.carrier
-**Kind**: instance property of [<code>Stream</code>](#Stream)  
+**Kind**: instance property of [<code>Stream</code>](#Stream)
 **Properties**
 
 | Name | Type | Description |
@@ -421,7 +419,7 @@ The class representing Carrier stream.
 <a name="Stream+session"></a>
 
 ### stream.session
-**Kind**: instance property of [<code>Stream</code>](#Stream)  
+**Kind**: instance property of [<code>Stream</code>](#Stream)
 **Properties**
 
 | Name | Type | Description |
@@ -433,7 +431,7 @@ The class representing Carrier stream.
 ### stream.on(name, callback)
 Add or remove Stream callback.
 
-**Kind**: instance method of [<code>Stream</code>](#Stream)  
+**Kind**: instance method of [<code>Stream</code>](#Stream)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -445,7 +443,7 @@ Add or remove Stream callback.
 ### stream.getTransportInfo(onSuccess, [onError])
 Get tranport info of carrier stream.
 
-**Kind**: instance method of [<code>Stream</code>](#Stream)  
+**Kind**: instance method of [<code>Stream</code>](#Stream)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -458,7 +456,7 @@ Get tranport info of carrier stream.
 Send outgoing data to remote peer.
 If the stream is in multiplexing mode, application can not call this function.
 
-**Kind**: instance method of [<code>Stream</code>](#Stream)  
+**Kind**: instance method of [<code>Stream</code>](#Stream)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -472,7 +470,7 @@ If the stream is in multiplexing mode, application can not call this function.
 Open a new channel on multiplexing stream.
 If the stream is in multiplexing mode, application can not call this function.
 
-**Kind**: instance method of [<code>Stream</code>](#Stream)  
+**Kind**: instance method of [<code>Stream</code>](#Stream)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -486,7 +484,7 @@ If the stream is in multiplexing mode, application can not call this function.
 Close a new channel on multiplexing stream.
 If the stream is in multiplexing mode, application can not call this function.
 
-**Kind**: instance method of [<code>Stream</code>](#Stream)  
+**Kind**: instance method of [<code>Stream</code>](#Stream)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -500,7 +498,7 @@ If the stream is in multiplexing mode, application can not call this function.
 Send outgoing data to remote peer.
 If the stream is in multiplexing mode, application can not call this function.
 
-**Kind**: instance method of [<code>Stream</code>](#Stream)  
+**Kind**: instance method of [<code>Stream</code>](#Stream)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -515,7 +513,7 @@ If the stream is in multiplexing mode, application can not call this function.
 Request remote peer to pend channel data sending.
 If the stream is in multiplexing mode, application can not call this function.
 
-**Kind**: instance method of [<code>Stream</code>](#Stream)  
+**Kind**: instance method of [<code>Stream</code>](#Stream)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -529,7 +527,7 @@ If the stream is in multiplexing mode, application can not call this function.
 Request remote peer to resume channel data sending.
 If the stream is in multiplexing mode, application can not call this function.
 
-**Kind**: instance method of [<code>Stream</code>](#Stream)  
+**Kind**: instance method of [<code>Stream</code>](#Stream)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -543,7 +541,7 @@ If the stream is in multiplexing mode, application can not call this function.
 Open a port forwarding to remote service over multiplexing.
 If the stream is in multiplexing mode, application can not call this function.
 
-**Kind**: instance method of [<code>Stream</code>](#Stream)  
+**Kind**: instance method of [<code>Stream</code>](#Stream)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -560,7 +558,7 @@ If the stream is in multiplexing mode, application can not call this function.
 Close a port forwarding.
 If the stream is in multiplexing mode, application can not call this function.
 
-**Kind**: instance method of [<code>Stream</code>](#Stream)  
+**Kind**: instance method of [<code>Stream</code>](#Stream)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -571,7 +569,7 @@ If the stream is in multiplexing mode, application can not call this function.
 <a name="Session"></a>
 
 ## Session
-**Kind**: global class  
+**Kind**: global class
 
 * [Session](#Session)
     * [new Session()](#new_Session_new)
@@ -594,7 +592,7 @@ The class representing Carrier Session.
 <a name="Session+peer"></a>
 
 ### session.peer
-**Kind**: instance property of [<code>Session</code>](#Session)  
+**Kind**: instance property of [<code>Session</code>](#Session)
 **Properties**
 
 | Name | Type | Description |
@@ -604,7 +602,7 @@ The class representing Carrier Session.
 <a name="Session+carrier"></a>
 
 ### session.carrier
-**Kind**: instance property of [<code>Session</code>](#Session)  
+**Kind**: instance property of [<code>Session</code>](#Session)
 **Properties**
 
 | Name | Type | Description |
@@ -617,13 +615,13 @@ The class representing Carrier Session.
 Close a session to friend. All resources include streams, channels, portforwardings
 associated with current session will be destroyed.
 
-**Kind**: instance method of [<code>Session</code>](#Session)  
+**Kind**: instance method of [<code>Session</code>](#Session)
 <a name="Session+request"></a>
 
 ### session.request(onSuccess, [onError], handler)
 Send session request to the friend.
 
-**Kind**: instance method of [<code>Session</code>](#Session)  
+**Kind**: instance method of [<code>Session</code>](#Session)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -638,7 +636,7 @@ Reply the session request from friend.
 
 This function will send a session response to friend.
 
-**Kind**: instance method of [<code>Session</code>](#Session)  
+**Kind**: instance method of [<code>Session</code>](#Session)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -655,7 +653,7 @@ Begin to start a session.
 All streams in current session will try to connect with remote friend,
 The stream status will update to application by stream's StreamHandler.
 
-**Kind**: instance method of [<code>Session</code>](#Session)  
+**Kind**: instance method of [<code>Session</code>](#Session)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -678,7 +676,7 @@ Carrier stream supports several underlying transport mechanisms:
  Application can use options to specify the new stream mode.
  Multiplexing over UDP can not provide reliable transport.
 
-**Kind**: instance method of [<code>Session</code>](#Session)  
+**Kind**: instance method of [<code>Session</code>](#Session)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -693,7 +691,7 @@ Carrier stream supports several underlying transport mechanisms:
 ### session.removeStream(onSuccess, [onError], stream)
 Remove a stream from session.
 
-**Kind**: instance method of [<code>Session</code>](#Session)  
+**Kind**: instance method of [<code>Session</code>](#Session)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -708,7 +706,7 @@ Add a new portforwarding service to session.
 
 The registered services can be used by remote peer in portforwarding request.
 
-**Kind**: instance method of [<code>Session</code>](#Session)  
+**Kind**: instance method of [<code>Session</code>](#Session)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -726,7 +724,7 @@ Remove a portforwarding server to session.
 
 This function has not effect on existing portforwarings.
 
-**Kind**: instance method of [<code>Session</code>](#Session)  
+**Kind**: instance method of [<code>Session</code>](#Session)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -737,7 +735,7 @@ This function has not effect on existing portforwarings.
 <a name="Carrier"></a>
 
 ## Carrier
-**Kind**: global class  
+**Kind**: global class
 
 * [Carrier](#Carrier)
     * [new Carrier()](#new_Carrier_new)
@@ -772,7 +770,7 @@ The class representing Carrier.
 <a name="Carrier+nodeId"></a>
 
 ### carrier.nodeId
-**Kind**: instance property of [<code>Carrier</code>](#Carrier)  
+**Kind**: instance property of [<code>Carrier</code>](#Carrier)
 **Properties**
 
 | Name | Type | Description |
@@ -782,7 +780,7 @@ The class representing Carrier.
 <a name="Carrier+userId"></a>
 
 ### carrier.userId
-**Kind**: instance property of [<code>Carrier</code>](#Carrier)  
+**Kind**: instance property of [<code>Carrier</code>](#Carrier)
 **Properties**
 
 | Name | Type | Description |
@@ -792,7 +790,7 @@ The class representing Carrier.
 <a name="Carrier+address"></a>
 
 ### carrier.address
-**Kind**: instance property of [<code>Carrier</code>](#Carrier)  
+**Kind**: instance property of [<code>Carrier</code>](#Carrier)
 **Properties**
 
 | Name | Type | Description |
@@ -802,7 +800,7 @@ The class representing Carrier.
 <a name="Carrier+nospam"></a>
 
 ### carrier.nospam
-**Kind**: instance property of [<code>Carrier</code>](#Carrier)  
+**Kind**: instance property of [<code>Carrier</code>](#Carrier)
 **Properties**
 
 | Name | Type | Description |
@@ -812,7 +810,7 @@ The class representing Carrier.
 <a name="Carrier+presence"></a>
 
 ### carrier.presence
-**Kind**: instance property of [<code>Carrier</code>](#Carrier)  
+**Kind**: instance property of [<code>Carrier</code>](#Carrier)
 **Properties**
 
 | Name | Type | Description |
@@ -824,7 +822,7 @@ The class representing Carrier.
 ### carrier.on(name, callback)
 Add or remove Carrier callback.
 
-**Kind**: instance method of [<code>Carrier</code>](#Carrier)  
+**Kind**: instance method of [<code>Carrier</code>](#Carrier)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -837,7 +835,7 @@ Add or remove Carrier callback.
 Start carrier node asynchronously to connect to carrier network. If the connection
 to network is successful, carrier node starts working.
 
-**Kind**: instance method of [<code>Carrier</code>](#Carrier)  
+**Kind**: instance method of [<code>Carrier</code>](#Carrier)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -850,7 +848,7 @@ to network is successful, carrier node starts working.
 ### carrier.getSelfInfo(onSuccess, [onError])
 Get self user information.
 
-**Kind**: instance method of [<code>Carrier</code>](#Carrier)  
+**Kind**: instance method of [<code>Carrier</code>](#Carrier)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -864,7 +862,7 @@ Update self user information.
 After self user information changed, carrier node will update this information
 to carrier network, and thereupon network broadcasts the change to all friends.
 
-**Kind**: instance method of [<code>Carrier</code>](#Carrier)  
+**Kind**: instance method of [<code>Carrier</code>](#Carrier)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -880,7 +878,7 @@ Check if carrier node instance is being ready.
 All carrier interactive APIs should be called only if carrier node instance
 is being ready.
 
-**Kind**: instance method of [<code>Carrier</code>](#Carrier)  
+**Kind**: instance method of [<code>Carrier</code>](#Carrier)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -892,7 +890,7 @@ is being ready.
 ### carrier.getFriends(onSuccess, [onError])
 Get friends list.
 
-**Kind**: instance method of [<code>Carrier</code>](#Carrier)  
+**Kind**: instance method of [<code>Carrier</code>](#Carrier)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -904,7 +902,7 @@ Get friends list.
 ### carrier.getFriend(onSuccess, [onError], userId)
 Get specified friend information.
 
-**Kind**: instance method of [<code>Carrier</code>](#Carrier)  
+**Kind**: instance method of [<code>Carrier</code>](#Carrier)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -920,7 +918,7 @@ Set the label of the specified friend.
 The label of a friend is a private alias name for current user. It can be
 seen by current user only, and has no impact to the target friend itself.
 
-**Kind**: instance method of [<code>Carrier</code>](#Carrier)  
+**Kind**: instance method of [<code>Carrier</code>](#Carrier)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -934,7 +932,7 @@ seen by current user only, and has no impact to the target friend itself.
 ### carrier.isFriend(onSuccess, [onError], userId)
 Check if the user ID is friend.
 
-**Kind**: instance method of [<code>Carrier</code>](#Carrier)  
+**Kind**: instance method of [<code>Carrier</code>](#Carrier)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -950,7 +948,7 @@ Add friend by sending a new friend request.
 This function will add a new friend with specific address, and then
 send a friend request to the target node.
 
-**Kind**: instance method of [<code>Carrier</code>](#Carrier)  
+**Kind**: instance method of [<code>Carrier</code>](#Carrier)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -966,7 +964,7 @@ Accept the friend request.
 
 This function is used to add a friend in response to a friend request.
 
-**Kind**: instance method of [<code>Carrier</code>](#Carrier)  
+**Kind**: instance method of [<code>Carrier</code>](#Carrier)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -981,7 +979,7 @@ Remove a friend.
 
 This function will remove a friend on this carrier node.
 
-**Kind**: instance method of [<code>Carrier</code>](#Carrier)  
+**Kind**: instance method of [<code>Carrier</code>](#Carrier)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -998,7 +996,7 @@ The message length may not exceed MAX_APP_MESSAGE_LEN, and message itself
 should be text-formatted. Larger messages must be split by application
 and sent as separate messages. Other nodes can reassemble the fragments.
 
-**Kind**: instance method of [<code>Carrier</code>](#Carrier)  
+**Kind**: instance method of [<code>Carrier</code>](#Carrier)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1015,7 +1013,7 @@ Send invite request to a friend.
 Application can attach the application defined data with in the invite
 request, and the data will send to target friend.
 
-**Kind**: instance method of [<code>Carrier</code>](#Carrier)  
+**Kind**: instance method of [<code>Carrier</code>](#Carrier)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1032,7 +1030,7 @@ Reply the friend invite request.
 
 This function will send a invite response to friend.
 
-**Kind**: instance method of [<code>Carrier</code>](#Carrier)  
+**Kind**: instance method of [<code>Carrier</code>](#Carrier)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1050,7 +1048,7 @@ Create a new session to a friend.
 
 The session object represent a conversation handle to a friend.
 
-**Kind**: instance method of [<code>Carrier</code>](#Carrier)  
+**Kind**: instance method of [<code>Carrier</code>](#Carrier)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1064,7 +1062,7 @@ The session object represent a conversation handle to a friend.
 Disconnect carrier node from carrier network, and destroy all associated resources to carreier node instance.
 After calling the method, the carrier node instance becomes invalid.
 
-**Kind**: instance method of [<code>Carrier</code>](#Carrier)  
+**Kind**: instance method of [<code>Carrier</code>](#Carrier)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1076,7 +1074,7 @@ After calling the method, the carrier node instance becomes invalid.
 ## BootstrapNode : <code>Object</code>
 The Carrier user information.
 
-**Kind**: global typedef  
+**Kind**: global typedef
 **Properties**
 
 | Name | Type | Description |
@@ -1092,7 +1090,7 @@ The Carrier user information.
 Options defines several settings that control the way the Carrier node connects to the carrier network.
 Default values are not defined for bootstraps options, so application should be set bootstrap nodes clearly.
 
-**Kind**: global typedef  
+**Kind**: global typedef
 **Properties**
 
 | Name | Type | Description |
@@ -1106,7 +1104,7 @@ Default values are not defined for bootstraps options, so application should be 
 ## UserInfo : <code>Object</code>
 The Carrier user information.
 
-**Kind**: global typedef  
+**Kind**: global typedef
 **Properties**
 
 | Name | Type | Description |
@@ -1125,7 +1123,7 @@ The Carrier user information.
 ## FriendInfo : <code>Object</code>
 The Carrier friend information.
 
-**Kind**: global typedef  
+**Kind**: global typedef
 **Properties**
 
 | Name | Type | Description |
@@ -1140,7 +1138,7 @@ The Carrier friend information.
 ## AddressInfo : <code>Object</code>
 The netword address information.
 
-**Kind**: global typedef  
+**Kind**: global typedef
 **Properties**
 
 | Name | Type | Description |
@@ -1156,7 +1154,7 @@ The netword address information.
 ## TransportInfo : <code>Object</code>
 The netword transport information.
 
-**Kind**: global typedef  
+**Kind**: global typedef
 **Properties**
 
 | Name | Type | Description |
@@ -1170,7 +1168,7 @@ The netword transport information.
 ## CarrierCallbacks : <code>Object</code>
 The Carrier callbacks.
 
-**Kind**: global typedef  
+**Kind**: global typedef
 **Properties**
 
 | Name | Type | Description |
@@ -1194,7 +1192,7 @@ The Carrier callbacks.
 ## StreamCallbacks : <code>Object</code>
 The Stream callbacks.
 
-**Kind**: global typedef  
+**Kind**: global typedef
 **Properties**
 
 | Name | Type | Description |
@@ -1213,7 +1211,7 @@ The Stream callbacks.
 ## onFriendInviteResponse : <code>function</code>
 The callback function to process the friend invite response.
 
-**Kind**: global typedef  
+**Kind**: global typedef
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1227,7 +1225,7 @@ The callback function to process the friend invite response.
 ## onSessionRequestComplete : <code>function</code>
 The callback function to receive session request complete event.
 
-**Kind**: global typedef  
+**Kind**: global typedef
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1241,7 +1239,7 @@ The callback function to receive session request complete event.
 ## onStateChanged : <code>function</code>
 The callback function to report state of stream when it's state changes.
 
-**Kind**: global typedef  
+**Kind**: global typedef
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1256,7 +1254,7 @@ If the stream enabled multiplexing mode, application will not
 receive stream-layered data callback any more. All data will reported
 as multiplexing channel data.
 
-**Kind**: global typedef  
+**Kind**: global typedef
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1268,7 +1266,7 @@ as multiplexing channel data.
 ## onChannelOpen : <code>function</code>
 The callback function to be called when new multiplexing channel request to open.
 
-**Kind**: global typedef  
+**Kind**: global typedef
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1282,7 +1280,7 @@ The callback function to be called when new multiplexing channel request to open
 ## onChannelOpened : <code>function</code>
 The callback function to be called when new multiplexing channel opened.
 
-**Kind**: global typedef  
+**Kind**: global typedef
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1294,7 +1292,7 @@ The callback function to be called when new multiplexing channel opened.
 ## onChannelClose : <code>function</code>
 The callback function to be called when channel close.
 
-**Kind**: global typedef  
+**Kind**: global typedef
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1307,7 +1305,7 @@ The callback function to be called when channel close.
 ## onChannelData : <code>function</code>
 The callback functiont to be called when channel received incoming data.
 
-**Kind**: global typedef  
+**Kind**: global typedef
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1320,7 +1318,7 @@ The callback functiont to be called when channel received incoming data.
 ## onChannelPending : <code>function</code>
 The callback function to be called when remote peer ask to pend data sending.
 
-**Kind**: global typedef  
+**Kind**: global typedef
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1332,7 +1330,7 @@ The callback function to be called when remote peer ask to pend data sending.
 ## onChannelResume : <code>function</code>
 The callback function to be called when remote peer ask to resume data sending.
 
-**Kind**: global typedef  
+**Kind**: global typedef
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1344,7 +1342,7 @@ The callback function to be called when remote peer ask to resume data sending.
 ## onConnection : <code>function</code>
 The callback function to process the self connection status.
 
-**Kind**: global typedef  
+**Kind**: global typedef
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1359,7 +1357,7 @@ The callback function to process the ready notification.
 Application should wait this callback invoked before calling any
 function to interact with friends.
 
-**Kind**: global typedef  
+**Kind**: global typedef
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1370,7 +1368,7 @@ function to interact with friends.
 ## onSelfInfoChanged : <code>function</code>
 The callback function to process the self info changed event.
 
-**Kind**: global typedef  
+**Kind**: global typedef
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1382,7 +1380,7 @@ The callback function to process the self info changed event.
 ## onFriends : <code>function</code>
 The callback function to iterate the each friend item in friend list.
 
-**Kind**: global typedef  
+**Kind**: global typedef
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1394,7 +1392,7 @@ The callback function to iterate the each friend item in friend list.
 ## onFriendConnection : <code>function</code>
 The callback function to process the friend connections status changed event.
 
-**Kind**: global typedef  
+**Kind**: global typedef
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1407,7 +1405,7 @@ The callback function to process the friend connections status changed event.
 ## onFriendInfoChanged : <code>function</code>
 The callback function to process the friend information changed event.
 
-**Kind**: global typedef  
+**Kind**: global typedef
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1420,7 +1418,7 @@ The callback function to process the friend information changed event.
 ## onFriendPresence : <code>function</code>
 The callback function to process the friend presence changed event.
 
-**Kind**: global typedef  
+**Kind**: global typedef
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1433,7 +1431,7 @@ The callback function to process the friend presence changed event.
 ## onFriendRequest : <code>function</code>
 The callback function to process the friend request.
 
-**Kind**: global typedef  
+**Kind**: global typedef
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1447,7 +1445,7 @@ The callback function to process the friend request.
 ## onFriendAdded : <code>function</code>
 The callback function to process the new friend added event.
 
-**Kind**: global typedef  
+**Kind**: global typedef
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1459,7 +1457,7 @@ The callback function to process the new friend added event.
 ## onFriendRemoved : <code>function</code>
 The callback function to process the friend removed event.
 
-**Kind**: global typedef  
+**Kind**: global typedef
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1471,7 +1469,7 @@ The callback function to process the friend removed event.
 ## onFriendMessage : <code>function</code>
 The callback function to process the friend message.
 
-**Kind**: global typedef  
+**Kind**: global typedef
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1484,7 +1482,7 @@ The callback function to process the friend message.
 ## onFriendInviteRequest : <code>function</code>
 The callback function to process the friend invite request.
 
-**Kind**: global typedef  
+**Kind**: global typedef
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1497,7 +1495,7 @@ The callback function to process the friend invite request.
 ## onSessionRequest : <code>function</code>
 The callback function that handle session request.
 
-**Kind**: global typedef  
+**Kind**: global typedef
 
 | Param | Type | Description |
 | --- | --- | --- |
