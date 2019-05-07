@@ -81,7 +81,7 @@ class PluginCarrierHandler: CarrierDelegate {
 
         mCarrier = Carrier.sharedInstance()
 
-        try CarrierSessionManager.initializeSharedInstance(carrier: mCarrier);
+        try CarrierSessionManager.initializeSharedInstance(carrier: mCarrier, sessionRequestHandler: didReceiveSessionRequest);
         mSessionManager = CarrierSessionManager.sharedInstance();
 
         return mCarrier;
@@ -270,4 +270,12 @@ class PluginCarrierHandler: CarrierDelegate {
         sendEvent(ret);
     }
 
+    func didReceiveSessionRequest(carrier: Carrier, from: String, data: String) {
+        let ret: NSMutableDictionary = [
+            "name": "onSessionRequest",
+            "from": from,
+            "sdp": data,
+        ]
+        sendEvent(ret);
+    }
 }

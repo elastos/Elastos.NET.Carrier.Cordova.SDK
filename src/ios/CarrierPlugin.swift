@@ -629,7 +629,7 @@ class CarrierPlugin : TrinityPlugin {
     @objc func sessionReplyRequest(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let status = command.arguments[1] as? Int ?? 0
-        let reason = command.arguments[2] as? String ?? ""
+        let reason = command.arguments[2] as? String ?? nil
 
         if let session: Session = mSessionDict[id] {
             do {
