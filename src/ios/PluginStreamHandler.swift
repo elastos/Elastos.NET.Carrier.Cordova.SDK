@@ -95,7 +95,7 @@ class PluginStreamHandler: CarrierStreamDelegate {
                               _ data: Data) {
         let ret: NSMutableDictionary = [
             "name": "onStreamData",
-            "data": NSString(data: data, encoding: String.Encoding.utf8.rawValue) ?? "",
+            "data": NSString(data: data.base64EncodedData(), encoding: String.Encoding.utf8.rawValue) ?? "",
             ]
         sendEvent(ret);
     }
@@ -138,7 +138,7 @@ class PluginStreamHandler: CarrierStreamDelegate {
         let ret: NSMutableDictionary = [
             "name": "onChannelData",
             "channel": channel,
-            "data": NSString(data: data, encoding: String.Encoding.utf8.rawValue) ?? "",
+            "data": NSString(data: data.base64EncodedData(), encoding: String.Encoding.utf8.rawValue) ?? "",
             ]
         sendEvent(ret);
         return true;

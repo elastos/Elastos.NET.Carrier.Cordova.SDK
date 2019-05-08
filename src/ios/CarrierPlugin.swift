@@ -783,11 +783,11 @@ class CarrierPlugin : TrinityPlugin {
     @objc func streamWrite(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let data = command.arguments[1] as? String ?? ""
-        let rawData = data.data(using: String.Encoding.utf8)
+        let rawData = Data(base64Encoded: data, options: Data.Base64DecodingOptions.ignoreUnknownCharacters)!
 
         if let streamHandler: PluginStreamHandler = mStreamDict[id] {
             do {
-                let written  = try streamHandler.mStream.writeData(rawData!);
+                let written  = try streamHandler.mStream.writeData(rawData);
                 let ret: NSDictionary = [
                     "written": written,
                     ]
@@ -849,11 +849,11 @@ class CarrierPlugin : TrinityPlugin {
         let id = command.arguments[0] as? Int ?? 0
         let channel = command.arguments[1] as? Int ?? 0
         let data = command.arguments[2] as? String ?? ""
-        let rawData = data.data(using: String.Encoding.utf8)
+        let rawData = Data(base64Encoded: data, options: Data.Base64DecodingOptions.ignoreUnknownCharacters)!
 
         if let streamHandler: PluginStreamHandler = mStreamDict[id] {
             do {
-                let written  = try streamHandler.mStream.writeChannel(channel, data: rawData!);
+                let written  = try streamHandler.mStream.writeChannel(channel, data: rawData);
                 let ret: NSDictionary = [
                     "channel": channel,
                     "written": written,
