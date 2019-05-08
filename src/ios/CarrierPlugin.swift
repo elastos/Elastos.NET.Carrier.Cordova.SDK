@@ -525,7 +525,7 @@ class CarrierPlugin : TrinityPlugin {
         let id = command.arguments[0] as? Int ?? 0
         let to = command.arguments[1] as? String ?? ""
         let status = command.arguments[2] as? Int ?? 0
-        var reason = nil;
+        var reason:String? = nil;
         if status != 0 {
             reason = command.arguments[3] as? String ?? ""
         }
