@@ -65,9 +65,9 @@ class PluginStreamHandler: CarrierStreamDelegate {
 
         let info:TransportInfo = try mStream.getTransportInfo();
         ret = [
-            "topology": info.networkTopology,
-            "local": getAddressInfoDict(info: info.localAddressInfo),
-            "remote": getAddressInfoDict(info: info.remoteAddressInfo),
+            "topology": info.networkTopology.rawValue,
+            "localAddr": getAddressInfoDict(info: info.localAddressInfo),
+            "remoteAddr": getAddressInfoDict(info: info.remoteAddressInfo),
             ]
 
         return ret!;
