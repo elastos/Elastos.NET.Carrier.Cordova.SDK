@@ -525,7 +525,10 @@ class CarrierPlugin : TrinityPlugin {
         let id = command.arguments[0] as? Int ?? 0
         let to = command.arguments[1] as? String ?? ""
         let status = command.arguments[2] as? Int ?? 0
-        let reason = command.arguments[3] as? String ?? ""
+        var reason = nil;
+        if status != 0 {
+            reason = command.arguments[3] as? String ?? ""
+        }
         let data = command.arguments[4] as? String ?? ""
         if let carrierHandler: PluginCarrierHandler = mCarrierDict[id] {
             do {
