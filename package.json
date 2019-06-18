@@ -1,5 +1,5 @@
 {
-  "name": "carrier",
+  "name": "elastos-trinity-plugins-carrier",
   "version": "0.0.1",
   "description": "Elastos Carrier Plugin",
   "cordova": {
