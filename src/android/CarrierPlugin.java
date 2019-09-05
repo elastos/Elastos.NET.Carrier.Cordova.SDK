@@ -19,14 +19,14 @@
   * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   * SOFTWARE.
   */
-  
+
   package org.elastos.trinity.plugins.carrier;
 
   import android.util.Base64;
-  
+
   import org.apache.cordova.CordovaPlugin;
   import org.apache.cordova.CallbackContext;
-  
+
   import org.apache.cordova.PluginResult;
   import org.elastos.carrier.session.PortForwardingProtocol;
   import org.elastos.carrier.session.Session;
@@ -34,43 +34,43 @@
   import org.json.JSONArray;
   import org.json.JSONException;
   import org.json.JSONObject;
-  
+
   import java.util.List;
   import java.util.Map;
   import java.util.HashMap;
-  
+
   import org.elastos.carrier.*;
   import org.elastos.carrier.exceptions.CarrierException;
-  
-  
+
+
   /**
    * This class echoes a string called from JavaScript.
    */
   public class CarrierPlugin extends TrinityPlugin {
-  
+
       private static String TAG = "CarrierPlugin";
-  
+
       private static final int OK = 0;
       private static final int CARRIER = 1;
       private static final int SESSION = 2;
       private static final int STREAM  = 3;
       private static final int FRIEND_INVITE = 4;
-  
+
       private Map<Integer, PluginCarrierHandler> mCarrierMap;
       private HashMap<Integer, Session> mSessionMap;
       private HashMap<Integer, PluginStreamHandler> mStreamMap;
-  
+
       private CallbackContext mCarrierCallbackContext = null;
       private CallbackContext mSessionCallbackContext = null;
       private CallbackContext mStreamCallbackContext = null;
       private CallbackContext mFIRCallbackContext = null;
-  
+
       public CarrierPlugin() {
           mCarrierMap  = new HashMap();
           mSessionMap  = new HashMap();
           mStreamMap  = new HashMap();
       }
-  
+
       @Override
       public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
           try {
@@ -221,17 +221,17 @@
           }
           return true;
       }
-  
+
       private void test(JSONArray args, CallbackContext callbackContext) throws JSONException {
           String data = args.getString(0);
           byte[] rawData = Base64.decode(data, Base64.DEFAULT);
       }
-  
+
       private void getVersion(CallbackContext callbackContext) {
           String version = Carrier.getVersion();
           callbackContext.success(version);
       }
-  
+
       private void getIdFromAddress(JSONArray args, CallbackContext callbackContext) throws JSONException {
           String address = args.getString(0);
           if (address != null && address.length() > 0) {
@@ -242,7 +242,7 @@
               callbackContext.error("Expected one non-empty string argument.");
           }
       }
-  
+
       private void isValidAddress(JSONArray args,  CallbackContext callbackContext) throws JSONException {
           String address = args.getString(0);
           if (address != null && address.length() > 0) {
@@ -253,7 +253,7 @@
               callbackContext.error("Expected one non-empty string argument.");
           }
       }
-  
+
       private void isValidId(JSONArray args, CallbackContext callbackContext) throws JSONException {
           String userId = args.getString(0);
           if (userId != null && userId.length() > 0) {
@@ -264,10 +264,10 @@
               callbackContext.error("Expected one non-empty string argument.");
           }
       }
-  
+
       private void setListener(JSONArray args, CallbackContext callbackContext) throws JSONException {
           Integer type = args.getInt(0);
-  
+
           switch (type) {
               case CARRIER:  mCarrierCallbackContext = callbackContext;
                   break;
@@ -277,27 +277,27 @@
                   break;
               case FRIEND_INVITE:  mFIRCallbackContext = callbackContext;
                   break;
-  
+
           }
-  
+
   //         Don't return any result now
           PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
           pluginResult.setKeepCallback(true);
           callbackContext.sendPluginResult(pluginResult);
       }
-  
+
       private void createObject(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           String dir = args.getString(0);
           String config = args.getString(1);
-  
+
           dir = cordova.getActivity().getFilesDir() + "/data/carrier/" + dir;
-  
-          PluginCarrierHandler carrierHandler = PluginCarrierHandler.createInstance(dir, config, mCarrierCallbackContext);
+
+          PluginCarrierHandler carrierHandler = PluginCarrierHandler.createInstance(dir, config, mCarrierCallbackContext, this);
           if (carrierHandler != null) {
               mCarrierMap.put(carrierHandler.mCode, carrierHandler);
               JSONObject r = new JSONObject();
               r.put("id", carrierHandler.mCode);
-  
+
               UserInfo selfInfo = carrierHandler.mCarrier.getSelfInfo();
               r.put("nodeId", carrierHandler.mCarrier.getNodeId());
               r.put("userId", selfInfo.getUserId());
@@ -310,7 +310,7 @@
               callbackContext.error("error");
           }
       }
-  
+
       private void carrierStart(JSONArray args, CallbackContext callbackContext) throws JSONException {
           Integer id = args.getInt(0);
           Integer iterateInterval = args.getInt(1);
@@ -323,7 +323,7 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void getSelfInfo(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
@@ -336,7 +336,7 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void setSelfInfo(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           String name = args.getString(1);
@@ -344,7 +344,7 @@
           PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
           if (carrierHandler != null) {
               UserInfo selfInfo = carrierHandler.mCarrier.getSelfInfo();
-  
+
               switch (name) {
                   case "name":
                       selfInfo.setName(value);
@@ -372,9 +372,9 @@
                       callbackContext.error("Name invalid!");
                       return;
               }
-  
+
               carrierHandler.mCarrier.setSelfInfo(selfInfo);
-  
+
               JSONObject r = new JSONObject();
               r.put("name", name);
               r.put("value", value);
@@ -384,7 +384,7 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void getNospam(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
@@ -397,11 +397,11 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void setNospam(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           int nospam = args.getInt(1);
-  
+
           PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
           if (carrierHandler != null) {
               carrierHandler.mCarrier.setNospam(nospam);
@@ -413,7 +413,7 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void getPresence(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
@@ -426,11 +426,11 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void setPresence(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           int presence = args.getInt(1);
-  
+
           PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
           if (carrierHandler != null) {
               carrierHandler.mCarrier.setPresence(PresenceStatus.valueOf(presence));
@@ -442,7 +442,7 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void isReady(JSONArray args, CallbackContext callbackContext) throws JSONException {
           Integer id = args.getInt(0);
           PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
@@ -455,7 +455,7 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void getFriends(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
@@ -469,7 +469,7 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void getFriend(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           String userId = args.getString(1);
@@ -483,7 +483,7 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void labelFriend(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           String userId = args.getString(1);
@@ -500,7 +500,7 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void isFriend(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           String userId = args.getString(1);
@@ -515,7 +515,7 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void acceptFriend(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           String userId = args.getString(1);
@@ -530,7 +530,7 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void addFriend(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           String address = args.getString(1);
@@ -546,7 +546,7 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void removeFriend(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           String userId = args.getString(1);
@@ -561,7 +561,7 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void sendFriendMessage(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           String to = args.getString(1);
@@ -575,7 +575,7 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void inviteFriend(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           String to = args.getString(1);
@@ -594,7 +594,7 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void replyFriendInvite(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           String to = args.getString(1);
@@ -615,7 +615,7 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void destroy(JSONArray args, CallbackContext callbackContext) throws JSONException {
           Integer id = args.getInt(0);
           PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
@@ -628,7 +628,7 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void newSession(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           String to = args.getString(1);
@@ -651,7 +651,7 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void sessionClose(JSONArray args, CallbackContext callbackContext) throws JSONException {
           Integer id = args.getInt(0);
           Session session = mSessionMap.get(id);
@@ -663,7 +663,7 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void getPeer(JSONArray args, CallbackContext callbackContext) throws JSONException {
           Integer id = args.getInt(0);
           Session session = mSessionMap.get(id);
@@ -677,7 +677,7 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void sessionRequest(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           int handlerId = args.getInt(1);
@@ -691,7 +691,7 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void sessionReplyRequest(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           int status = args.getInt(1);
@@ -711,7 +711,7 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void sessionStart(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           String sdp = args.getString(1);
@@ -726,12 +726,12 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void addStream(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           int type = args.getInt(1);
           int options = args.getInt(2);
-  
+
           Session session = mSessionMap.get(id);
           if (session != null) {
               PluginStreamHandler streamHandler = PluginStreamHandler.createInstance(session, type, options, mStreamCallbackContext);
@@ -755,7 +755,7 @@
       private void removeStream(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           Integer streamId = args.getInt(1);
-  
+
           Session session = mSessionMap.get(id);
           PluginStreamHandler streamHandler = mStreamMap.get(streamId);
           if (session != null && streamHandler != null) {
@@ -766,14 +766,14 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void addService(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           String service = args.getString(1);
           int protocol = args.getInt(2);
           String host = args.getString(3);
           String port = args.getString(4);
-  
+
           Session session = mSessionMap.get(id);
           if (session != null) {
               session.addService(service, PortForwardingProtocol.valueOf(protocol), host, port);
@@ -788,11 +788,11 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void removeService(JSONArray args, CallbackContext callbackContext) throws JSONException {
           Integer id = args.getInt(0);
           String service = args.getString(1);
-  
+
           Session session = mSessionMap.get(id);
           if (session != null) {
               session.removeService(service);
@@ -804,10 +804,10 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void getTransportInfo(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
-  
+
           PluginStreamHandler streamHandler = mStreamMap.get(id);
           if (streamHandler != null) {
               JSONObject r = streamHandler.getTransportInfoJson();
@@ -817,12 +817,12 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void streamWrite(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           String data = args.getString(1);
           byte[] rawData = Base64.decode(data, Base64.DEFAULT);
-  
+
           PluginStreamHandler streamHandler = mStreamMap.get(id);
           if (streamHandler != null) {
               int written  = streamHandler.mStream.writeData(rawData);
@@ -834,11 +834,11 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void openChannel(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           String cookie = args.getString(1);
-  
+
           PluginStreamHandler streamHandler = mStreamMap.get(id);
           if (streamHandler != null) {
               int channel  = streamHandler.mStream.openChannel(cookie);
@@ -850,11 +850,11 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void closeChannel(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           int channel = args.getInt(1);
-  
+
           PluginStreamHandler streamHandler = mStreamMap.get(id);
           if (streamHandler != null) {
               streamHandler.mStream.closeChannel(channel);
@@ -866,13 +866,13 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void writeChannel(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           int channel = args.getInt(1);
           String data = args.getString(2);
           byte[] rawData = Base64.decode(data, Base64.DEFAULT);
-  
+
           PluginStreamHandler streamHandler = mStreamMap.get(id);
           if (streamHandler != null) {
               int written  = streamHandler.mStream.writeData(channel, rawData);
@@ -885,11 +885,11 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void pendChannel(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           int channel = args.getInt(1);
-  
+
           PluginStreamHandler streamHandler = mStreamMap.get(id);
           if (streamHandler != null) {
               streamHandler.mStream.pendChannel(channel);
@@ -901,11 +901,11 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void resumeChannel(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           int channel = args.getInt(1);
-  
+
           PluginStreamHandler streamHandler = mStreamMap.get(id);
           if (streamHandler != null) {
               streamHandler.mStream.resumeChannel(channel);
@@ -917,14 +917,14 @@
               callbackContext.error("Id invalid!");
           }
       }
-  
+
       private void openPortForwarding(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           String service = args.getString(1);
           int protocol = args.getInt(2);
           String host = args.getString(3);
           String port = args.getString(4);
-  
+
           PluginStreamHandler streamHandler = mStreamMap.get(id);
           if (streamHandler != null) {
               int pfId = streamHandler.mStream.openPortForwarding(service, PortForwardingProtocol.valueOf(protocol), host, port);
@@ -940,11 +940,11 @@
               callbackContext.error("error");
           }
       }
-  
+
       private void closePortForwarding(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           int pfId = args.getInt(1);
-  
+
           PluginStreamHandler streamHandler = mStreamMap.get(id);
           if (streamHandler != null) {
               streamHandler.mStream.closePortForwarding(pfId);
@@ -957,4 +957,3 @@
           }
       }
   }
-  

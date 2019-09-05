@@ -23,6 +23,8 @@
 				<param name="android-package" value="org.elastos.trinity.plugins.carrier.CarrierPlugin" />
 			</feature>
 		</config-file>
+        <resource-file src="bootstraps.json" target="res/raw/bootstraps.json" />
+        <source-file src="src/android/BootstrapsGetter.java" target-dir="src/org/elastos/trinity/plugins/carrier" />
         <source-file src="src/android/CarrierPlugin.java" target-dir="src/org/elastos/trinity/plugins/carrier" />
         <source-file src="src/android/PluginCarrierHandler.java" target-dir="src/org/elastos/trinity/plugins/carrier" />
         <source-file src="src/android/PluginStreamHandler.java" target-dir="src/org/elastos/trinity/plugins/carrier" />
@@ -38,6 +40,7 @@
             </feature>
         </config-file>
         <!-- <dependency id="cordova-plugin-add-swift-support" version="1.7.2"/> -->
+        <resource-file src="bootstraps.json" />
         <source-file src="src/ios/CarrierPlugin.swift" />
         <source-file src="src/ios/PluginCarrierHandler.swift" />
         <source-file src="src/ios/PluginStreamHandler.swift" />

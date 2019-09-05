@@ -52,7 +52,6 @@ class PluginCarrierHandler: CarrierDelegate {
             try url.setResourceValues(resourceValues)
         }
 
-
         let options = CarrierOptions()
         options.bootstrapNodes = [BootstrapNode]()
 
@@ -61,17 +60,22 @@ class PluginCarrierHandler: CarrierDelegate {
         print("decodedJsonDict=\(decodedJsonDict)")
 
         options.udpEnabled = decodedJsonDict["udpEnabled"] as! Bool
-        if decodedJsonDict["bootstraps"] is Array<AnyObject> {
-            for dict in decodedJsonDict["bootstraps"] as! Array<AnyObject>{
-                let node = dict as! [String:Any]
+
+        if let path:String = Bundle.main.path(forResource: "bootstraps", ofType: "json") {
+            let data = try! Data(contentsOf: URL(fileURLWithPath: path))
+            let json:[String: Any] = try JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
+            let bootstrapNodes = json["bootstraps"] as! Array<AnyObject>
+            print("bootstrapNodes size=\(bootstrapNodes.count)")
+            for item in bootstrapNodes  {
                 let bootstrapNode = BootstrapNode()
-                bootstrapNode.ipv4 = (node["ipv4"] as AnyObject? as? String) ?? ""
-                bootstrapNode.port = (node["port"] as AnyObject? as? String) ?? ""
-                bootstrapNode.publicKey = (node["publicKey"] as AnyObject? as? String) ?? ""
+                let node: [String: Any] = item as! [String: Any]
+
+                bootstrapNode.ipv4 = node["ipv4"] as? String
+                bootstrapNode.port = String(node["port"] as! Int)
+                bootstrapNode.publicKey = node["publicKey"] as? String
 
                 options.bootstrapNodes?.append(bootstrapNode)
             }
-
         }
 
         options.persistentLocation = carrierDirectory

@@ -28,100 +28,87 @@
   import org.json.JSONArray;
   import org.json.JSONException;
   import org.json.JSONObject;
-  
+
   import java.nio.charset.StandardCharsets;
   import java.util.List;
   import java.util.ArrayList;
   import java.io.File;
-  
+
   import org.elastos.carrier.*;
   import org.elastos.carrier.exceptions.CarrierException;
   import org.elastos.carrier.session.Manager;
-  
+
   public class PluginCarrierHandler extends AbstractCarrierHandler implements ManagerHandler {
 	  private static String TAG = "PluginCarrierHandler";
-  
+
 	  public Carrier mCarrier;
 	  public int mCode;
 	  public Manager mSessionManager;
 	  public CallbackContext mCallbackContext = null;
-  
-  
+
 	  public static int AGENT_READY = 0;
-  
+
 	  private PluginCarrierHandler(CallbackContext callbackContext) {
 		  mCallbackContext = callbackContext;
 	  }
-  
-	  private Carrier createCarrier(String dir, String configString) throws JSONException, CarrierException {
-  
+
+	  private Carrier createCarrier(String dir, String configString, CarrierPlugin plugin) throws JSONException, CarrierException {
+
 		  File carrierDir = new File(dir);
 		  if (!carrierDir.exists()) {
 			  carrierDir.mkdirs();
 		  }
-  
+
 		  boolean udpEnabled = false;
 		  List<Carrier.Options.BootstrapNode> bootstraps = new ArrayList<>();
+		  ArrayList<BootstrapsGetter.BootstrapNode> list = BootstrapsGetter.getBootstrapNodes(plugin);
+		  for (BootstrapsGetter.BootstrapNode node: list) {
+			  Carrier.Options.BootstrapNode bootstrapNode = new Carrier.Options.BootstrapNode();
+			  bootstrapNode.setIpv4(node.ipv4);
+			  bootstrapNode.setPort(String.valueOf(node.port));
+			  bootstrapNode.setPublicKey(node.publicKey);
+			  bootstraps.add(bootstrapNode);
+		  }
 
-  
-  //			InputStream configStream = mContext.getResources().openRawResource(R.raw.elastos_carrier_config);
-  //			String configString = IOUtils.toString(configStream, "UTF-8");
 		  JSONObject jsonObject = new JSONObject(configString);
-
 		  udpEnabled = jsonObject.getBoolean("udpEnabled");
 
-		  JSONArray jsonBootstraps = jsonObject.getJSONArray("bootstraps");
-		  for (int i = 0, m = jsonBootstraps.length(); i < m; i++) {
-			  JSONObject jsonBootstrap = jsonBootstraps.getJSONObject(i);
-			  Carrier.Options.BootstrapNode bootstrap = new Carrier.Options.BootstrapNode();
-			  String ipv4 = jsonBootstrap.optString("ipv4");
-			  if (ipv4 != null) {
-				  bootstrap.setIpv4(ipv4);
-			  }
-			  String ipv6 = jsonBootstrap.optString("ipv6");
-			  if (ipv4 != null) {
-				  bootstrap.setIpv6(ipv6);
-			  }
-			  bootstrap.setPort(jsonBootstrap.getString("port"));
-			  bootstrap.setPublicKey(jsonBootstrap.getString("publicKey"));
-			  bootstraps.add(bootstrap);
-		  }
-  
 		  Carrier.Options options = new Carrier.Options();
 		  options.setPersistentLocation(dir).
 				  setUdpEnabled(udpEnabled).
 				  setBootstrapNodes(bootstraps);
-  
+
 		  Carrier.initializeInstance(options, this);
 		  mCarrier = Carrier.getInstance();
 		  Log.i(TAG, "Agent elastos carrier instance created successfully");
 		  if (mCarrier == null) {
 			  return null;
 		  }
-  
+
 		  Manager.initializeInstance(mCarrier,  this);
 		  mSessionManager = Manager.getInstance();
 		  Log.i(TAG, "Agent session manager created successfully");
-  
+
   //		mCarrier.start(50);
 		  mCode = System.identityHashCode(mCarrier);
   //		mCarrierMap.put(dir, carrier);
-  
+
 		  return mCarrier;
 	  }
-  
+
 	  public static PluginCarrierHandler createInstance(String dir, String configString,
-														CallbackContext callbackContext) throws JSONException, CarrierException {
+														CallbackContext callbackContext,
+														CarrierPlugin plugin) throws JSONException, CarrierException {
 		  PluginCarrierHandler handler = new PluginCarrierHandler(callbackContext);
 		  if (handler != null) {
-			  Carrier carrier = handler.createCarrier(dir, configString);
+			  Carrier carrier = handler.createCarrier(dir, configString, plugin);
 			  if (carrier == null) {
 				  handler = null;
 			  }
 		  }
 		  return handler;
 	  }
-  
+
 	  public JSONObject getUserInfoJson(UserInfo info) throws JSONException {
 		  JSONObject r = new JSONObject();
 		  r.put("description", info.getDescription());
@@ -134,7 +121,7 @@
 		  r.put("hasAvatar", info.hasAvatar());
 		  return r;
 	  }
-  
+
 	  public JSONObject getFriendInfoJson(FriendInfo info) throws JSONException {
 		  JSONObject r = new JSONObject();
 		  r.put("status", info.getConnectionStatus().value());
@@ -143,7 +130,7 @@
 		  r.put("userInfo", getUserInfoJson(info));
 		  return r;
 	  }
-  
+
 	  public JSONObject getFriendsInfoJson(List<FriendInfo> friends) throws JSONException {
 		  // List<JSONObject> jsons = new ArrayList<JSONObject>();
 		  JSONObject ret = new JSONObject();
@@ -154,7 +141,7 @@
 		  }
 		  return ret;
 	  }
-  
+
   //	public JSONObject getCarrierInfoJson() throws JSONException, CarrierException {
   //		UserInfo selfInfo = mCarrier.getSelfInfo();
   //		List<FriendInfo> friends = mCarrier.getFriends();
@@ -168,7 +155,7 @@
   //		r.put("friends", getFriendsInfoJson(friends));
   //		return r;
   //	}
-  
+
   //	public void logout() {
   //		String elaCarrierPath = mContext.getFilesDir().getAbsolutePath() + "/elaCarrier";
   //		File elaCarrierDir = new File(elaCarrierPath);
@@ -181,22 +168,22 @@
   //
   //		this.kill();
   //	}
-  
+
 	  public void kill() {
 		  if (mCarrier != null) {
 			  mSessionManager.cleanup();
 			  mCarrier.kill();
 		  }
 	  }
-  
+
 	  public Manager getSessionManager() {
 		  return mSessionManager;
 	  }
-  
+
 	  public UserInfo getInfo() throws CarrierException {
 		  return mCarrier.getSelfInfo();
 	  }
-  
+
 	  private void sendEvent(JSONObject info) throws JSONException {
 		  info.put("id", mCode);
 		  if (mCallbackContext != null) {
@@ -205,7 +192,7 @@
 			  mCallbackContext.sendPluginResult(result);
 		  }
 	  }
-  
+
 	  @Override
 	  public void onIdle(Carrier carrier) {
 		  JSONObject r = new JSONObject();
@@ -216,7 +203,7 @@
 			  e.printStackTrace();
 		  }
 	  }
-  
+
 	  @Override
 	  public void onConnection(Carrier carrier, ConnectionStatus status) {
 		  Log.i(TAG, "Agent connection status changed to " + status);
@@ -229,7 +216,7 @@
 			  e.printStackTrace();
 		  }
 	  }
-  
+
 	  @Override
 	  public void onReady(Carrier carrier) {
 		  JSONObject r = new JSONObject();
@@ -240,7 +227,7 @@
 			  e.printStackTrace();
 		  }
 	  }
-  
+
 	  @Override
 	  public void onSelfInfoChanged(Carrier carrier, UserInfo userInfo) {
 		  JSONObject r = new JSONObject();
@@ -252,11 +239,11 @@
 			  e.printStackTrace();
 		  }
 	  }
-  
+
 	  @Override
 	  public void onFriends(Carrier carrier, List<FriendInfo> friends) {
 		  Log.i(TAG, "Client portforwarding agent received friend list: " + friends);
-  
+
 		  JSONObject r = new JSONObject();
 		  try {
 			  r.put("name", "onFriends");
@@ -266,7 +253,7 @@
 			  e.printStackTrace();
 		  }
 	  }
-  
+
 	  @Override
 	  public void onFriendConnection(Carrier carrier, String friendId, ConnectionStatus status) {
 		  JSONObject r = new JSONObject();
@@ -279,7 +266,7 @@
 			  e.printStackTrace();
 		  }
 	  }
-  
+
 	  @Override
 	  public void onFriendInfoChanged(Carrier carrier, String friendId, FriendInfo friendInfo) {
 		  JSONObject r = new JSONObject();
@@ -292,7 +279,7 @@
 			  e.printStackTrace();
 		  }
 	  }
-  
+
 	  @Override
 	  public void onFriendPresence(Carrier carrier, String friendId, PresenceStatus presence) {
 		  JSONObject r = new JSONObject();
@@ -305,7 +292,7 @@
 			  e.printStackTrace();
 		  }
 	  }
-  
+
 	  @Override
 	  public void onFriendAdded(Carrier carrier, FriendInfo friendInfo) {
 		  JSONObject r = new JSONObject();
@@ -317,7 +304,7 @@
 			  e.printStackTrace();
 		  }
 	  }
-  
+
 	  @Override
 	  public void onFriendRemoved(Carrier carrier, String friendId) {
 		  JSONObject r = new JSONObject();
@@ -329,7 +316,7 @@
 			  e.printStackTrace();
 		  }
 	  }
-  
+
 	  @Override
 	  public void onFriendRequest(Carrier carrier, String userId, UserInfo info, String hello) {
 		  JSONObject r = new JSONObject();
@@ -343,7 +330,7 @@
 			  e.printStackTrace();
 		  }
 	  }
-  
+
 	  @Override
 	  public void onFriendInviteRequest(Carrier carrier, String from, byte[] data) {
 		  JSONObject r = new JSONObject();
@@ -357,13 +344,13 @@
 			  e.printStackTrace();
 		  }
 	  }
-  
+
 	  @Override
 	  public void onFriendMessage(Carrier carrier, String from, byte[] data) {
 		  JSONObject r = new JSONObject();
 		  String message = new String(data, StandardCharsets.UTF_8);
 		  try {
-  
+
 			  r.put("name", "onFriendMessage");
 			  r.put("from", from);
 			  r.put("message", message);
@@ -372,7 +359,7 @@
 			  e.printStackTrace();
 		  }
 	  }
-  
+
 	  @Override
 	  public void onSessionRequest(Carrier carrier, String from, String sdp) {
 		  JSONObject r = new JSONObject();
@@ -386,5 +373,4 @@
 		  }
 	  }
   }
-  
-  
+
