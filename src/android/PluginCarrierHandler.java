@@ -332,13 +332,14 @@
 	  }
 
 	  @Override
-	  public void onFriendInviteRequest(Carrier carrier, String from, byte[] data) {
+	  public void onFriendMessage(Carrier carrier, String from, byte[] data, boolean isOffline) {
 		  JSONObject r = new JSONObject();
 		  String message = new String(data, StandardCharsets.UTF_8);
 		  try {
-			  r.put("name", "onFriendInviteRequest");
+			  r.put("name", "onFriendMessage");
 			  r.put("from", from);
 			  r.put("message", message);
+			  r.put("isOffline", isOffline);
 			  sendEvent(r);
 		  } catch (JSONException e) {
 			  e.printStackTrace();
@@ -346,14 +347,12 @@
 	  }
 
 	  @Override
-	  public void onFriendMessage(Carrier carrier, String from, byte[] data) {
+	  public void onFriendInviteRequest(Carrier carrier, String from, String data) {
 		  JSONObject r = new JSONObject();
-		  String message = new String(data, StandardCharsets.UTF_8);
 		  try {
-
-			  r.put("name", "onFriendMessage");
+			  r.put("name", "onFriendInviteRequest");
 			  r.put("from", from);
-			  r.put("message", message);
+			  r.put("message", data);
 			  sendEvent(r);
 		  } catch (JSONException e) {
 			  e.printStackTrace();

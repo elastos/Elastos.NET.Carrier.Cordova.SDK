@@ -28,5 +28,5 @@ repositories {
 }
 
 dependencies {
-    implementation(name: 'org.elastos.trinity.carrier-debug', ext: 'aar')
+    implementation 'org.elastos:carrier:5.4.1'
 }

@@ -31,7 +31,6 @@
         <source-file src="src/android/FIRHandler.java" target-dir="src/org/elastos/trinity/plugins/carrier" />
         <source-file src="src/android/SRCHandler.java" target-dir="src/org/elastos/trinity/plugins/carrier" />
         <framework src="src/android/carrier.gradle" custom="true" type="gradleReference"/>
-        <resource-file src="src/android/libs/org.elastos.carrier-debug.aar" target="libs/org.elastos.trinity.carrier-debug.aar"/>
 	</platform>
     <platform name="ios">
         <config-file target="config.xml" parent="/*">
