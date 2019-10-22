@@ -25,7 +25,6 @@
   import org.apache.cordova.CallbackContext;
   import org.apache.cordova.PluginResult;
   import org.elastos.carrier.session.ManagerHandler;
-  import org.json.JSONArray;
   import org.json.JSONException;
   import org.json.JSONObject;
 
@@ -53,7 +52,6 @@
 	  }
 
 	  private Carrier createCarrier(String dir, String configString, CarrierPlugin plugin) throws JSONException, CarrierException {
-
 		  File carrierDir = new File(dir);
 		  if (!carrierDir.exists()) {
 			  carrierDir.mkdirs();
@@ -366,6 +364,20 @@
 			  r.put("name", "onSessionRequest");
 			  r.put("from", from);
 			  r.put("sdp", sdp);
+			  sendEvent(r);
+		  } catch (JSONException e) {
+			  e.printStackTrace();
+		  }
+	  }
+
+	  @Override
+	  public void onGroupInvite(Carrier carrier, String from, byte[] cookie) {
+		  String cookieData = Base58.encode(cookie);
+		  JSONObject r = new JSONObject();
+		  try {
+			  r.put("name", "onGroupInvite");
+			  r.put("from", from);
+			  r.put("cookieCode", cookieData);
 			  sendEvent(r);
 		  } catch (JSONException e) {
 			  e.printStackTrace();

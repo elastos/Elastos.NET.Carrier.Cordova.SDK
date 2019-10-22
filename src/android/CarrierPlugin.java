@@ -24,7 +24,6 @@
 
   import android.util.Base64;
 
-  import org.apache.cordova.CordovaPlugin;
   import org.apache.cordova.CallbackContext;
 
   import org.apache.cordova.PluginResult;
@@ -35,9 +34,12 @@
   import org.json.JSONException;
   import org.json.JSONObject;
 
+  import java.nio.charset.Charset;
   import java.util.List;
   import java.util.Map;
   import java.util.HashMap;
+  import java.util.Objects;
+  import java.util.UUID;
 
   import org.elastos.carrier.*;
   import org.elastos.carrier.exceptions.CarrierException;
@@ -47,7 +49,6 @@
    * This class echoes a string called from JavaScript.
    */
   public class CarrierPlugin extends TrinityPlugin {
-
       private static String TAG = "CarrierPlugin";
 
       private static final int OK = 0;
@@ -55,20 +56,27 @@
       private static final int SESSION = 2;
       private static final int STREAM  = 3;
       private static final int FRIEND_INVITE = 4;
+      private static final int GROUP = 5;
+
+      private static final String SUCCESS = "Success!";
+      private static final String INVALID_ID = "Id invalid!";
 
       private Map<Integer, PluginCarrierHandler> mCarrierMap;
       private HashMap<Integer, Session> mSessionMap;
       private HashMap<Integer, PluginStreamHandler> mStreamMap;
+      private HashMap<String, PluginGroupHandler> mGroupHandlerMap;
 
       private CallbackContext mCarrierCallbackContext = null;
       private CallbackContext mSessionCallbackContext = null;
       private CallbackContext mStreamCallbackContext = null;
       private CallbackContext mFIRCallbackContext = null;
+      private CallbackContext mGroupCallbackContext = null;
 
       public CarrierPlugin() {
           mCarrierMap  = new HashMap();
           mSessionMap  = new HashMap();
           mStreamMap  = new HashMap();
+          mGroupHandlerMap = new HashMap<>();
       }
 
       @Override
@@ -210,6 +218,33 @@
                   case "isValidId":
                       this.isValidId(args, callbackContext);
                       break;
+                  case "createGroup":
+                      this.createGroup(args,callbackContext);
+                      break;
+                  case "joinGroup":
+                      this.joinGroup(args,callbackContext);
+                      break;
+                  case "inviteGroup":
+                      this.inviteGroup(args,callbackContext);
+                      break;
+                  case "leaveGroup":
+                      this.leaveGroup(args,callbackContext);
+                      break;
+                  case "sendGroupMessage":
+                      this.sendGroupMessage(args,callbackContext);
+                      break;
+                  case "getGroupTitle":
+                      this.getGroupTitle(args,callbackContext);
+                      break;
+                  case "setGroupTitle":
+                      this.setGroupTitle(args,callbackContext);
+                      break;
+                  case "getGroupPeers":
+                      this.getGroupPeers(args,callbackContext);
+                      break;
+                  case "getGroupPeer":
+                      this.getGroupPeer(args,callbackContext);
+                      break;
                   default:
                       return false;
               }
@@ -267,7 +302,6 @@
 
       private void setListener(JSONArray args, CallbackContext callbackContext) throws JSONException {
           Integer type = args.getInt(0);
-
           switch (type) {
               case CARRIER:  mCarrierCallbackContext = callbackContext;
                   break;
@@ -277,9 +311,10 @@
                   break;
               case FRIEND_INVITE:  mFIRCallbackContext = callbackContext;
                   break;
+              case GROUP:   mGroupCallbackContext = callbackContext;
+                  break;
 
           }
-
   //         Don't return any result now
           PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
           pluginResult.setKeepCallback(true);
@@ -293,11 +328,12 @@
           dir = cordova.getActivity().getFilesDir() + "/data/carrier/" + dir;
 
           PluginCarrierHandler carrierHandler = PluginCarrierHandler.createInstance(dir, config, mCarrierCallbackContext, this);
+
           if (carrierHandler != null) {
               mCarrierMap.put(carrierHandler.mCode, carrierHandler);
+
               JSONObject r = new JSONObject();
               r.put("id", carrierHandler.mCode);
-
               UserInfo selfInfo = carrierHandler.mCarrier.getSelfInfo();
               r.put("nodeId", carrierHandler.mCarrier.getNodeId());
               r.put("userId", selfInfo.getUserId());
@@ -320,7 +356,7 @@
               callbackContext.success("ok");
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -333,7 +369,7 @@
               callbackContext.success(r);
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -381,7 +417,7 @@
               callbackContext.success(r);
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -394,7 +430,7 @@
               callbackContext.success(r);
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -410,7 +446,7 @@
               callbackContext.success(r);
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -423,7 +459,7 @@
               callbackContext.success(r);
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -439,7 +475,7 @@
               callbackContext.success(r);
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -452,7 +488,7 @@
               callbackContext.success(r);
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -466,7 +502,7 @@
               callbackContext.success(r);
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -480,7 +516,7 @@
               callbackContext.success(r);
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -497,7 +533,7 @@
               callbackContext.success(r);
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -512,7 +548,7 @@
               callbackContext.success(r);
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -527,7 +563,7 @@
               callbackContext.success(r);
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -543,7 +579,7 @@
               callbackContext.success(r);
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -558,7 +594,7 @@
               callbackContext.success(r);
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -568,11 +604,13 @@
           String message = args.getString(2);
           PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
           if (carrierHandler != null) {
-              carrierHandler.mCarrier.sendFriendMessage(to, message);
-              callbackContext.success("success!");
+              boolean isOffline = carrierHandler.mCarrier.sendFriendMessage(to, message);
+              JSONObject r = new JSONObject();
+              r.put("isOffline", isOffline);
+              callbackContext.success(r);
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -591,7 +629,7 @@
               callbackContext.success(r);
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -612,7 +650,7 @@
               callbackContext.success(r);
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -621,11 +659,12 @@
           PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
           if (carrierHandler != null) {
               carrierHandler.mCarrier.kill();
+              clearGroupHandlerMap();
               JSONObject r = new JSONObject();
               callbackContext.success(r);
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -648,7 +687,7 @@
               }
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -660,7 +699,7 @@
               callbackContext.success();
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -674,7 +713,7 @@
               callbackContext.success(r);
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -688,7 +727,7 @@
               callbackContext.success();
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -708,7 +747,7 @@
               callbackContext.success(r);
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -723,7 +762,7 @@
               callbackContext.success(r);
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -749,7 +788,7 @@
               }
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
       private void removeStream(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
@@ -763,7 +802,7 @@
               callbackContext.success();
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -785,7 +824,7 @@
               callbackContext.success(r);
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -801,7 +840,7 @@
               callbackContext.success(r);
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -814,7 +853,7 @@
               callbackContext.success(r);
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -831,7 +870,7 @@
               callbackContext.success(r);
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -847,7 +886,7 @@
               callbackContext.success(r);
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -863,7 +902,7 @@
               callbackContext.success(r);
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -882,7 +921,7 @@
               callbackContext.success(r);
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -898,7 +937,7 @@
               callbackContext.success(r);
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -914,7 +953,7 @@
               callbackContext.success(r);
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
       }
 
@@ -953,7 +992,235 @@
               callbackContext.success(r);
           }
           else {
-              callbackContext.error("Id invalid!");
+              callbackContext.error(INVALID_ID);
           }
+      }
+
+      private void createGroup(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException{
+          int id = args.getInt(0);
+          PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
+
+          if (carrierHandler != null) {
+              String groupId = getGroupId();
+              PluginGroupHandler groupHandler = new PluginGroupHandler(mGroupCallbackContext);
+              Group group = carrierHandler.mCarrier.newGroup(groupHandler);
+              group.setTitle("Untitled");
+
+              groupHandler.setGroup(group);
+              groupHandler.setGroupId(groupId);
+
+              addGroupMap(groupId , groupHandler);
+
+              JSONObject jsonObject = new JSONObject();
+              jsonObject.put("groupId",groupId);
+
+              callbackContext.success(jsonObject);
+          }
+          else {
+              callbackContext.error(INVALID_ID);
+          }
+      }
+
+      private void joinGroup(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException{
+          int id = args.getInt(0);
+          String friendId = args.getString(1);
+          String cookieBase58 = args.getString(2);
+
+          PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
+          byte[] cookie = Base58.decode(cookieBase58);
+          if (carrierHandler != null) {
+              String groupId = getGroupId();
+              PluginGroupHandler groupHandler = new PluginGroupHandler(mGroupCallbackContext);
+
+              Group group = carrierHandler.mCarrier.groupJoin(friendId,cookie,groupHandler);
+              groupHandler.setGroupId(groupId);
+              groupHandler.setGroup(group);
+
+              addGroupMap(groupId , groupHandler);
+
+              JSONObject jsonObject = new JSONObject();
+              jsonObject.put("groupId" , groupId);
+
+              callbackContext.success(jsonObject);
+          }
+          else {
+              callbackContext.error(INVALID_ID);
+          }
+      }
+
+      private void inviteGroup(JSONArray args, CallbackContext callbackContext) throws JSONException,CarrierException{
+          String groupId = args.getString(0);
+          String friendId = args.getString(1);
+
+          Group group = null;
+          try{
+              group = Objects.requireNonNull(mGroupHandlerMap.get(groupId)).mGroup;
+          }catch (NullPointerException e){
+          }
+          if (group != null) {
+              group.invite(friendId);
+              callbackContext.success(SUCCESS);
+          }
+          else {
+              callbackContext.error(INVALID_ID);
+          }
+      }
+
+      private void leaveGroup(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException{
+          int id = args.getInt(0);
+          String groupId = args.getString(1);
+
+          PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
+          Group group = null;
+          try{
+              group = Objects.requireNonNull(mGroupHandlerMap.get(groupId)).mGroup;
+          }catch (NullPointerException e){
+          }
+          if (carrierHandler != null && group !=null) {
+              carrierHandler.mCarrier.groupLeave(group);
+              deleteGroupHandlerFromMap(groupId);
+
+              callbackContext.success(SUCCESS);
+          }
+          else {
+              callbackContext.error(INVALID_ID);
+          }
+      }
+
+      private void sendGroupMessage(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException{
+          String groupId = args.getString(0);
+          String messageData = args.getString(1);
+
+          Group group = null;
+          try{
+              group = Objects.requireNonNull(mGroupHandlerMap.get(groupId)).mGroup;
+          }catch (NullPointerException e){
+          }
+          byte[] message = messageData.getBytes(Charset.forName("UTF-8"));
+
+          if (group != null) {
+              group.sendMessage(message);
+              callbackContext.success(SUCCESS);
+          }else {
+              callbackContext.error(INVALID_ID);
+          }
+      }
+
+      private void getGroupTitle(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException{
+          String groupId = args.getString(0);
+          Group group = null;
+          try{
+              group = Objects.requireNonNull(mGroupHandlerMap.get(groupId)).mGroup;
+          }catch (NullPointerException e){
+          }
+          if (group != null) {
+              callbackContext.success(getGroupTitleJson(group));
+          }else {
+              callbackContext.error(INVALID_ID);
+          }
+      }
+
+      private void setGroupTitle(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException{
+          String groupId = args.getString(0);
+          String groupTitle = args.getString(1);
+
+          Group group = null;
+          try{
+              group = Objects.requireNonNull(mGroupHandlerMap.get(groupId)).mGroup;
+          }catch (NullPointerException e){
+          }
+          if (group != null) {
+              group.setTitle(groupTitle);
+              callbackContext.success(getGroupTitleJson(group));
+          }else {
+              callbackContext.error(INVALID_ID);
+          }
+      }
+
+      private void getGroupPeers(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException{
+          String groupId = args.getString(0);
+
+          Group group = null;
+          try{
+              group = Objects.requireNonNull(mGroupHandlerMap.get(groupId)).mGroup;
+          }catch (NullPointerException e){
+          }
+          if (group != null) {
+              JSONObject jsonObject = new JSONObject();
+              jsonObject.put("peers",getGroupPeersInfoJson(group));
+              callbackContext.success(jsonObject);
+          }else {
+              callbackContext.error(INVALID_ID);
+          }
+
+      }
+
+      private void getGroupPeer(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException{
+          String groupId = args.getString(0);
+          String peerId = args.getString(1);
+
+          Group group = null;
+          try{
+              group = Objects.requireNonNull(mGroupHandlerMap.get(groupId)).mGroup;
+          }catch (NullPointerException e){
+          }
+          if (group != null && peerId != null) {
+              JSONObject jsonObject = new JSONObject();
+              jsonObject.put("peer",getGroupPeerInfoJson(group,peerId));
+              callbackContext.success(jsonObject);
+          }else {
+              callbackContext.error(INVALID_ID);
+          }
+      }
+
+      private void clearGroupHandlerMap(){
+          mGroupHandlerMap.clear();
+      }
+
+      private void deleteGroupHandlerFromMap(String groupHandlerId){
+          mGroupHandlerMap.remove(groupHandlerId);
+      }
+
+      private String getGroupId(){
+          //TODO tobe modify , If can get groupid
+          return randomUUID();
+      }
+
+      private String randomUUID(){
+          return UUID.randomUUID().toString().replace("-", "");
+      }
+
+      private void addGroupMap(String groupId , PluginGroupHandler groupHandler){
+          mGroupHandlerMap.put(groupId,groupHandler);
+      }
+
+      private JSONObject getGroupPeersInfoJson(Group group) throws JSONException, CarrierException {
+          JSONObject jsonObject = new JSONObject();
+
+          List<Group.PeerInfo> peerInfos = group.getPeers();
+          for (Group.PeerInfo peerInfo : peerInfos) {
+              JSONObject peerObj = new JSONObject();
+              peerObj.put("peerName",peerInfo.getName());
+              peerObj.put("peerUserId",peerInfo.getUserId());
+
+              jsonObject.put(peerInfo.getUserId(),peerObj);
+          }
+          return jsonObject;
+      }
+
+      private JSONObject getGroupPeerInfoJson(Group group , String peerId) throws JSONException ,CarrierException {
+          JSONObject peerObj = new JSONObject();
+
+          Group.PeerInfo peerInfo = group.getPeer(peerId);
+          peerObj.put("peerName",peerInfo.getName());
+          peerObj.put("peerUserId",peerInfo.getUserId());
+
+          return peerObj;
+      }
+
+      private JSONObject getGroupTitleJson(Group group) throws JSONException ,CarrierException {
+          JSONObject jsonObject = new JSONObject();
+          jsonObject.put("groupTitle",group.getTitle());
+          return jsonObject;
       }
   }

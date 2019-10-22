@@ -22,21 +22,12 @@
 
  package org.elastos.trinity.plugins.carrier;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.util.Base64;
-import android.util.Log;
 
 import java.net.InetSocketAddress;
-import java.net.ServerSocket;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.PluginResult;
-import org.elastos.carrier.ConnectionStatus;
-import org.elastos.carrier.FriendInfo;
-import org.elastos.carrier.PresenceStatus;
-import org.elastos.carrier.UserInfo;
 import org.elastos.carrier.session.*;
 import org.elastos.carrier.exceptions.CarrierException;
 import org.json.JSONException;
