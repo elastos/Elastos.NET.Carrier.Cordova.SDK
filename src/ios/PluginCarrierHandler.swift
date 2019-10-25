@@ -264,7 +264,8 @@ class PluginCarrierHandler: CarrierDelegate {
 
     func didReceiveFriendMessage(_ carrier: Carrier,
                                  _ from: String,
-                                 _ data: Data) {
+                                 _ data: Data,
+                                 _ isOffline: Bool) {
         let message = String(data: data, encoding: .utf8)!;
         let ret: NSMutableDictionary = [
             "name": "onFriendMessage",
