@@ -24,6 +24,7 @@
 
   import org.apache.cordova.CallbackContext;
   import org.apache.cordova.PluginResult;
+  import org.elastos.carrier.filetransfer.FileTransferInfo;
   import org.elastos.carrier.session.ManagerHandler;
   import org.json.JSONException;
   import org.json.JSONObject;
@@ -37,13 +38,15 @@
   import org.elastos.carrier.exceptions.CarrierException;
   import org.elastos.carrier.session.Manager;
 
-  public class PluginCarrierHandler extends AbstractCarrierHandler implements ManagerHandler {
+  public class PluginCarrierHandler extends AbstractCarrierHandler implements ManagerHandler , org.elastos.carrier.filetransfer.ManagerHandler {
 	  private static String TAG = "PluginCarrierHandler";
 
 	  public Carrier mCarrier;
 	  public int mCode;
 	  public Manager mSessionManager;
 	  public CallbackContext mCallbackContext = null;
+
+	  private org.elastos.carrier.filetransfer.Manager mFileTransferManager;
 
 	  public static int AGENT_READY = 0;
 
@@ -87,7 +90,11 @@
 		  mSessionManager = Manager.getInstance();
 		  Log.i(TAG, "Agent session manager created successfully");
 
-  //		mCarrier.start(50);
+		  org.elastos.carrier.filetransfer.Manager.initializeInstance(mCarrier,this);
+		  mFileTransferManager = org.elastos.carrier.filetransfer.Manager.getInstance();
+		  Log.i(TAG, "Agent file transfer manager created successfully");
+
+		  //		mCarrier.start(50);
 		  mCode = System.identityHashCode(mCarrier);
   //		mCarrierMap.put(dir, carrier);
 
@@ -170,12 +177,17 @@
 	  public void kill() {
 		  if (mCarrier != null) {
 			  mSessionManager.cleanup();
+			  mFileTransferManager.cleanup();
 			  mCarrier.kill();
 		  }
 	  }
 
 	  public Manager getSessionManager() {
 		  return mSessionManager;
+	  }
+
+	  public org.elastos.carrier.filetransfer.Manager getFileTransferManager(){
+	  	    return mFileTransferManager ;
 	  }
 
 	  public UserInfo getInfo() throws CarrierException {
@@ -382,6 +394,32 @@
 		  } catch (JSONException e) {
 			  e.printStackTrace();
 		  }
+	  }
+
+	  @Override
+	  public void onConnectRequest(Carrier carrier, String from, FileTransferInfo info) {
+		  JSONObject r = new JSONObject();
+		  try {
+			  r.put("name", "onConnectRequest");
+			  r.put("from", from);
+			  r.put("info", createFileTransferJSON(info));
+			  sendEvent(r);
+		  } catch (JSONException e) {
+			  e.printStackTrace();
+		  }
+	  }
+
+	  private JSONObject createFileTransferJSON(FileTransferInfo info){
+	  	  JSONObject jsonObject = new JSONObject();
+		  try {
+			  jsonObject.put("fileId",info.getFileId());
+			  jsonObject.put("filename",info.getFileName());
+			  jsonObject.put("size",info.getSize());
+		  } catch (JSONException e) {
+			  e.printStackTrace();
+		  }
+
+		  return jsonObject ;
 	  }
   }
 

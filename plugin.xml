@@ -28,6 +28,7 @@
         <source-file src="src/android/CarrierPlugin.java" target-dir="src/org/elastos/trinity/plugins/carrier" />
         <source-file src="src/android/PluginCarrierHandler.java" target-dir="src/org/elastos/trinity/plugins/carrier" />
         <source-file src="src/android/PluginStreamHandler.java" target-dir="src/org/elastos/trinity/plugins/carrier" />
+        <source-file src="src/android/PluginFileTransferHandler.java" target-dir="src/org/elastos/trinity/plugins/carrier" />
         <source-file src="src/android/FIRHandler.java" target-dir="src/org/elastos/trinity/plugins/carrier" />
         <source-file src="src/android/PluginGroupHandler.java" target-dir="src/org/elastos/trinity/plugins/carrier" />
         <source-file src="src/android/SRCHandler.java" target-dir="src/org/elastos/trinity/plugins/carrier" />
