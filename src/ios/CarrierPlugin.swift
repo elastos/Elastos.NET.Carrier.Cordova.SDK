@@ -37,17 +37,24 @@ class CarrierPlugin : TrinityPlugin {
     var SESSION = 2;
     var STREAM = 3;
     var FRIEND_INVITE = 4;
+    var FILETRANSFER = 6 ;
 
     var mCarrierDict = [Int: PluginCarrierHandler]()
     var mSessionDict = [Int: Session]()
     var mStreamDict = [Int: PluginStreamHandler]()
+    var mFileTransferDict = [Int: PluginFileTransferHandler]()
 
     var carrierCallbackId: String = ""
     var sessionCallbackId: String = ""
     var streamCallbackId: String = ""
     var FIRCallbackId: String = ""
+    var fileTransferCallbackId: String = ""
+
 
     var count: Int = 1;
+    
+    var fileTransferCount: Int = 0;
+
 
     //    override init() {
     //        super.init();
@@ -126,16 +133,23 @@ class CarrierPlugin : TrinityPlugin {
         switch (type) {
         case CARRIER:
             carrierCallbackId = command.callbackId;
+            break;
         case SESSION:
             sessionCallbackId = command.callbackId;
+            break;
         case STREAM:
             streamCallbackId = command.callbackId;
+            break;
         case FRIEND_INVITE:
             FIRCallbackId = command.callbackId;
+            break;
+        case FILETRANSFER:
+            fileTransferCallbackId = command.callbackId;
+            break;
         default:
             self.error(command, retAsString: "Expected one non-empty let argument.");
+            break;
         }
-
 
         //         Don't return any result now
         let result = CDVPluginResult(status: CDVCommandStatus_NO_RESULT);
@@ -959,6 +973,286 @@ class CarrierPlugin : TrinityPlugin {
         }
         else {
             self.error(command, retAsString: "Id invalid!");
+        }
+    }
+    
+    @objc func closeFileTrans(_ command: CDVInvokedUrlCommand) {
+        let fileTransferId = command.arguments[0] as? Int ?? 0
+
+        if let fileTransferHandler: PluginFileTransferHandler = mFileTransferDict[fileTransferId] {
+            fileTransferHandler.fileTransfer?.close();
+            self.success(command, retAsString: "success!");
+        }
+        else {
+            self.error(command, retAsString: "Id invalid!");
+        }
+    }
+    
+    @objc func getFileTransFileId(_ command: CDVInvokedUrlCommand) {
+        let fileTransferId = command.arguments[0] as? Int ?? 0
+        let filename = command.arguments[1] as? String ?? ""
+
+
+        if let fileTransferHandler: PluginFileTransferHandler = mFileTransferDict[fileTransferId] {
+            do {
+                let fileId = try fileTransferHandler.fileTransfer?.acquireFileId(by: filename);
+                
+                let ret: NSDictionary = [
+                    "fileId": fileId,
+                    ]
+                self.success(command, retAsDict: ret);
+            }
+            catch {
+                self.error(command, retAsString: error.localizedDescription);
+            }
+        }
+        else {
+            self.error(command, retAsString: "Id invalid!");
+        }
+    }
+    
+    
+    @objc func getFileTransFileName(_ command: CDVInvokedUrlCommand) {
+        let fileTransferId = command.arguments[0] as? Int ?? 0
+        let fileId = command.arguments[1] as? String ?? ""
+
+
+        if let fileTransferHandler: PluginFileTransferHandler = mFileTransferDict[fileTransferId] {
+            do {
+               
+                let filename = try fileTransferHandler.fileTransfer?.acquireFileName(by: fileId);
+                let ret: NSDictionary = [
+                    "filename": filename,
+                    ]
+                self.success(command, retAsDict: ret);
+            }
+            catch {
+                self.error(command, retAsString: error.localizedDescription);
+            }
+        }
+        else {
+            self.error(command, retAsString: "Id invalid!");
+        }
+    }
+    
+    @objc func fileTransConnect(_ command: CDVInvokedUrlCommand) {
+        let fileTransferId = command.arguments[0] as? Int ?? 0
+
+        if let fileTransferHandler: PluginFileTransferHandler = mFileTransferDict[fileTransferId] {
+            do {
+                try fileTransferHandler.fileTransfer?.sendConnectionRequest();
+                self.success(command, retAsString: "success!");
+            }
+            catch {
+                self.error(command, retAsString: error.localizedDescription);
+            }
+        }
+        else {
+            self.error(command, retAsString: "Id invalid!");
+        }
+    }
+    
+    @objc func acceptFileTransConnect(_ command: CDVInvokedUrlCommand) {
+        let fileTransferId = command.arguments[0] as? Int ?? 0
+
+        if let fileTransferHandler: PluginFileTransferHandler = mFileTransferDict[fileTransferId] {
+            do {
+                try fileTransferHandler.fileTransfer?.acceptConnectionRequest();
+                self.success(command, retAsString: "success!");
+            }
+            catch {
+                self.error(command, retAsString: error.localizedDescription);
+            }
+        }
+        else {
+            self.error(command, retAsString: "Id invalid!");
+        }
+    }
+    
+    @objc func addFileTransFile(_ command: CDVInvokedUrlCommand) {
+        let fileTransferId = command.arguments[0] as? Int ?? 0
+        let fileInfo = command.arguments[1] as? CarrierFileTransferInfo ?? CarrierFileTransferInfo();
+        
+        if let fileTransferHandler: PluginFileTransferHandler = mFileTransferDict[fileTransferId] {
+            do {
+                try fileTransferHandler.fileTransfer?.addFile(fileInfo);
+                self.success(command, retAsString: "success!");
+            }
+            catch {
+                self.error(command, retAsString: error.localizedDescription);
+            }
+        }
+        else {
+            self.error(command, retAsString: "Id invalid!");
+        }
+    }
+    
+    @objc func pullFileTransData(_ command: CDVInvokedUrlCommand) {
+        let fileTransferId = command.arguments[0] as? Int ?? 0
+        let fileId = command.arguments[1] as? String ?? ""
+        let offset = command.arguments[2] as? UInt64 ?? 0
+
+        if let fileTransferHandler: PluginFileTransferHandler = mFileTransferDict[fileTransferId] {
+            do {
+                try fileTransferHandler.fileTransfer?.sendPullRequest(fileId: fileId, withOffset: offset)
+                self.success(command, retAsString: "success!");
+            }
+            catch {
+                self.error(command, retAsString: error.localizedDescription);
+            }
+        }
+        else {
+            self.error(command, retAsString: "Id invalid!");
+        }
+    }
+    
+    @objc func writeFileTransData(_ command: CDVInvokedUrlCommand) {
+        let fileTransferId = command.arguments[0] as? Int ?? 0
+        let fileId = command.arguments[1] as? String ?? ""
+        let data = command.arguments[2] as? String ?? ""
+        let rawData:Data = data.data(using: .utf8)!
+        
+        if let fileTransferHandler: PluginFileTransferHandler = mFileTransferDict[fileTransferId] {
+            do {
+                try fileTransferHandler.fileTransfer?.sendData(fileId: fileId, withData: rawData)
+                self.success(command, retAsString: "success!");
+            }
+            catch {
+                self.error(command, retAsString: error.localizedDescription);
+            }
+        }
+        else {
+            self.error(command, retAsString: "Id invalid!");
+        }
+    }
+    
+    @objc func sendFileTransFinish(_ command: CDVInvokedUrlCommand) {
+        let fileTransferId = command.arguments[0] as? Int ?? 0
+        let fileId = command.arguments[1] as? String ?? ""
+        
+        if let fileTransferHandler: PluginFileTransferHandler = mFileTransferDict[fileTransferId] {
+            do {
+                //TODO
+//                try fileTransferHandler.fileTransfer?.sendFileTransFinish(fileId: fileId)
+                self.success(command, retAsString: "success!");
+            }
+            catch {
+                self.error(command, retAsString: error.localizedDescription);
+            }
+        }
+        else {
+            self.error(command, retAsString: "Id invalid!");
+        }
+    }
+    
+    @objc func cancelFileTrans(_ command: CDVInvokedUrlCommand) {
+        let fileTransferId = command.arguments[0] as? Int ?? 0
+        let fileId = command.arguments[1] as? String ?? ""
+        let status = command.arguments[0] as? Int ?? 0
+        let reason = command.arguments[1] as? String ?? ""
+
+        if let fileTransferHandler: PluginFileTransferHandler = mFileTransferDict[fileTransferId] {
+            do {
+                try fileTransferHandler.fileTransfer?.cancelTransfering(fileId: fileId, withReason: status, reason: reason)
+                self.success(command, retAsString: "success!");
+            }
+            catch {
+                self.error(command, retAsString: error.localizedDescription);
+            }
+        }
+        else {
+            self.error(command, retAsString: "Id invalid!");
+        }
+    }
+    
+    @objc func pendFileTrans(_ command: CDVInvokedUrlCommand) {
+        let fileTransferId = command.arguments[0] as? Int ?? 0
+        let fileId = command.arguments[1] as? String ?? ""
+       
+        if let fileTransferHandler: PluginFileTransferHandler = mFileTransferDict[fileTransferId] {
+            do {
+                try fileTransferHandler.fileTransfer?.pendTransfering(fileId: fileId)
+                self.success(command, retAsString: "success!");
+            }
+            catch {
+                self.error(command, retAsString: error.localizedDescription);
+            }
+        }
+        else {
+            self.error(command, retAsString: "Id invalid!");
+        }
+    }
+    
+    @objc func resumeFileTrans(_ command: CDVInvokedUrlCommand) {
+        let fileTransferId = command.arguments[0] as? Int ?? 0
+        let fileId = command.arguments[1] as? String ?? ""
+       
+        if let fileTransferHandler: PluginFileTransferHandler = mFileTransferDict[fileTransferId] {
+            do {
+                try fileTransferHandler.fileTransfer?.resumeTransfering(fileId: fileId)
+                self.success(command, retAsString: "success!");
+            }
+            catch {
+                self.error(command, retAsString: error.localizedDescription);
+            }
+        }
+        else {
+            self.error(command, retAsString: "Id invalid!");
+        }
+    }
+    
+    @objc func newFileTransfer(_ command: CDVInvokedUrlCommand) {
+        let id = command.arguments[0] as? Int ?? 0
+        let to = command.arguments[1] as? String ?? ""
+        let fileInfo = command.arguments[2] as? NSMutableDictionary
+        
+        let fileId:String = fileInfo?["fileId"] as! String
+        let filename:String = fileInfo?["filename"] as! String
+        let size: String = fileInfo?["size"] as! String
+        let isize: Int = Int(size) ?? 0
+        let usize: UInt64 = UInt64(isize)
+        
+        let fileTransFileInfo = CarrierFileTransferInfo();
+        fileTransFileInfo.fileId = fileId
+        fileTransFileInfo.fileName = filename
+        fileTransFileInfo.fileSize = usize
+        
+        if let carrierHandler: PluginCarrierHandler = mCarrierDict[id] {
+            do {
+                let pluginFileTransferHandler = PluginFileTransferHandler(fileTransferCallbackId, self.commandDelegate)
+
+                let fileTransfer = try carrierHandler.mFileTransferManager?.createFileTransfer(to: to, withFileInfo: fileTransFileInfo, delegate: pluginFileTransferHandler)
+
+                fileTransferCount = fileTransferCount + 1 ;
+
+                pluginFileTransferHandler.fileTransfer = fileTransfer!;
+                pluginFileTransferHandler.fileTransferId = fileTransferCount;
+
+                mFileTransferDict[fileTransferCount] = pluginFileTransferHandler;
+                
+                let ret: NSDictionary = [
+                    "fileTransferId": fileTransferCount,
+                ]
+                self.success(command, retAsDict: ret);
+            }
+            catch {
+                self.error(command, retAsString: error.localizedDescription);
+            }
+        }
+        else {
+            self.error(command, retAsString: "Id invalid!");
+        }
+    }
+    
+    @objc func generateFileTransFileId(_ command: CDVInvokedUrlCommand) {
+        do {
+            let fileId = try CarrierFileTransfer.acquireFileId()
+            let ret: NSDictionary = [
+                "fileId": fileId ,
+            ]
+            self.success(command, retAsDict: ret);
+        }catch {
+            self.error(command, retAsString: error.localizedDescription);
         }
     }
 }

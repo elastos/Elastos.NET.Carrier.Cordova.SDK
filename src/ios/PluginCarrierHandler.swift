@@ -35,6 +35,7 @@ class PluginCarrierHandler: CarrierDelegate {
     var mSessionManager: CarrierSessionManager!;
     var callbackId:String?
     var commandDelegate:CDVCommandDelegate?
+    var mFileTransferManager: CarrierFileTransferManager?
 
     init(_ callbackId: String, _ commandDelegate:CDVCommandDelegate) {
         self.callbackId = callbackId;
@@ -88,6 +89,9 @@ class PluginCarrierHandler: CarrierDelegate {
         try CarrierSessionManager.initializeSharedInstance(carrier: mCarrier, sessionRequestHandler: didReceiveSessionRequest);
         mSessionManager = CarrierSessionManager.sharedInstance();
 
+        try CarrierFileTransferManager.initializeSharedInstance(carrier: mCarrier, connectHandler: didReceiveFileTransferConnectHandler)
+        mFileTransferManager = CarrierFileTransferManager.sharedInstance()
+        
         return mCarrier;
     }
 
@@ -137,7 +141,6 @@ class PluginCarrierHandler: CarrierDelegate {
                                      messageAs: ret as? [AnyHashable : Any]);
         result?.setKeepCallbackAs(true);
         self.commandDelegate?.send(result, callbackId:self.callbackId);
-
     }
 
     func willBecomeIdle(_ carrier:Carrier) {
@@ -282,5 +285,26 @@ class PluginCarrierHandler: CarrierDelegate {
             "sdp": data,
         ]
         sendEvent(ret);
+    }
+    
+    func didReceiveFileTransferConnectHandler (_ carrier: Carrier,
+    _ from: String, _ fileinfo: CarrierFileTransferInfo) {
+        let ret: NSMutableDictionary = [
+            "name": "onConnectRequest",
+            "from": from,
+            "info": createFileInfoDictionary(fileinfo),
+        ]
+        
+        sendEvent(ret);
+    }
+    
+    func createFileInfoDictionary(_ fileinfo: CarrierFileTransferInfo) -> NSMutableDictionary {
+        
+        let ret:NSMutableDictionary = [
+            "filename": fileinfo.fileName ?? "",
+            "fileId": fileinfo.fileId ?? "",
+            "size": fileinfo.fileSize,
+        ]
+        return ret
     }
 }
