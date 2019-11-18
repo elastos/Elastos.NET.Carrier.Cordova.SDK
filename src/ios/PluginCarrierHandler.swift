@@ -151,6 +151,7 @@ class PluginCarrierHandler: CarrierDelegate {
     }
 
     func connectionStatusDidChange(_ carrier:Carrier, _ newStatus: CarrierConnectionStatus) {
+        
         let ret: NSMutableDictionary = [
             "name": "onConnection",
             "status": newStatus.rawValue,
@@ -306,5 +307,18 @@ class PluginCarrierHandler: CarrierDelegate {
             "size": fileinfo.fileSize,
         ]
         return ret
+    }
+
+    func didReceiveGroupInvite(_ carrier: Carrier, _ from: String, _ cookie: Data) {
+        //It will be replaced with base58 later
+        let cookieData = cookie.base64EncodedString(options: .endLineWithLineFeed)
+        
+        let ret: NSMutableDictionary = [
+            "name": "onGroupInvite",
+            "from": from,
+            "cookieCode": cookieData ,
+        ]
+        
+        sendEvent(ret);
     }
 }

@@ -25,7 +25,7 @@ import ElastosCarrierSDK
 
 typealias Carrier = ElastosCarrierSDK.Carrier
 typealias Session = ElastosCarrierSDK.CarrierSession
-
+typealias Group = ElastosCarrierSDK.CarrierGroup
 
 @objc(CarrierPlugin)
 class CarrierPlugin : TrinityPlugin {
@@ -37,24 +37,27 @@ class CarrierPlugin : TrinityPlugin {
     var SESSION = 2;
     var STREAM = 3;
     var FRIEND_INVITE = 4;
+    var GROUP = 5;
     var FILETRANSFER = 6 ;
 
     var mCarrierDict = [Int: PluginCarrierHandler]()
     var mSessionDict = [Int: Session]()
     var mStreamDict = [Int: PluginStreamHandler]()
+    var mGroupDict = [Int: PluginGroupHandler]()
     var mFileTransferDict = [Int: PluginFileTransferHandler]()
 
     var carrierCallbackId: String = ""
     var sessionCallbackId: String = ""
     var streamCallbackId: String = ""
     var FIRCallbackId: String = ""
+
     var fileTransferCallbackId: String = ""
-
-
-    var count: Int = 1;
-    
     var fileTransferCount: Int = 0;
 
+    var groupCallbackId: String = ""
+    var groupCount: Int = 0;
+    
+    var count: Int = 1;
 
     //    override init() {
     //        super.init();
@@ -131,6 +134,7 @@ class CarrierPlugin : TrinityPlugin {
         let type = command.arguments[0] as? Int ?? 0
 
         switch (type) {
+
         case CARRIER:
             carrierCallbackId = command.callbackId;
             break;
@@ -142,6 +146,9 @@ class CarrierPlugin : TrinityPlugin {
             break;
         case FRIEND_INVITE:
             FIRCallbackId = command.callbackId;
+            break;
+        case GROUP:
+            groupCallbackId = command.callbackId;
             break;
         case FILETRANSFER:
             fileTransferCallbackId = command.callbackId;
@@ -177,7 +184,6 @@ class CarrierPlugin : TrinityPlugin {
                 "nospam" : try carrierHandler.mCarrier.getSelfNospam(),
                 "presence" : try carrierHandler.mCarrier.getSelfPresence().rawValue,
                 ]
-
             self.success(command, retAsDict: ret);
         }
         catch {
@@ -1010,8 +1016,7 @@ class CarrierPlugin : TrinityPlugin {
             self.error(command, retAsString: "Id invalid!");
         }
     }
-    
-    
+
     @objc func getFileTransFileName(_ command: CDVInvokedUrlCommand) {
         let fileTransferId = command.arguments[0] as? Int ?? 0
         let fileId = command.arguments[1] as? String ?? ""
@@ -1025,16 +1030,16 @@ class CarrierPlugin : TrinityPlugin {
                     "filename": filename,
                     ]
                 self.success(command, retAsDict: ret);
-            }
-            catch {
-                self.error(command, retAsString: error.localizedDescription);
-            }
-        }
-        else {
-            self.error(command, retAsString: "Id invalid!");
-        }
-    }
-    
+           }
+           catch {
+               self.error(command, retAsString: error.localizedDescription);
+           }
+       }
+       else {
+           self.error(command, retAsString: "Id invalid!");
+       }
+   }
+
     @objc func fileTransConnect(_ command: CDVInvokedUrlCommand) {
         let fileTransferId = command.arguments[0] as? Int ?? 0
 
@@ -1105,7 +1110,7 @@ class CarrierPlugin : TrinityPlugin {
             self.error(command, retAsString: "Id invalid!");
         }
     }
-    
+
     @objc func writeFileTransData(_ command: CDVInvokedUrlCommand) {
         let fileTransferId = command.arguments[0] as? Int ?? 0
         let fileId = command.arguments[1] as? String ?? ""
@@ -1144,7 +1149,7 @@ class CarrierPlugin : TrinityPlugin {
             self.error(command, retAsString: "Id invalid!");
         }
     }
-    
+
     @objc func cancelFileTrans(_ command: CDVInvokedUrlCommand) {
         let fileTransferId = command.arguments[0] as? Int ?? 0
         let fileId = command.arguments[1] as? String ?? ""
@@ -1164,7 +1169,7 @@ class CarrierPlugin : TrinityPlugin {
             self.error(command, retAsString: "Id invalid!");
         }
     }
-    
+
     @objc func pendFileTrans(_ command: CDVInvokedUrlCommand) {
         let fileTransferId = command.arguments[0] as? Int ?? 0
         let fileId = command.arguments[1] as? String ?? ""
@@ -1182,7 +1187,7 @@ class CarrierPlugin : TrinityPlugin {
             self.error(command, retAsString: "Id invalid!");
         }
     }
-    
+
     @objc func resumeFileTrans(_ command: CDVInvokedUrlCommand) {
         let fileTransferId = command.arguments[0] as? Int ?? 0
         let fileId = command.arguments[1] as? String ?? ""
@@ -1200,7 +1205,7 @@ class CarrierPlugin : TrinityPlugin {
             self.error(command, retAsString: "Id invalid!");
         }
     }
-    
+
     @objc func newFileTransfer(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let to = command.arguments[1] as? String ?? ""
@@ -1232,6 +1237,49 @@ class CarrierPlugin : TrinityPlugin {
                 
                 let ret: NSDictionary = [
                     "fileTransferId": fileTransferCount,
+                    ]
+                self.success(command, retAsDict: ret);
+            }
+            catch {
+                self.error(command, retAsString: error.localizedDescription);
+            }
+        }
+        else {
+            self.error(command, retAsString: "Id invalid!");
+        }
+    }
+
+    @objc func generateFileTransFileId(_ command: CDVInvokedUrlCommand) {
+        do {
+            let fileId = try CarrierFileTransfer.acquireFileId()
+            let ret: NSDictionary = [
+                "fileId": fileId ,
+            ]
+            self.success(command, retAsDict: ret);
+        }catch {
+            self.error(command, retAsString: error.localizedDescription);
+        }
+    }
+    
+    @objc func createGroup(_ command: CDVInvokedUrlCommand) {
+        let id = command.arguments[0] as? Int ?? 0
+        
+        if let carrierHandler: PluginCarrierHandler = mCarrierDict[id] {
+            do {
+                let groupHandler = PluginGroupHandler(groupCallbackId,self.commandDelegate);
+                
+                let group = try carrierHandler.mCarrier.createGroup(withDelegate: groupHandler);
+                
+                groupCount = groupCount + 1;
+                
+                let groupId = groupCount;
+                groupHandler.setGroup(group);
+                groupHandler.setGroupId(groupId);
+                
+                mGroupDict[groupId]=groupHandler;
+                
+                let ret: NSDictionary = [
+                    "groupId": groupId,
                 ]
                 self.success(command, retAsDict: ret);
             }
@@ -1243,16 +1291,187 @@ class CarrierPlugin : TrinityPlugin {
             self.error(command, retAsString: "Id invalid!");
         }
     }
-    
-    @objc func generateFileTransFileId(_ command: CDVInvokedUrlCommand) {
-        do {
-            let fileId = try CarrierFileTransfer.acquireFileId()
-            let ret: NSDictionary = [
-                "fileId": fileId ,
-            ]
-            self.success(command, retAsDict: ret);
-        }catch {
-            self.error(command, retAsString: error.localizedDescription);
+
+    @objc func joinGroup(_ command: CDVInvokedUrlCommand) {
+        let id = command.arguments[0] as? Int ?? 0
+        let friendId = command.arguments[1] as? String ?? ""
+        let cookieCode = command.arguments[2] as? String ?? ""
+
+        //It will be replaced with base58 later
+        let cookieRawData = Data(base64Encoded: cookieCode)
+
+        if let carrierHandler: PluginCarrierHandler = mCarrierDict[id] {
+            do {
+                let groupHandler = PluginGroupHandler(groupCallbackId,self.commandDelegate);
+                
+                let group = try carrierHandler.mCarrier.joinGroup(createdBy: friendId, withCookie: cookieRawData!, delegate: groupHandler);
+                
+                groupCount = groupCount + 1;
+                let groupId = groupCount;
+                groupHandler.setGroup(group);
+                groupHandler.setGroupId(groupId);
+                
+                mGroupDict[groupId]=groupHandler;
+                
+                let ret: NSDictionary = [
+                    "groupId": groupId,
+                ]
+                self.success(command, retAsDict: ret);
+            }
+            catch {
+                self.error(command, retAsString: error.localizedDescription);
+            }
+        }
+        else {
+            self.error(command, retAsString: "Id invalid!");
+        }
+    }
+
+    @objc func leaveGroup(_ command: CDVInvokedUrlCommand) {
+        let id = command.arguments[0] as? Int ?? 0
+        let groupId = command.arguments[1] as? Int ?? 0
+
+        if  mCarrierDict[id] != nil && mGroupDict[groupId] != nil {
+            do {
+                let carrierHandler: PluginCarrierHandler! = mCarrierDict[id];
+                let groupHandler: PluginGroupHandler! = mGroupDict[groupId];
+
+                try carrierHandler.mCarrier.leaveGroup(from: groupHandler.mGroup);
+
+                mGroupDict.removeValue(forKey: groupId);
+
+                self.success(command, retAsString: "success!");
+            }
+            catch {
+                self.error(command, retAsString: error.localizedDescription);
+            }
+        }
+        else {
+            self.error(command, retAsString: "Id invalid!");
+        }
+    }
+
+    @objc func inviteGroup(_ command: CDVInvokedUrlCommand) {
+        let groupId = command.arguments[0] as? Int ?? 0
+        let friendId = command.arguments[1] as? String ?? ""
+
+        if let groupHandler: PluginGroupHandler = mGroupDict[groupId] {
+            do {
+                try groupHandler.mGroup.inviteFriend(friendId);
+                self.success(command, retAsString: "success!");
+            }
+            catch {
+                self.error(command, retAsString: error.localizedDescription);
+            }
+        }
+        else {
+            self.error(command, retAsString: "Id invalid!");
+        }
+    }
+
+    @objc func sendGroupMessage(_ command: CDVInvokedUrlCommand) {
+        let groupId = command.arguments[0] as? Int ?? 0
+        let message = command.arguments[1] as? String ?? ""
+        
+        let messageRawData:Data = message.data(using: .utf8)!
+
+        if let groupHandler: PluginGroupHandler = mGroupDict[groupId] {
+            do {
+                try groupHandler.mGroup.sendMessage(messageRawData);
+                self.success(command, retAsString: "success!");
+            }
+            catch {
+                self.error(command, retAsString: error.localizedDescription);
+            }
+        }
+        else {
+            self.error(command, retAsString: "Id invalid!");
+        }
+    }
+
+    @objc func getGroupTitle(_ command: CDVInvokedUrlCommand) {
+        let groupId = command.arguments[0] as? Int ?? 0
+
+        if let groupHandler: PluginGroupHandler = mGroupDict[groupId] {
+            do {
+                let title = try groupHandler.mGroup.getTitle();
+                let ret: NSDictionary = [
+                    "groupTitle": title,
+                ]
+                self.success(command, retAsDict: ret);
+            }
+            catch {
+                self.error(command, retAsString: error.localizedDescription);
+            }
+        }
+        else {
+            self.error(command, retAsString: "Id invalid!");
+        }
+    }
+
+    @objc func setGroupTitle(_ command: CDVInvokedUrlCommand) {
+        let groupId = command.arguments[0] as? Int ?? 0
+        let groupTitle = command.arguments[1] as? String ?? ""
+
+        if let groupHandler: PluginGroupHandler = mGroupDict[groupId] {
+            do {
+                try groupHandler.mGroup.setTitle(groupTitle);
+                let title = try groupHandler.mGroup.getTitle();
+                let ret: NSDictionary = [
+                    "groupTitle": title,
+                ]
+                self.success(command, retAsDict: ret);
+            }
+            catch {
+                self.error(command, retAsString: error.localizedDescription);
+            }
+        }
+        else {
+            self.error(command, retAsString: "Id invalid!");
+        }
+    }
+
+    @objc func getGroupPeers(_ command: CDVInvokedUrlCommand) {
+        let groupId = command.arguments[0] as? Int ?? 0
+
+        if let groupHandler: PluginGroupHandler = mGroupDict[groupId] {
+            do {
+                let peers = try groupHandler.mGroup.getPeers();
+                let peersInfo = groupHandler.getGroupPeersInfoDict(peers);
+                let ret : NSDictionary = [
+                    "peers": peersInfo,
+                ]
+                
+                self.success(command, retAsDict: ret);
+            }
+            catch {
+                self.error(command, retAsString: error.localizedDescription);
+            }
+        }
+        else {
+            self.error(command, retAsString: "Id invalid!");
+        }
+    }
+
+    @objc func getGroupPeer(_ command: CDVInvokedUrlCommand) {
+        let groupId = command.arguments[0] as? Int ?? 0
+        let peerId = command.arguments[1] as? String ?? ""
+
+        if let groupHandler: PluginGroupHandler = mGroupDict[groupId] {
+            do {
+                let peer = try groupHandler.mGroup.getPeer(byPeerid: peerId);
+                let peerInfo = groupHandler.getGroupPeerInfoDict(peer);
+                let ret : NSDictionary = [
+                    "peer": peerInfo,
+                ]
+                self.success(command, retAsDict: ret);
+            }
+            catch {
+                self.error(command, retAsString: error.localizedDescription);
+            }
+        }
+        else {
+            self.error(command, retAsString: "Id invalid!");
         }
     }
 }
