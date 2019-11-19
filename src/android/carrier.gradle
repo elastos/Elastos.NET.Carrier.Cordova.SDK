@@ -25,5 +25,5 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.elastos:carrier:5.4.1'
+    implementation 'org.elastos:carrier:5.4.2'
 }
