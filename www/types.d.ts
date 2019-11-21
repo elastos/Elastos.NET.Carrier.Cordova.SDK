@@ -1,20 +1,20 @@
-export declare type onSessionRequestComplete = (session: Session, status: Number, reason: string, sdp: string)=>void;
-export declare type onFriendInviteResponse = (from: string, status: Number, reason: string, data: string)=>void;
+export declare type OnSessionRequestComplete = (session: Session, status: Number, reason: string, sdp: string)=>void;
+export declare type OnFriendInviteResponse = (from: string, status: Number, reason: string, data: string)=>void;
 
-export declare class BootstrapNode {
+export declare type BootstrapNode = {
     ipv4: string;
     ipv6: string;
     port: string;
     publicKey: string;
 }
 
-export declare class Options {
+export declare type Options = {
     udpEnabled: Boolean;
     persistentLocation: string;
     bootstraps: BootstrapNode[];
 }
 
-export declare class UserInfo {
+export declare type UserInfo = {
     userId: string;
     name: string;
     description: string;
@@ -25,14 +25,14 @@ export declare class UserInfo {
     region: string;
 }
 
-export declare class FriendInfo {
+export declare type FriendInfo = {
     userInfo: UserInfo;
     presence: PresenceStatus;
     connection: ConnectionStatus;
     label: string;
 }
 
-export declare class AddressInfo {
+export declare type AddressInfo = {
     type: CandidateType;
     address: string;
     port: string;
@@ -40,125 +40,126 @@ export declare class AddressInfo {
     relatedPort?: string;
 }
 
-export declare class TransportInfo {
+export declare type FileTransferInfo = {
+    filename: string;
+    fileId: string;
+    size: Number;
+}
+
+export declare type TransportInfo = {
     topology: NetworkTopology;
     localAddr: AddressInfo;
     remoteAddr: AddressInfo;
 }
 
 export declare type StreamCallbacks = {
-    onStateChanged: (stream: Stream, state: StreamState)=>void = null;
-    onStreamData: (stream: Stream, data: string)=>void = null;
-    onChannelOpen: (stream: Stream, channel: Number, cookie: string)=>void = null;
-    onChannelOpened: (stream: Stream, channel: Number)=>void;
-    onChannelClose: (stream: Stream, channel: Number, reason: string)=>void;
-    onChannelData: (stream: Stream, channel: Number, data: string)=>void;
-    onChannelPending: (stream: Stream, channel: Number)=>void;
-    onChannelResume: (stream: Stream, channel: Number)=>void;
+    onStateChanged?: (stream: Stream, state: StreamState)=>void;
+    onStreamData?: (stream: Stream, data: string)=>void;
+    onChannelOpen?: (stream: Stream, channel: Number, cookie: string)=>void;
+    onChannelOpened?: (stream: Stream, channel: Number)=>void;
+    onChannelClose?: (stream: Stream, channel: Number, reason: string)=>void;
+    onChannelData?: (stream: Stream, channel: Number, data: string)=>void;
+    onChannelPending?: (stream: Stream, channel: Number)=>void;
+    onChannelResume?: (stream: Stream, channel: Number)=>void;
 }
 
-export declare class Stream {
-    id: Number = null;
-    carrier: Carrier = null;
-    session: Session = null;
+export declare interface Stream {
+    id: Number;
+    carrier: Carrier;
+    session: Session;
 
     callbacks: StreamCallbacks;
 
     getTransportInfo: (onSuccess: (transportInfo: TransportInfo)=>void, onError?:(err: string)=>void)=>void;
-    write: (onSuccess:(bytesSent: Number)=>void, onError?:(err: string)=>void, data: string)=>void;
-    openChannel: (onSuccess:(channelId: Number)=>void, onError?:(err: string)=>void, cookie: string)=>void;
-    closeChannel: (onSuccess:()=>void, onError?:(err: string)=>void, channel: Number)=>void;
-    writeChannel: (onSuccess:(bytesSent: Number)=>void, onError?:(err: string)=>void, channel: Number, data: string)=>void;
-    pendChannel: (onSuccess:()=>void, onError?:(err: string)=>void, channel: Number)=>void;
-    resumeChannel: (onSuccess:()=>void, onError?:(err: string)=>void, channel: Number)=>void;
-    openPortForwarding: (onSuccess:(portForwardingId: Number)=>void, onError?:(err: string)=>void, service: string, protocol: PortForwardingProtocol,  host: string, port: Number)=>void;
-    closePortForwarding: (onSuccess:()=>void, onError?:(err: string)=>void, portForwarding: Number)=>void;
+    write: (data: string, onSuccess:(bytesSent: Number)=>void, onError?:(err: string)=>void)=>void;
+    openChannel: (cookie: string, onSuccess:(channelId: Number)=>void, onError?:(err: string)=>void)=>void;
+    closeChannel: (channel: Number, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
+    writeChannel: (channel: Number, data: string, onSuccess:(bytesSent: Number)=>void, onError?:(err: string)=>void)=>void;
+    pendChannel: (channel: Number, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
+    resumeChannel: (channel: Number, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
+    openPortForwarding: (service: string, protocol: PortForwardingProtocol,  host: string, port: Number, onSuccess:(portForwardingId: Number)=>void, onError?:(err: string)=>void)=>void;
+    closePortForwarding: (portForwarding: Number, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
 }
 
-export declare class Session {
-    peer: string = null;
-    carrier: Carrier = null;
+export declare interface Session {
+    peer: string;
+    carrier: Carrier;
 
     close: (onSuccess?:()=>void, onError?:(err: string)=>void)=>void;
-    request: (onSuccess:()=>void, onError?:(err: string)=>void, handler: onSessionRequestComplete)=>void;
-    replyRequest: (onSuccess:()=>void, onError?:(err: string)=>void, status: Number, reason: string)=>void;
-    start: (onSuccess:()=>void, onError?:(err: string)=>void, sdp: string)=>void;
-    addStream: (onSuccess:()=>void, onError?:(err: string)=>void, type: StreamType, options: Number, callbacks: StreamCallbacks)=>void;
-    removeStream: (onSuccess:()=>void, onError?:(err: string)=>void, stream: Stream)=>void;
-    addService: (onSuccess:()=>void, onError?:(err: string)=>void, service: string, protocol: PortForwardingProtocol, host: string, port: Number)=>void;
-    removeService: (onSuccess:()=>void, onError?:(err: string)=>void, service: string)=>void;
+    request: (handler: OnSessionRequestComplete, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
+    replyRequest: (status: Number, reason: string, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
+    start: (sdp: string, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
+    addStream: (type: StreamType, options: Number, callbacks: StreamCallbacks, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
+    removeStream: (stream: Stream, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
+    addService: (service: string, protocol: PortForwardingProtocol, host: string, port: Number, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
+    removeService: (service: string, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
 }
 
 export declare type CarrierCallbacks = {
-    onConnection: (carrier: Carrier, status: ConnectionStatus)=>void = null;
-    onReady: (carrier: Carrier)=>void = null;
-    onSelfInfoChanged: (carrier: Carrier, userInfo: UserInfo)=>void = null;
-    onFriends: (carrier: Carrier, friends: FriendInfo[])=>void = null;
-    onFriendConnection: (carrier: Carrier, friendId: string, status: ConnectionStatus)=>void = null;
-    onFriendInfoChanged: (carrier: Carrier, friendId: string, info: FriendInfo)=>void = null;
-    onFriendPresence: (carrier: Carrier, friendId: string, presence: PresenceStatus)=>void = null;
-    onFriendRequest: (carrier: Carrier, userId: string, info: UserInfo, hello: string)=>void = null;
-    onFriendAdded: (carrier: Carrier, friendInfo: FriendInfo)=>void = null;
-    onFriendRemoved: (carrier: Carrier, friendId: string)=>void = null;
-    onFriendMessage: (carrier: Carrier, from: string, messate: string, isOffline: Boolean)=>void = null;
-    onFriendInviteRequest: (carrier: Carrier, from: string, data: string)=>void = null;
-    onSessionRequest: (carrier: Carrier, from: string, sdp: string)=>void = null;
-    onSessionRequest: (carrier: Carrier, groupTitle: string)=>void = null;
+    onConnection?: (carrier: Carrier, status: ConnectionStatus)=>void;
+    onReady?: (carrier: Carrier)=>void;
+    onSelfInfoChanged?: (carrier: Carrier, userInfo: UserInfo)=>void;
+    onFriends?: (carrier: Carrier, friends: FriendInfo[])=>void;
+    onFriendConnection?: (carrier: Carrier, friendId: string, status: ConnectionStatus)=>void;
+    onFriendInfoChanged?: (carrier: Carrier, friendId: string, info: FriendInfo)=>void;
+    onFriendPresence?: (carrier: Carrier, friendId: string, presence: PresenceStatus)=>void;
+    onFriendRequest?: (carrier: Carrier, userId: string, info: UserInfo, hello: string)=>void;
+    onFriendAdded?: (carrier: Carrier, friendInfo: FriendInfo)=>void;
+    onFriendRemoved?: (carrier: Carrier, friendId: string)=>void;
+    onFriendMessage?: (carrier: Carrier, from: string, messate: string, isOffline: Boolean)=>void;
+    onFriendInviteRequest?: (carrier: Carrier, from: string, data: string)=>void;
+    onSessionRequest?: (carrier: Carrier, from: string, sdp: string)=>void;
+    onGroupInvite?: (carrier: Carrier, groupTitle: string)=>void;
+    onConnectRequest?: (carrier: Carrier, from: string, fileInfo: FileTransferInfo)=>void;
 }
 
-export declare class Carrier {
-    nodeId: string = null;
-    userId: string = null;
-    address: string = null;
+export declare interface Carrier {
+    nodeId: string;
+    userId: string;
+    address: string;
 
     callbacks: CarrierCallbacks;
 
-    set nospam(value: Number); // CHECK THIS
-    get nospam():Number; // CHECK THIS
-
-    set presence(value: PresenceStatus); // CHECK THIS
-    get presence():PresenceStatus; // CHECK THIS
-
-    start: (onSuccess:()=>void, onError?:(err: string)=>void, iterateInterval: Number)=>void;
+    start: (iterateInterval: Number, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
     getSelfInfo: (onSuccess:(userInfo: UserInfo)=>void, onError?:(err: string)=>void)=>void;
-    setSelfInfo: (onSuccess:()=>void, onError?:(err: string)=>void, name: string, value: string)=>void;
+    setSelfInfo: (name: string, value: string, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
     isReady: (onSuccess:(ready: Boolean)=>void, onError?:(err: string)=>void)=>void;
     getFriends: (onSuccess:(friends: FriendInfo[])=>void, onError?:(err: string)=>void)=>void;
-    getFriend: (onSuccess:(friend: FriendInfo)=>void, onError?:(err: string)=>void, userId: string)=>void;
-    labelFriend: (onSuccess:()=>void, onError?:(err: string)=>void, userId: string, label: string)=>void;
-    isFriend: (onSuccess:(isFriend: Boolean)=>void, onError?:(err: string)=>void, userId: string)=>void;
-    addFriend: (onSuccess:()=>void, onError?:(err: string)=>void, address: string, hello: string)=>void;
-    acceptFriend: (onSuccess:()=>void, onError?:(err: string)=>void, userId: string)=>void;
-    removeFriend: (onSuccess:()=>void, onError?:(err: string)=>void, userId: string)=>void;
-    sendFriendMessage: (onSuccess:()=>void, onError?:(err: string)=>void, to: string, message: string)=>void;
-    inviteFriend: (onSuccess:()=>void, onError?:(err: string)=>void, to: string, data: string, handler: onFriendInviteResponse)=>void;
-    replyFriendInvite: (onSuccess:()=>void, onError?:(err: string)=>void, to: string, status: Number, reason: string, data: string)=>void;
-    newGroup: (onSuccess:(group: Group)=>void, onError?:(err: string)=>void, callbacks: CarrierCallbacks)=>void;
-    groupJoin: (onSuccess:(group: Group)=>void, onError?:(err: string)=>void, friendId: string, cookieCode: string)=>void;
-    groupLeave: (onSuccess:()=>void, onError?:(err: string)=>void, group: Group)=>void;
+    getFriend: (userId: string, onSuccess:(friend: FriendInfo)=>void, onError?:(err: string)=>void)=>void;
+    labelFriend: (userId: string, label: string, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
+    isFriend: (userId: string, onSuccess:(isFriend: Boolean)=>void, onError?:(err: string)=>void)=>void;
+    addFriend: (address: string, hello: string, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
+    acceptFriend: (userId: string, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
+    removeFriend: (userId: string, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
+    sendFriendMessage: (to: string, message: string, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
+    inviteFriend: (to: string, data: string, handler: OnFriendInviteResponse, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
+    replyFriendInvite: (to: string, status: Number, reason: string, data: string, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
+    newGroup: (callbacks: CarrierCallbacks, onSuccess:(group: Group)=>void, onError?:(err: string)=>void)=>void;
+    groupJoin: (friendId: string, cookieCode: string, onSuccess:(group: Group)=>void, onError?:(err: string)=>void)=>void;
+    groupLeave: (group: Group, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
     getGroups: (onSuccess:(groups: Group[])=>void, onError?:(err: string)=>void)=>void;
-    newSession: (onSuccess:(session: Session)=>void, onError?:(err: string)=>void, to: string)=>void;
+    newSession: (to: string, onSuccess:(session: Session)=>void, onError?:(err: string)=>void)=>void;
     destroy: (onSuccess:()=>void, onError?:(err: string)=>void)=>void;
 }
 
 export declare type GroupCallbacks = {
-    onGroupConnected: ()=>void;
-    onGroupMessage: (from: string, message: string)=>void;
-    onGroupTitle: (from: string, title: string)=>void;
-    onPeerName: (peerId: string, peerName: string)=>void;
-    onPeerListChanged: ()=>void;
+    onGroupConnected?: ()=>void ;
+    onGroupMessage?: (from: string, message: string)=>void;
+    onGroupTitle?: (from: string, title: string)=>void;
+    onPeerName?: (peerId: string, peerName: string)=>void;
+    onPeerListChanged?: ()=>void;
 }
 
-export declare class Group {
+export declare interface Group {
     groupId: Number;
     callbacks: GroupCallbacks;
 
-    invite: (onSuccess:()=>void, onError?:(err: string)=>void, friendId: string)=>void;
-    sendMessage: (onSuccess:()=>void, onError?:(err: string)=>void, message: string)=>void;
+    invite: (friendId: string, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
+    sendMessage: (message: string, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
     getTitle: (onSuccess:(groupTitle: string)=>void, onError?:(err: string)=>void)=>void;
-    setTitle: (onSuccess:(groupTitle: string)=>void, onError?:(err: string)=>void, groupTitle: string)=>void;
+    setTitle: (groupTitle: string, onSuccess:(groupTitle: string)=>void, onError?:(err: string)=>void)=>void;
     getPeers: (onSuccess:(peers: any)=>void, onError?:(err: string)=>void)=>void; // TODO: define a Peer type
-    getPeers: (onSuccess:(peer: any)=>void, onError?:(err: string)=>void, peerId: string)=>void; // TODO: define a Peer type
+    getPeer: (peerId: string, onSuccess:(peer: any)=>void, onError?:(err: string)=>void)=>void; // TODO: define a Peer type
 }
 
 export declare enum ConnectionStatus {
@@ -222,10 +223,10 @@ export declare enum StreamMode {
     PORT_FORWARDING=16
 }
 
-export declare class CarrierPlugin {
+export declare interface CarrierPlugin {
     getVersion: (onSuccess:(version: string)=>void, onError?:(err: string)=>void)=>void;
-    isValidId: (onSuccess:(isValid: Boolean)=>void, onError?:(err: string)=>void, id: string)=>void;
-    isValidAddress: (onSuccess:(isValid: string)=>void, onError?:(err: string)=>void, address: string)=>void;
-    getIdFromAddress: (onSuccess:(userId: string)=>void, onError?:(err: string)=>void, address: string)=>void;
-    createObject: (onSuccess:(carrier: Carrier)=>void, onError?:(err: string)=>void, options: any, callbacks: CarrierCallbacks)=>void; // TODO: need a type for options
+    isValidId: (id: string, onSuccess:(isValid: Boolean)=>void, onError?:(err: string)=>void)=>void;
+    isValidAddress: (address: string, onSuccess:(isValid: string)=>void, onError?:(err: string)=>void)=>void;
+    getIdFromAddress: (address: string, onSuccess:(userId: string)=>void, onError?:(err: string)=>void)=>void;
+    createObject: (options: any, callbacks: CarrierCallbacks, onSuccess:(carrier: Carrier)=>void, onError?:(err: string)=>void)=>void; // TODO: need a type for options
 }
