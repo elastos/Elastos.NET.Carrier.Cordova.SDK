@@ -660,16 +660,6 @@ class CarrierPluginImpl implements CarrierPlugin {
         Object.freeze(GroupImpl.prototype);
         Object.freeze(FileTransferImpl.prototype);
 
-        Object.freeze(ConnectionStatus);
-        Object.freeze(PresenceStatus);
-        Object.freeze(StreamType);
-        Object.freeze(StreamState);
-        Object.freeze(CandidateType);
-        Object.freeze(NetworkTopology);
-        Object.freeze(PortForwardingProtocol);
-        Object.freeze(CloseReason);
-        Object.freeze(StreamMode);
-
         exec(function () { }, null, 'CarrierPlugin', 'initVal', []);
     }
 
