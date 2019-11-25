@@ -80,16 +80,16 @@ const FRIEND_INVITE = 4;
 const GROUP = 5 ;
 const FILE_TRANSFER = 6 ;
 
-class StreamImpl implements Stream {
+class StreamImpl implements Carrier.Stream {
     objId = null;
     carrierPlugin = null;
     
     id: Int = null;
-    carrier: Carrier = null;
-    session: Session = null;
-    type: StreamType = null;
+    carrier: Carrier.Carrier = null;
+    session: Carrier.Session = null;
+    type: Carrier.StreamType = null;
 
-    callbacks: StreamCallbacks = {
+    callbacks: Carrier.StreamCallbacks = {
         onStateChanged: null,
         onStreamData: null,
         onChannelOpen: null,
@@ -122,7 +122,7 @@ class StreamImpl implements Stream {
         exec(_onSuccess, onError, 'CarrierPlugin', name, args);
     }
 
-    getTransportInfo(onSuccess: (transportInfo: TransportInfo) => void, onError?: (err: string) => void) {
+    getTransportInfo(onSuccess: (transportInfo: Carrier.TransportInfo) => void, onError?: (err: string) => void) {
         this.process(onSuccess, onError, "getTransportInfo", [this.objId]);
     }
 
@@ -149,7 +149,7 @@ class StreamImpl implements Stream {
         this.process(onSuccess, onError, "resumeChannel", [this.objId, channel]);
     }
 
-    openPortForwarding(service: string, protocol: PortForwardingProtocol, host: string, port: Number, onSuccess: (portForwardingId: Number) => void, onError?: (err: string) => void) {
+    openPortForwarding(service: string, protocol: Carrier.PortForwardingProtocol, host: string, port: Number, onSuccess: (portForwardingId: Number) => void, onError?: (err: string) => void) {
         this.process(onSuccess, onError, "openPortForwarding", [this.objId, service, protocol, host, port]);
     }
 
@@ -158,7 +158,7 @@ class StreamImpl implements Stream {
     }
 }
    
-class SessionImpl implements Session {
+class SessionImpl implements Carrier.Session {
     objId = null;
     carrierPlugin = null;
     streams = [];
@@ -189,7 +189,7 @@ class SessionImpl implements Session {
         this.process(onSuccess, onError, "sessionClose", [this.objId]);
     }
 
-    request(handler: OnSessionRequestComplete, onSuccess: () => void, onError?: (err: string) => void) {
+    request(handler: Carrier.OnSessionRequestComplete, onSuccess: () => void, onError?: (err: string) => void) {
         var handlerId = 0;
         if (typeof handler == "function") {
             handlerId = this.carrierPlugin.addSessionRequestCompleteCB(handler, this);
@@ -205,7 +205,7 @@ class SessionImpl implements Session {
         this.process(onSuccess, onError, "sessionStart", [this.objId, sdp]);
     }
 
-    addStream(type: StreamType, options: Number, callbacks: StreamCallbacks, onSuccess: (stream: Stream) => void, onError?: (err: string) => void) {
+    addStream(type: Carrier.StreamType, options: Number, callbacks: Carrier.StreamCallbacks, onSuccess: (stream: Carrier.Stream) => void, onError?: (err: string) => void) {
         var stream = new StreamImpl();
         var me = this;
         var _onSuccess = function (ret) {
@@ -231,7 +231,7 @@ class SessionImpl implements Session {
         exec(_onSuccess, onError, 'CarrierPlugin', 'addStream', [this.objId, type, options]);
     }
 
-    removeStream(stream: StreamImpl, onSuccess: (stream: Stream) => void, onError?: (err: string) => void) {
+    removeStream(stream: StreamImpl, onSuccess: (stream: Carrier.Stream) => void, onError?: (err: string) => void) {
         if (stream == this.streams[stream.id]) {
             var me = this;
             var _onSuccess = function (ret) {
@@ -248,7 +248,7 @@ class SessionImpl implements Session {
         }
     }
 
-    addService(service: string, protocol: PortForwardingProtocol, host: string, port: Number, onSuccess: () => void, onError?: (err: string) => void) {
+    addService(service: string, protocol: Carrier.PortForwardingProtocol, host: string, port: Number, onSuccess: () => void, onError?: (err: string) => void) {
         this.process(onSuccess, onError, "addService", [this.objId, service, protocol, host, port]);
     }
 
@@ -258,7 +258,7 @@ class SessionImpl implements Session {
 }
 
 
-class CarrierImpl implements Carrier {
+class CarrierImpl implements Carrier.Carrier {
     objId = null;
     carrierPlugin = null;
     
@@ -339,7 +339,7 @@ class CarrierImpl implements Carrier {
         this.process(onSuccess, onError, "carrierStart", [this.objId, iterateInterval]);
     }
 
-    getSelfInfo(onSuccess: (userInfo: UserInfo) => void, onError?: (err: string) => void) {
+    getSelfInfo(onSuccess: (userInfo: Carrier.UserInfo) => void, onError?: (err: string) => void) {
         this.process(onSuccess, onError, "getSelfInfo", [this.objId]);
     }
 
@@ -351,11 +351,11 @@ class CarrierImpl implements Carrier {
         this.process(onSuccess, onError, "isReady", [this.objId]);
     }
 
-    getFriends(onSuccess: (friends: FriendInfo[]) => void, onError?: (err: string) => void) {
+    getFriends(onSuccess: (friends: Carrier.FriendInfo[]) => void, onError?: (err: string) => void) {
         this.process(onSuccess, onError, "getFriends", [this.objId]);
     }
 
-    getFriend(userId: string, onSuccess: (friend: FriendInfo) => void, onError?: (err: string) => void) {
+    getFriend(userId: string, onSuccess: (friend: Carrier.FriendInfo) => void, onError?: (err: string) => void) {
         this.process(onSuccess, onError, "getFriend", [this.objId, userId]);
     }
 
@@ -383,7 +383,7 @@ class CarrierImpl implements Carrier {
         this.process(onSuccess, onError, "sendFriendMessage", [this.objId, to, message]);
     }
 
-    inviteFriend(to: string, data: string, handler: OnFriendInviteResponse, onSuccess: () => void, onError?: (err: string) => void) {
+    inviteFriend(to: string, data: string, handler: Carrier.OnFriendInviteResponse, onSuccess: () => void, onError?: (err: string) => void) {
         var handlerId = 0;
            if (typeof handler == "function") {
                handlerId = this.carrierPlugin.addFriendInviteResponseCB(handler, this);
@@ -395,7 +395,7 @@ class CarrierImpl implements Carrier {
         this.process(onSuccess, onError, "replyFriendInvite", [this.objId, to, status, reason, data]);
     }
 
-    newGroup(callbacks: CarrierCallbacks, onSuccess: (group: Group) => void, onError?: (err: string) => void) {
+    newGroup(callbacks: Carrier.CarrierCallbacks, onSuccess: (group: Carrier.Group) => void, onError?: (err: string) => void) {
         var _onSuccess = function(ret){
             var group = new GroupImpl();
             group.groupId = ret.groupId;
@@ -413,7 +413,7 @@ class CarrierImpl implements Carrier {
         this.process(_onSuccess, onError, "createGroup", [this.objId]);
     }
 
-    groupJoin(friendId: string, cookieCode: string, callbacks: GroupCallbacks, onSuccess: (group: Group) => void, onError?: (err: string) => void) {
+    groupJoin(friendId: string, cookieCode: string, callbacks: Carrier.GroupCallbacks, onSuccess: (group: Carrier.Group) => void, onError?: (err: string) => void) {
         var _onSuccess = function(ret){
             var group = new GroupImpl();
             group.groupId = ret.groupId;
@@ -431,7 +431,7 @@ class CarrierImpl implements Carrier {
         this.process(_onSuccess, onError, "joinGroup", [this.objId,friendId,cookieCode]);
     }
 
-    groupLeave(group: Group, onSuccess: (group: Group) => void, onError?: (err: string) => void) {
+    groupLeave(group: Carrier.Group, onSuccess: (group: Carrier.Group) => void, onError?: (err: string) => void) {
         var _onSuccess = function(ret){
             delete carrierPlugin.groups[group.groupId];
             if (onSuccess) 
@@ -440,7 +440,7 @@ class CarrierImpl implements Carrier {
         this.process(_onSuccess, onError, "leaveGroup", [this.objId,group.groupId]);
     }
 
-    getGroups(onSuccess: (groups: Group[]) => void, onError?: (err: string) => void) {
+    getGroups(onSuccess: (groups: Carrier.Group[]) => void, onError?: (err: string) => void) {
         var groups = [];
         var index = 0;
         for(var i in carrierPlugin.groups) {
@@ -450,7 +450,7 @@ class CarrierImpl implements Carrier {
         if (onSuccess) onSuccess(groups);
     }
 
-    newFileTransfer(to: string, fileTransferInfo: FileTransferInfo, callbacks: any, onSuccess?: (fileTransfer: any) => void, onError?: (err: String) => void) {
+    newFileTransfer(to: string, fileTransferInfo: Carrier.FileTransferInfo, callbacks: any, onSuccess?: (fileTransfer: any) => void, onError?: (err: String) => void) {
         var _onSuccess = function(ret){
             var fileTransfer = new FileTransferImpl();
             fileTransfer.fileTransferId = ret.fileTransferId;
@@ -474,7 +474,7 @@ class CarrierImpl implements Carrier {
         this.process(_onSuccess,null, "generateFileTransFileId", []);
     }
 
-    newSession(to: string, onSuccess: (session: Session) => void, onError?: (err: string) => void) {
+    newSession(to: string, onSuccess: (session: Carrier.Session) => void, onError?: (err: string) => void) {
         var me = this;
            var _onSuccess = function (ret) {
                var session = new SessionImpl();
@@ -492,7 +492,7 @@ class CarrierImpl implements Carrier {
     }
 }
 
-class GroupImpl implements Group {
+class GroupImpl implements Carrier.Group {
     groupId = null;
 
     callbacks = {
@@ -553,7 +553,7 @@ class GroupImpl implements Group {
     }
 }
 
-class FileTransferImpl implements FileTransfer {
+class FileTransferImpl implements Carrier.FileTransfer {
     fileTransferId = null;
     
     callbacks = {
@@ -606,7 +606,7 @@ class FileTransferImpl implements FileTransfer {
         this.process(onSuccess, onError, "acceptFileTransConnect", [this.fileTransferId]);
     }
 
-    addFile(fileInfo: FileTransferInfo, onSuccess?: () => void, onError?: (err: string) => void) {
+    addFile(fileInfo: Carrier.FileTransferInfo, onSuccess?: () => void, onError?: (err: string) => void) {
         this.process(onSuccess, onError, "addFileTransFile", [this.fileTransferId,fileInfo]);
     }
 
@@ -636,7 +636,7 @@ class FileTransferImpl implements FileTransfer {
 }
 
    
-class CarrierPluginImpl implements CarrierPlugin {
+class CarrierPluginImpl implements Carrier.CarrierPlugin {
     carriers = [];
     streams = [];
     groups = {};
@@ -709,7 +709,7 @@ class CarrierPluginImpl implements CarrierPlugin {
         exec(onSuccess, onError, 'CarrierPlugin', 'getIdFromAddress', [address]);
     }
 
-    createObject(options: any, callbacks: CarrierCallbacks, onSuccess: (carrier: Carrier) => void, onError?: (err: string) => void) {
+    createObject(options: any, callbacks: Carrier.CarrierCallbacks, onSuccess: (carrier: Carrier.Carrier) => void, onError?: (err: string) => void) {
         this.setListener(CARRIER, (event) => {
             event.carrier = this.carriers[event.id];
             if (event.carrier) {
