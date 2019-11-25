@@ -663,27 +663,6 @@ class CarrierPluginImpl implements CarrierPlugin {
         exec(function () { }, null, 'CarrierPlugin', 'initVal', []);
     }
 
-    onCarrierEvent(event) {
-        event.carrier = this.carriers[event.id];
-        if (event.carrier) {
-            //        event.id = null;
-            if (event.carrier.callbacks[event.name]) {
-                event.carrier.callbacks[event.name](event);
-            }
-        }
-        else {
-            alert(event.name);
-        }
-    }
-
-    onStreamEvent(event) {
-        event.stream = this.streams[event.id];
-        event.id = null;
-        if (event.stream && event.stream.callbacks[event.name]) {
-            event.stream.callbacks[event.name](event);
-        }
-    }
-
     //FriendInviteResponseHandler
     addFriendInviteResponseCB(callback, carrier) {
         this.FriendInviteCount++;
@@ -693,39 +672,6 @@ class CarrierPluginImpl implements CarrierPlugin {
         return this.FriendInviteCount;
     }
 
-    onFriendInviteResponse(event) {
-        var id = event.id;
-        event.id = null;
-        if (this.FriendInviteEvent[id].callback) {
-            event.carrier = this.FriendInviteEvent[id].carrier;
-            this.FriendInviteEvent[id].callback(event);
-        }
-    }
-
-    //onGroupHandlerCallback
-    onGroupEvent(event){
-        var group = this.groups[event.groupId];
-        if (group) {
-            if (group.callbacks[event.name]) {
-                group.callbacks[event.name](event);
-            }
-        }else {
-            alert(event.name);
-        }
-    }
-
-    //onFileTransferHandlerCallback
-    onFileTransferEvent(event){
-        var fileTransfer = this.fileTransfers[event.fileTransferId];
-        if (fileTransfer) {
-            if (fileTransfer.callbacks[event.name]) {
-                fileTransfer.callbacks[event.name](event);
-            }
-        } else {
-            alert(event.name);
-        }
-    }
-
     //SessionRequestCompleteHandler
     addSessionRequestCompleteCB(callback, session) {
         this.SRCCount++;
@@ -733,15 +679,6 @@ class CarrierPluginImpl implements CarrierPlugin {
         this.SRCEvent[this.SRCCount].callback = callback;
         this.SRCEvent[this.SRCCount].session = session
         return this.SRCCount;
-    }
-
-    onSessionRequestComplete(event) {
-        var id = event.id;
-        event.id = null;
-        if (this.SRCEvent[id].callback) {
-            event.session = this.SRCEvent[id].session;
-            this.SRCEvent[id].callback(event);
-        }
     }
 
     setListener(type, eventCallback) {
@@ -773,40 +710,95 @@ class CarrierPluginImpl implements CarrierPlugin {
     }
 
     createObject(options: any, callbacks: CarrierCallbacks, onSuccess: (carrier: Carrier) => void, onError?: (err: string) => void) {
-        this.setListener(CARRIER,this.onCarrierEvent)
-           this.setListener(STREAM,this.onStreamEvent)
-           this.setListener(FRIEND_INVITE,this.onFriendInviteResponse)
-           this.setListener(SESSION,this.onSessionRequestComplete)
-           this.setListener(GROUP,this.onGroupEvent)
-           this.setListener(FILE_TRANSFER,this.onFileTransferEvent)
+        this.setListener(CARRIER, (event) => {
+            event.carrier = this.carriers[event.id];
+            if (event.carrier) {
+                //        event.id = null;
+                if (event.carrier.callbacks[event.name]) {
+                    event.carrier.callbacks[event.name](event);
+                }
+            }
+            else {
+                alert(event.name);
+            }
+        });
 
-           var carrier = new CarrierImpl();
-           var me = this;
-           var _onSuccess = function (ret) {
-               carrier.objId = ret.id;
-               carrier.nodeId = ret.nodeId;
-               carrier.userId = ret.userId;
-               carrier.address = ret.address;
-               carrier._nospam = ret.nospam;
-               carrier._presence = ret.presence;
-               carrier.carrierPlugin = me;
-               me.carriers[carrier.objId] = carrier;
+        this.setListener(STREAM, function(event) {
+            event.stream = this.streams[event.id];
+            event.id = null;
+            if (event.stream && event.stream.callbacks[event.name]) {
+                event.stream.callbacks[event.name](event);
+            }
+        });
 
-               if (onSuccess) onSuccess(carrier);
-           };
-           if (typeof (options) == "undefined" || options == null) {
-               options = this.options;
-           }
+        this.setListener(FRIEND_INVITE, (event) => {
+            var id = event.id;
+            event.id = null;
+            if (this.FriendInviteEvent[id].callback) {
+                event.carrier = this.FriendInviteEvent[id].carrier;
+                this.FriendInviteEvent[id].callback(event);
+            }
+        });
 
-           if (typeof (callbacks) != "undefined" && callbacks != null) {
-               for (var i = 0; i < CARRIER_CB_NAMES.length; i++) {
-                   var name = CARRIER_CB_NAMES[i];
-                   carrier.callbacks[name] = callbacks[name];
-               }
-           }
+        this.setListener(SESSION, (event) => {
+            var id = event.id;
+            event.id = null;
+            if (this.SRCEvent[id].callback) {
+                event.session = this.SRCEvent[id].session;
+                this.SRCEvent[id].callback(event);
+            }
+        });
 
-           var configstring = JSON.stringify(options);
-           exec(_onSuccess, onError, 'CarrierPlugin', 'createObject', ["im", configstring]);
+        this.setListener(GROUP, (event) => {
+            var group = this.groups[event.groupId];
+            if (group) {
+                if (group.callbacks[event.name]) {
+                    group.callbacks[event.name](event);
+                }
+            }else {
+                alert(event.name);
+            }
+        });
+
+        this.setListener(FILE_TRANSFER, (event) => {
+            var fileTransfer = this.fileTransfers[event.fileTransferId];
+            if (fileTransfer) {
+                if (fileTransfer.callbacks[event.name]) {
+                    fileTransfer.callbacks[event.name](event);
+                }
+            } else {
+                alert(event.name);
+            }
+        });
+
+        var carrier = new CarrierImpl();
+        var me = this;
+        var _onSuccess = function (ret) {
+            carrier.objId = ret.id;
+            carrier.nodeId = ret.nodeId;
+            carrier.userId = ret.userId;
+            carrier.address = ret.address;
+            carrier._nospam = ret.nospam;
+            carrier._presence = ret.presence;
+            carrier.carrierPlugin = me;
+            me.carriers[carrier.objId] = carrier;
+
+            if (onSuccess) 
+                onSuccess(carrier);
+        };
+        if (typeof (options) == "undefined" || options == null) {
+            options = this.options;
+        }
+
+        if (typeof (callbacks) != "undefined" && callbacks != null) {
+            for (var i = 0; i < CARRIER_CB_NAMES.length; i++) {
+                var name = CARRIER_CB_NAMES[i];
+                carrier.callbacks[name] = callbacks[name];
+            }
+        }
+
+        var configstring = JSON.stringify(options);
+        exec(_onSuccess, onError, 'CarrierPlugin', 'createObject', ["im", configstring]);
     }
 }
 
