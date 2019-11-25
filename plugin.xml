@@ -2,7 +2,7 @@
 <plugin id="elastos-trinity-plugins-carrier" version="0.0.1" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
     <name>Carrier</name>
     <js-module name="CarrierPlugin" src="www/carrier.js">
-        <clobbers target="carrierPlugin" />
+        <clobbers target="carrierManager" />
     </js-module>
 
     <!-- <hook type="after_plugin_add" src="hooks/after_plugin_add.js" /> -->
