@@ -24,7 +24,7 @@
 * @module CarrierPlugin
 */
 
-declare namespace Carrier {
+declare module CarrierPlugin {
     type Opaque<T, K> = T & { __opaque__: K };
     type Int = Opaque<number, 'Int'>;
 
@@ -1421,10 +1421,7 @@ declare namespace Carrier {
         PORT_FORWARDING=16
     }
 
-    /**
-     * @exports carrierPlugin
-     */
-    interface CarrierPlugin {
+    interface CarrierManager {
         /**
         * Get current version of Carrier node.
         *
