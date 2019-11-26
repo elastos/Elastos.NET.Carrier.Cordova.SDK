@@ -24,7 +24,7 @@
 * @module CarrierPlugin
 */
 
-declare module CarrierPlugin {
+declare namespace CarrierPlugin {
     type Opaque<T, K> = T & { __opaque__: K };
     type Int = Opaque<number, 'Int'>;
 

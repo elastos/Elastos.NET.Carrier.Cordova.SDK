@@ -638,7 +638,6 @@ class FileTransferImpl implements CarrierPlugin.FileTransfer {
     }
 }
 
-
 class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
     carriers = [];
     streams = [];
