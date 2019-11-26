@@ -83,7 +83,7 @@ const FILE_TRANSFER = 6 ;
 class StreamImpl implements CarrierPlugin.Stream {
     objId = null;
     carrierManager = null;
-    
+
     id: Int = null;
     carrier: CarrierPlugin.Carrier = null;
     session: CarrierPlugin.Session = null;
@@ -157,20 +157,20 @@ class StreamImpl implements CarrierPlugin.Stream {
         this.process(onSuccess, onError, "closePortForwarding", [this.objId, portForwarding]);
     }
 }
-   
+
 class SessionImpl implements CarrierPlugin.Session {
     objId = null;
     carrierManager = null;
     streams = [];
 
-    peer = null;       
+    peer = null;
     carrier = null;
 
     process(onSuccess, onError, name, args) {
         var me = this;
         exec((ret) => {
             ret.session = me;
-            if (onSuccess) 
+            if (onSuccess)
                 onSuccess(ret);
         }, onError, 'CarrierPlugin', name, args);
     }
@@ -217,7 +217,7 @@ class SessionImpl implements CarrierPlugin.Session {
             stream.session = me;
             me.streams[stream.id] = stream;
             me.carrierManager.streams[stream.objId] = stream;
-            if (onSuccess) 
+            if (onSuccess)
                 onSuccess(stream);
         };
 
@@ -238,7 +238,7 @@ class SessionImpl implements CarrierPlugin.Session {
                 ret.session = me;
                 me.streams[stream.id] = null;
                 me.carrierManager.streams[stream.objId] = null;
-                if (onSuccess) 
+                if (onSuccess)
                     onSuccess(ret);
             };
             exec(_onSuccess, onError, 'CarrierPlugin', "removeStream", [this.objId, stream.objId]);
@@ -261,7 +261,7 @@ class SessionImpl implements CarrierPlugin.Session {
 class CarrierImpl implements CarrierPlugin.Carrier {
     objId = null;
     carrierManager = null;
-    
+
     nodeId = null;
     userId = null;
     address = null;
@@ -436,7 +436,7 @@ class CarrierImpl implements CarrierPlugin.Carrier {
         var me = this;
         var _onSuccess = function(ret){
             delete me.carrierManager.groups[group.groupId];
-            if (onSuccess) 
+            if (onSuccess)
                 onSuccess(group);
         };
         this.process(_onSuccess, onError, "leaveGroup", [this.objId,group.groupId]);
@@ -558,13 +558,13 @@ class GroupImpl implements CarrierPlugin.Group {
 
 class FileTransferImpl implements CarrierPlugin.FileTransfer {
     fileTransferId = null;
-    
+
     callbacks = {
         onStateChanged: null,
         onFileRequest: null,
         onPullRequest: null,
         onData: null,
-        onDataFinished: null,            
+        onDataFinished: null,
         onPending: null,
         onResume: null,
         onCancel: null
@@ -574,7 +574,7 @@ class FileTransferImpl implements CarrierPlugin.FileTransfer {
         var me = this;
         var _onSuccess = function (ret) {
             ret.fileTransfer = me;
-            if (onSuccess) 
+            if (onSuccess)
                 onSuccess(ret);
         }
         exec(_onSuccess, onError, 'CarrierPlugin', name, args);
@@ -595,7 +595,7 @@ class FileTransferImpl implements CarrierPlugin.FileTransfer {
     getFileName(fileId: string, onSuccess?: (filename: string) => void, onError?: (err: string) => void) {
         var _onSuccess = function (ret) {
             var filename = ret.filename;
-            if (onSuccess) 
+            if (onSuccess)
                 onSuccess(filename);
          };
          this.process(_onSuccess, onError, "getFileTransFileName", [this.fileTransferId,fileId]);
@@ -604,7 +604,7 @@ class FileTransferImpl implements CarrierPlugin.FileTransfer {
     connect(onSuccess?: () => void, onError?: (err: string) => void) {
         this.process(onSuccess, onError, "fileTransConnect", [this.fileTransferId]);
     }
-    
+
     acceptConnect(onSuccess?: () => void, onError?: (err: string) => void) {
         this.process(onSuccess, onError, "acceptFileTransConnect", [this.fileTransferId]);
     }
@@ -638,7 +638,7 @@ class FileTransferImpl implements CarrierPlugin.FileTransfer {
     }
 }
 
-   
+
 class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
     carriers = [];
     streams = [];
@@ -687,7 +687,7 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
     setListener(type, eventCallback) {
         exec(eventCallback, null, 'CarrierPlugin', 'setListener', [type]);
     }
- 
+
     getVersion(onSuccess: (version: string) => void, onError?: (err: string) => void) {
         exec(onSuccess, onError, 'CarrierPlugin', 'getVersion', []);
     }
@@ -712,7 +712,7 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
         exec(onSuccess, onError, 'CarrierPlugin', 'getIdFromAddress', [address]);
     }
 
-    createObject(options: any, callbacks: CarrierPlugin.CarrierCallbacks, onSuccess: (carrier: CarrierPlugin.Carrier) => void, onError?: (err: string) => void) {
+    createObject(callbacks: CarrierPlugin.CarrierCallbacks, options: any, onSuccess: (carrier: CarrierPlugin.Carrier) => void, onError?: (err: string) => void) {
         this.setListener(CARRIER, (event) => {
             event.carrier = this.carriers[event.id];
             if (event.carrier) {
@@ -786,7 +786,7 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
             carrier.carrierManager = me;
             me.carriers[carrier.objId] = carrier;
 
-            if (onSuccess) 
+            if (onSuccess)
                 onSuccess(carrier);
         };
         if (typeof (options) == "undefined" || options == null) {
