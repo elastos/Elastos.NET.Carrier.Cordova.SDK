@@ -655,8 +655,6 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
     SRCCount = 0;
 
     constructor() {
-        this.Test = CarrierPlugin.ConnectionStatus.CONNECTED
-
         Object.freeze(CarrierManagerImpl.prototype);
         Object.freeze(CarrierImpl.prototype);
         Object.freeze(SessionImpl.prototype);
