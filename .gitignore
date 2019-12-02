@@ -1,2 +1,3 @@
 .DS_Store
 src/ios/libs/ElastosCarrierSDK.framework
+www/carrier.js
