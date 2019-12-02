@@ -1011,7 +1011,7 @@ declare namespace CarrierPlugin {
         /**
         * Send a message to a group request.
         *
-        * @param {Function} onSuccess  The function to call when success.The param is a string "Success!",
+        * @param {Function} onSuccess  The function to call when success.
         * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
         * @param {string} message      The message content defined by application
         */
@@ -1494,7 +1494,7 @@ declare namespace CarrierPlugin {
         *
         * @param {CarrierCallbacks} callbacks The callbacks for carrier node.
         * @param {Options}   [options]   The options to set for creating carrier node. If set to null, will use default.
-        * @param {Function}  [onSuccess]  The function to call when success.
+        * @param {Function}  [onSuccess]  The function to call when success, the param is a carrier object.
         * @param {Function}  [onError]  The function to call when error, the param is a string. Or set to null.
         */
         createObject: (callbacks: CarrierCallbacks, options?: any, onSuccess?:(carrier: Carrier)=>void, onError?:(err: string)=>void)=>void; // TODO: need a type for options
