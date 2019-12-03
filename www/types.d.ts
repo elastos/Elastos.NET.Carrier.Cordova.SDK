@@ -267,7 +267,7 @@ declare namespace CarrierPlugin {
         /**
         * Get transport info of carrier stream.
         * @param onSuccess  The function to call when success, the param is a TransportInfo object
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         */
         getTransportInfo: (onSuccess: (transportInfo: TransportInfo)=>void, onError?:(err: string)=>void)=>void;
 
@@ -276,7 +276,7 @@ declare namespace CarrierPlugin {
         * If the stream is in multiplexing mode, application can not call this function.
         *
         * @param onSuccess  The function to call when success, the param is a Number: Bytes of data sent.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param data       The data to send.
         */
         write: (data: string, onSuccess:(bytesSent: Number)=>void, onError?:(err: string)=>void)=>void;
@@ -286,7 +286,7 @@ declare namespace CarrierPlugin {
         * If the stream is in multiplexing mode, application can not call this function.
         *
         * @param onSuccess  The function to call when success, the param is a Number: New channel ID.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param cookie     The application defined data passed to remote peer
         */
         openChannel: (cookie: string, onSuccess:(channelId: Number)=>void, onError?:(err: string)=>void)=>void;
@@ -296,7 +296,7 @@ declare namespace CarrierPlugin {
         * If the stream is in multiplexing mode, application can not call this function.
         *
         * @param onSuccess  The function to call when success.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param channel    The channel ID to close
         */
         closeChannel: (channel: Number, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
@@ -306,7 +306,7 @@ declare namespace CarrierPlugin {
         * If the stream is in multiplexing mode, application can not call this function.
         *
         * @param onSuccess  The function to call when success, the param is a Number: Bytes of data sent.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param channel    The current channel ID.
         * @param data       The data to send.
         */
@@ -317,7 +317,7 @@ declare namespace CarrierPlugin {
         * If the stream is in multiplexing mode, application can not call this function.
         *
         * @param onSuccess  The function to call when success.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param channel    The current channel ID.
         */
         pendChannel: (channel: Number, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
@@ -327,7 +327,7 @@ declare namespace CarrierPlugin {
         * If the stream is in multiplexing mode, application can not call this function.
         *
         * @param onSuccess  The function to call when success.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param channel    The current channel ID.
         */
         resumeChannel: (channel: Number, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
@@ -337,7 +337,7 @@ declare namespace CarrierPlugin {
         * If the stream is in multiplexing mode, application can not call this function.
         *
         * @param onSuccess  The function to call when success, the param is a Number: Port forwarding ID.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param service    The remote service name
         * @param protocol   Port forwarding protocol
         * @param host       Local host or IP address to binding. If host is null, port forwarding will bind to localhost
@@ -350,7 +350,7 @@ declare namespace CarrierPlugin {
         * If the stream is in multiplexing mode, application can not call this function.
         *
         * @param onSuccess       The function to call when success.
-        * @param [onError]       The function to call when error, the param is a string. Or set to null.
+        * @param onError         The function to call when error, the param is a string. Or set to null.
         * @param portForwarding  The portforwarding ID.
         */
         closePortForwarding: (portForwarding: Number, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
@@ -375,7 +375,7 @@ declare namespace CarrierPlugin {
         * Send session request to the friend.
         *
         * @param onSuccess  The function to call when success.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param handler    A handler to the SessionRequestCompleteHandler to receive the session response
         */
         request: (handler: OnSessionRequestComplete, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
@@ -385,7 +385,7 @@ declare namespace CarrierPlugin {
         * This function will send a session response to friend.
         *
         * @param onSuccess  The function to call when success.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param status     The status code of the response. 0 is success, otherwise is error
         * @param reason     The error message if status is error, or null if success
         */
@@ -397,7 +397,7 @@ declare namespace CarrierPlugin {
         * The stream status will update to application by stream's StreamHandler.
         *
         * @param onSuccess  The function to call when success.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param sdp        The remote user's SDP.  Reference: https://tools.ietf.org/html/rfc4566
         */
         start: (sdp: string, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
@@ -413,7 +413,7 @@ declare namespace CarrierPlugin {
         *  Multiplexing over UDP can not provide reliable transport.
         *
         * @param onSuccess  The function to call when success, the param is a Stream object: The new added carrier stream.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param type       The stream type defined in StreamType
         * @param options    The stream mode options. Options are constructed by a bitwise-inclusive OR of flags
         * @param callbacks  The stream callbacks.
@@ -424,7 +424,7 @@ declare namespace CarrierPlugin {
         * Remove a stream from session.
         *
         * @param onSuccess  The function to call when success.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param stream     The Stream to be removed
         */
         removeStream: (stream: Stream, onSuccess:(stream: Stream)=>void, onError?:(err: string)=>void)=>void;
@@ -434,7 +434,7 @@ declare namespace CarrierPlugin {
         * The registered services can be used by remote peer in portforwarding request.
         *
         * @param onSuccess The function to call when success.
-        * @param [onError] The function to call when error, the param is a string. Or set to null.
+        * @param onError   The function to call when error, the param is a string. Or set to null.
         * @param service   The new service name, should be unique in session scope.
         * @param protocol  The protocol of the service.
         * @param host      The host name or IP address of the service.
@@ -447,7 +447,7 @@ declare namespace CarrierPlugin {
         * This function has not effect on existing portforwardings.
         *
         * @param onSuccess  The function to call when success.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param service    The service name.
         */
         removeService: (service: string, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
@@ -639,7 +639,7 @@ declare namespace CarrierPlugin {
         * to network is successful, carrier node starts working.
         *
         * @param onSuccess       The function to call when success.
-        * @param [onError]       The function to call when error, the param is a string. Or set to null.
+        * @param onError         The function to call when error, the param is a string. Or set to null.
         * @param iterateInterval Internal loop interval, in milliseconds.
         */
         start: (iterateInterval: Number, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
@@ -648,7 +648,7 @@ declare namespace CarrierPlugin {
         * Get self user information.
         *
         * @param onSuccess  The function to call when success, the param is a UserInfo: the user information to the carrier node.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         */
         getSelfInfo: (onSuccess:(userInfo: UserInfo)=>void, onError?:(err: string)=>void)=>void;
 
@@ -658,7 +658,7 @@ declare namespace CarrierPlugin {
         * to carrier network, and thereupon network broadcasts the change to all friends.
         *
         * @param onSuccess  The function to call when success.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param userinfo   The user information to update for this carrier node.
         */
         setSelfInfo: (name: string, value: string, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
@@ -669,7 +669,7 @@ declare namespace CarrierPlugin {
         * is being ready.
         *
         * @param onSuccess  The function to call when success, the param is a Boolean: true if the carrier node instance is ready, or false if not.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         */
         isReady: (onSuccess:(ready: Boolean)=>void, onError?:(err: string)=>void)=>void;
 
@@ -677,7 +677,7 @@ declare namespace CarrierPlugin {
         * Get friends list.
         *
         * @param onSuccess  The function to call when success, the param is a {friendId: info} Object: The list of friend information to current user.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         */
         getFriends: (onSuccess:(friends: FriendInfo[])=>void, onError?:(err: string)=>void)=>void;
 
@@ -685,7 +685,7 @@ declare namespace CarrierPlugin {
         * Get specified friend information.
         *
         * @param onSuccess  The function to call when success, the param is a FriendInfo: The friend information.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param userId     The user identifier of friend
         */
         getFriend: (userId: string, onSuccess:(friend: FriendInfo)=>void, onError?:(err: string)=>void)=>void;
@@ -696,7 +696,7 @@ declare namespace CarrierPlugin {
         * seen by current user only, and has no impact to the target friend itself.
         *
         * @param onSuccess  The function to call when success.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param userId     The friend's user identifier
         * @param label      The new label of specified friend
         */
@@ -706,7 +706,7 @@ declare namespace CarrierPlugin {
         * Check if the user ID is friend.
         *
         * @param onSuccess  The function to call when success, the param is a Boolean: True if the user is a friend, or false if not.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param userId     The userId to check.
         */
         isFriend: (userId: string, onSuccess:(isFriend: Boolean)=>void, onError?:(err: string)=>void)=>void;
@@ -717,7 +717,7 @@ declare namespace CarrierPlugin {
         * send a friend request to the target node.
         *
         * @param onSuccess  The function to call when success.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param address    The target user address of remote carrier node.
         * @param hello      PIN for target user, or any application defined content.
         */
@@ -728,7 +728,7 @@ declare namespace CarrierPlugin {
         * This function is used to add a friend in response to a friend request.
         *
         * @param onSuccess  The function to call when success.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param userId     The user ID who wants to be friend with us.
         */
         acceptFriend: (userId: string, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
@@ -738,7 +738,7 @@ declare namespace CarrierPlugin {
         * This function will remove a friend on this carrier node.
         *
         * @param onSuccess  The function to call when success.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param userId     The target user ID to remove friendship
         */
         removeFriend: (userId: string, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
@@ -750,7 +750,7 @@ declare namespace CarrierPlugin {
         * and sent as separate messages. Other nodes can reassemble the fragments.
         *
         * @param onSuccess  The function to call when success.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param to         The target ID
         * @param message    The message content defined by application
         */
@@ -762,7 +762,7 @@ declare namespace CarrierPlugin {
         * request, and the data will be sent to target friend.
         *
         * @param onSuccess   The function to call when success.
-        * @param [onError]   The function to call when error, the param is a string. Or set to null.
+        * @param onError     The function to call when error, the param is a string. Or set to null.
         * @param to          The target ID
         * @param data        The application defined data sent to target user
         * @param handler     The handler to receive invite reponse
@@ -774,7 +774,7 @@ declare namespace CarrierPlugin {
         * This function will send an invite response to friend.
         *
         * @param onSuccess  The function to call when success.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param to         The ID of who sends invite request
         * @param status     The status code of the response. 0 is success, otherwise is error
         * @param reason     The error message if status is error, or null if success
@@ -787,7 +787,7 @@ declare namespace CarrierPlugin {
         * This function will create a new group.
         *
         * @param {Function} onSuccess  The function to call when success, the param is Group object.
-        * @param {Function} [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param {Function} onError    The function to call when error, the param is a string. Or set to null.
         */
         newGroup: (callbacks: CarrierCallbacks, onSuccess:(group: Group)=>void, onError?:(err: string)=>void)=>void;
 
@@ -796,7 +796,7 @@ declare namespace CarrierPlugin {
         * Join a group associating with cookie into which remote friend invites.
         *
         * @param onSuccess  The function to call when success, the param is Group object
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param friendId   The friend who sends a group invitation
         * @param cookieCode The cookieCode information to join group,from onGroupInvite.
         */
@@ -806,7 +806,7 @@ declare namespace CarrierPlugin {
         * Leave a group.
         *
         * @param onSuccess  The function to call when success
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param group      Group object
         */
         groupLeave: (group: Group, onSuccess:(group: Group)=>void, onError?:(err: string)=>void)=>void;
@@ -815,7 +815,7 @@ declare namespace CarrierPlugin {
          * Get all Groups request.
          *
          * @param onSuccess  The function to call when success.The param is a group array object ,
-         * @param [onError]  The function to call when error, the param is a string. Or set to null.
+         * @param onError    The function to call when error, the param is a string. Or set to null.
          */
         getGroups: (onSuccess:(groups: Group[])=>void, onError?:(err: string)=>void)=>void;
 
@@ -824,7 +824,7 @@ declare namespace CarrierPlugin {
         * The file transfer object represents a conversation handle to a friend.
         *
         * @param onSuccess           The function to call when success.The param is fileTransfer instance,
-        * @param [onError]           The function to call when error, the param is a string. Or set to null.
+        * @param onError             The function to call when error, the param is a string. Or set to null.
         * @param to                  The target ID(userid or userid@nodeid).
         * @param fileTransferInfo    Information of the file to be transferred.
         */
@@ -842,7 +842,7 @@ declare namespace CarrierPlugin {
         * The session object represents a conversation handle to a friend.
         *
         * @param onSuccess  The function to call when success, the param is a Session Object: The new Session object
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param to         The target ID(userid or userid@nodeid).
         */
         newSession: (to: string, onSuccess:(session: Session)=>void, onError?:(err: string)=>void)=>void;
@@ -852,7 +852,7 @@ declare namespace CarrierPlugin {
         * After calling the method, the carrier node instance becomes invalid.
         *
         * @param onSuccess  The function to call when success.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         */
         destroy: (onSuccess?:()=>void, onError?:(err: string)=>void)=>void;
     }
@@ -921,7 +921,7 @@ declare namespace CarrierPlugin {
         * Invite a friend into group request.
         *
         * @param onSuccess  The function to call when success.The param is a string "Success!",
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param friendId   The friend's ID
         */
         invite: (friendId: string, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
@@ -930,7 +930,7 @@ declare namespace CarrierPlugin {
         * Send a message to a group request.
         *
         * @param onSuccess  The function to call when success.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param message    The message content defined by application
         */
         sendMessage: (message: string, onSuccess:()=>void, onError?:(err: string)=>void)=>void;
@@ -939,7 +939,7 @@ declare namespace CarrierPlugin {
         * Get group title request.
         *
         * @param onSuccess  The function to call when success.The param is a string, group title information
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         */
         getTitle: (onSuccess:(groupTitle: string)=>void, onError?:(err: string)=>void)=>void;
 
@@ -947,7 +947,7 @@ declare namespace CarrierPlugin {
         * Modify group title request.
         *
         * @param onSuccess  The function to call when success.The param is a json string, group title information,
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param groupTitle New group's title
         */
         setTitle: (groupTitle: string, onSuccess:(groupTitle: string)=>void, onError?:(err: string)=>void)=>void;
@@ -957,7 +957,7 @@ declare namespace CarrierPlugin {
         *
         * @param onSuccess  The function to call when success.The param is a json string, group peers information,
         *                   like this {"PEER_ID":{"peerName":"PEER_NAME","peerUserId":"PEER_ID"}}.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         */
         getPeers: (onSuccess:(peers: any)=>void, onError?:(err: string)=>void)=>void; // TODO: define a Peer type
 
@@ -966,7 +966,7 @@ declare namespace CarrierPlugin {
         *
         * @param onSuccess  The function to call when success.The param is a json string, a peer information,
         *                   like this{"peerName":"PEER_NAME","peerUserId":"PEER_ID"}.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param peerId     The peer's ID
         */
         getPeer: (peerId: string, onSuccess:(peer: any)=>void, onError?:(err: string)=>void)=>void; // TODO: define a Peer type
@@ -1086,7 +1086,7 @@ declare namespace CarrierPlugin {
          * Close file transfer instance.
          *
          * @param onSuccess  The function to call when success.The param is a string "Success!",
-         * @param [onError]  The function to call when error, the param is a string. Or set to null.
+         * @param onError    The function to call when error, the param is a string. Or set to null.
          *
          */
         close: (onSuccess?: ()=>void, onError?: (err:string)=>void)=>void;
@@ -1097,7 +1097,7 @@ declare namespace CarrierPlugin {
          *
          * @param filename   The target file name.
          * @param onSuccess  The function to call when success.The param is fileId,
-         * @param [onError]  The function to call when error, the param is a string. Or set to null.
+         * @param onError    The function to call when error, the param is a string. Or set to null.
          *
          */
         getFileId: (filename: string, onSuccess?: (fileId: string)=>void, onError?: (err:string)=>void)=>void;
@@ -1108,7 +1108,7 @@ declare namespace CarrierPlugin {
          *
          * @param fileId     The target file identifier.
          * @param onSuccess  The function to call when success.The param is filename,
-         * @param [onError]  The function to call when error, the param is a string. Or set to null.
+         * @param onError    The function to call when error, the param is a string. Or set to null.
          */
         getFileName: (fileId: string, onSuccess?: (filename: string)=>void, onError?: (err:string)=>void)=>void;
 
@@ -1116,7 +1116,7 @@ declare namespace CarrierPlugin {
          * Send a file transfer connect request to target peer.
          *
          * @param onSuccess  The function to call when success.The param is a string "Success!",
-         * @param [onError]  The function to call when error, the param is a string. Or set to null.
+         * @param onError    The function to call when error, the param is a string. Or set to null.
          *
          */
         connect: (onSuccess?: ()=>void, onError?: (err:string)=>void)=>void;
@@ -1125,7 +1125,7 @@ declare namespace CarrierPlugin {
          * Accept file transfer connection request.
          *
          * @param onSuccess  The function to call when success.The param is a string "Success!",
-         * @param [onError]  The function to call when error, the param is a string. Or set to null.
+         * @param onError    The function to call when error, the param is a string. Or set to null.
          *
          */
         acceptConnect: (onSuccess?: ()=>void, onError?: (err:string)=>void)=>void;
@@ -1135,7 +1135,7 @@ declare namespace CarrierPlugin {
          *
          * @param fileinfo   Information of the file to be added.
          * @param onSuccess  The function to call when success.The param is a string "Success!",
-         * @param [onError]  The function to call when error, the param is a string. Or set to null.
+         * @param onError    The function to call when error, the param is a string. Or set to null.
          */
         addFile: (fileInfo: FileTransferInfo, onSuccess?: ()=>void, onError?: (err:string)=>void)=>void;
 
@@ -1145,7 +1145,7 @@ declare namespace CarrierPlugin {
          * @param fileId     The file identifier.
          * @param offset     The offset of file where transfer begins.
          * @param onSuccess  The function to call when success.The param is a string "Success!",
-         * @param [onError]  The function to call when error, the param is a string. Or set to null.
+         * @param onError    The function to call when error, the param is a string. Or set to null.
          */
         pullData: (fileId: string, offset: Int, onSuccess?: ()=>void, onError?: (err:string)=>void)=>void;
 
@@ -1153,7 +1153,7 @@ declare namespace CarrierPlugin {
          * To transfer file data with a specified fileId.
          *
          * @param onSuccess  The function to call when success.The param is a string "Success!",
-         * @param [onError]  The function to call when error, the param is a string. Or set to null.
+         * @param onError    The function to call when error, the param is a string. Or set to null.
          * @param fileId     The file identifier.
          * @param data       The data to transfer for file.
          */
@@ -1164,7 +1164,7 @@ declare namespace CarrierPlugin {
          *
          * @param fileId     The file identifier.
          * @param onSuccess  The function to call when success.The param is a string "Success!",
-         * @param [onError]  The function to call when error, the param is a string. Or set to null.
+         * @param onError    The function to call when error, the param is a string. Or set to null.
          */
         sendFinish: (fileId: string, onSuccess?: ()=>void, onError?: (err:string)=>void)=>void;
 
@@ -1173,7 +1173,7 @@ declare namespace CarrierPlugin {
          *
          * @param fileId     The file identifier.
          * @param onSuccess  The function to call when success.The param is a string "Success!",
-         * @param [onError]  The function to call when error, the param is a string. Or set to null.
+         * @param onError    The function to call when error, the param is a string. Or set to null.
          */
         cancelTransfer: (fileId: string, status: Int, reason: string, onSuccess?: ()=>void, onError?: (err:string)=>void)=>void;
 
@@ -1182,7 +1182,7 @@ declare namespace CarrierPlugin {
          *
          * @param fileId     The file identifier.
          * @param onSuccess  The function to call when success.The param is a string "Success!",
-         * @param [onError]  The function to call when error, the param is a string. Or set to null.
+         * @param onError    The function to call when error, the param is a string. Or set to null.
          */
         pendTransfer: (fileId: string, onSuccess?: ()=>void, onError?: (err:string)=>void)=>void;
 
@@ -1191,7 +1191,7 @@ declare namespace CarrierPlugin {
          *
          * @param fileId     The file identifier.
          * @param onSuccess  The function to call when success.The param is a string "Success!",
-         * @param [onError]  The function to call when error, the param is a string. Or set to null.
+         * @param onError    The function to call when error, the param is a string. Or set to null.
          */
         resumeTransfer: (fileId: string, onSuccess?: ()=>void, onError?: (err:string)=>void)=>void;
     }
@@ -1369,7 +1369,7 @@ declare namespace CarrierPlugin {
         * Get current version of Carrier node.
         *
         * @param onSuccess  The function to call when success, the param is a string: The version of carrier node.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         */
         getVersion: (onSuccess:(version: string)=>void, onError?:(err: string)=>void)=>void;
 
@@ -1378,7 +1378,7 @@ declare namespace CarrierPlugin {
         *
         * @param id         The carrier node ID to be checked.
         * @param onSuccess  The function to call when success, the param is a Boolean: True if ID is valid, otherwise false.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         */
         isValidId: (id: string, onSuccess:(isValid: Boolean)=>void, onError?:(err: string)=>void)=>void;
 
@@ -1387,7 +1387,7 @@ declare namespace CarrierPlugin {
         *
         * @param address    The carrier node address to be checked.
         * @param onSuccess  The function to call when success, the param is a Boolean: True if key is valid, otherwise false.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         */
         isValidAddress: (address: string, onSuccess:(isValid: Boolean)=>void, onError?:(err: string)=>void)=>void;
 
@@ -1395,7 +1395,7 @@ declare namespace CarrierPlugin {
         * Get carrier ID from carrier node address.
         *
         * @param onSuccess  The function to call when success, the param is a string: User ID if address is valid, otherwise null.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param address    The carrier node address.
         */
         getIdFromAddress: (address: string, onSuccess:(userId: string)=>void, onError?:(err: string)=>void)=>void;
@@ -1407,7 +1407,7 @@ declare namespace CarrierPlugin {
         * @param callbacks The callbacks for carrier node.
         * @param [options]   The options to set for creating carrier node. If set to null, will use default.
         * @param [onSuccess]  The function to call when success, the param is a carrier object.
-        * @param [onError]  The function to call when error, the param is a string. Or set to null.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
         */
         createObject: (callbacks: CarrierCallbacks, options?: any, onSuccess?:(carrier: Carrier)=>void, onError?:(err: string)=>void)=>void; // TODO: need a type for options
     }
