@@ -329,7 +329,7 @@ class CarrierImpl implements CarrierPlugin.Carrier {
     process(onSuccess, onError, name, args) {
         var me = this;
         var _onSuccess = function (ret) {
-            ret.carrier = me;
+            if (typeof ret === 'object') ret.carrier = me;
             if (onSuccess) onSuccess(ret);
         };
         exec(_onSuccess, onError, 'CarrierPlugin', name, args);
