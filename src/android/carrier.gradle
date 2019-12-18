@@ -19,11 +19,12 @@
   * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   * SOFTWARE.
   */
-  
+
 repositories {
     jcenter()
 }
 
 dependencies {
+    implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'org.elastos:carrier:5.4.2'
 }
