@@ -55,6 +55,7 @@ class PluginCarrierHandler: CarrierDelegate {
 
         let options = CarrierOptions()
         options.bootstrapNodes = [BootstrapNode]()
+        options.hivebootstrapNodes = [HiveBootstrapNode]()
 
         let jsonData = configString.data(using: .utf8)
         let decodedJsonDict:[String:Any] = (try JSONSerialization.jsonObject(with: jsonData!, options: []) as? [String: Any])!
@@ -65,8 +66,8 @@ class PluginCarrierHandler: CarrierDelegate {
         if let path:String = Bundle.main.path(forResource: "bootstraps", ofType: "json") {
             let data = try! Data(contentsOf: URL(fileURLWithPath: path))
             let json:[String: Any] = try JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
+
             let bootstrapNodes = json["bootstraps"] as! Array<AnyObject>
-            print("bootstrapNodes size=\(bootstrapNodes.count)")
             for item in bootstrapNodes  {
                 let bootstrapNode = BootstrapNode()
                 let node: [String: Any] = item as! [String: Any]
@@ -76,6 +77,17 @@ class PluginCarrierHandler: CarrierDelegate {
                 bootstrapNode.publicKey = node["publicKey"] as? String
 
                 options.bootstrapNodes?.append(bootstrapNode)
+            }
+
+            let hiveIpfsNodes = json["ipfsnodes"] as! Array<AnyObject>
+            for item in hiveIpfsNodes {
+                let ipfsNode = HiveBootstrapNode()
+                let node = item as! [String: String]
+                let parts = node["addr"]!.split(separator: ":")
+                ipfsNode.ipv4 = String(parts[0])
+                ipfsNode.port = String(parts[1])
+
+                options.hivebootstrapNodes?.append(ipfsNode)
             }
         }
 
@@ -91,7 +103,7 @@ class PluginCarrierHandler: CarrierDelegate {
 
         try CarrierFileTransferManager.initializeSharedInstance(carrier: mCarrier, connectHandler: didReceiveFileTransferConnectHandler)
         mFileTransferManager = CarrierFileTransferManager.sharedInstance()
-        
+
         return mCarrier;
     }
 
@@ -151,7 +163,7 @@ class PluginCarrierHandler: CarrierDelegate {
     }
 
     func connectionStatusDidChange(_ carrier:Carrier, _ newStatus: CarrierConnectionStatus) {
-        
+
         let ret: NSMutableDictionary = [
             "name": "onConnection",
             "status": newStatus.rawValue,
@@ -287,7 +299,7 @@ class PluginCarrierHandler: CarrierDelegate {
         ]
         sendEvent(ret);
     }
-    
+
     func didReceiveFileTransferConnectHandler (_ carrier: Carrier,
     _ from: String, _ fileinfo: CarrierFileTransferInfo) {
         let ret: NSMutableDictionary = [
@@ -295,12 +307,12 @@ class PluginCarrierHandler: CarrierDelegate {
             "from": from,
             "info": createFileInfoDictionary(fileinfo),
         ]
-        
+
         sendEvent(ret);
     }
-    
+
     func createFileInfoDictionary(_ fileinfo: CarrierFileTransferInfo) -> NSMutableDictionary {
-        
+
         let ret:NSMutableDictionary = [
             "filename": fileinfo.fileName ?? "",
             "fileId": fileinfo.fileId ?? "",
@@ -312,13 +324,13 @@ class PluginCarrierHandler: CarrierDelegate {
     func didReceiveGroupInvite(_ carrier: Carrier, _ from: String, _ cookie: Data) {
         //It will be replaced with base58 later
         let cookieData = cookie.base64EncodedString(options: .endLineWithLineFeed)
-        
+
         let ret: NSMutableDictionary = [
             "name": "onGroupInvite",
             "from": from,
             "cookieCode": cookieData ,
         ]
-        
+
         sendEvent(ret);
     }
 }
