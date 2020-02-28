@@ -872,7 +872,7 @@ declare namespace CarrierPlugin {
         *
         * @param group      The group instance .
         */
-        onGroupConnected?();
+        onGroupConnected?(group: Group);
 
         /**
         * The callback function that handles group message.
@@ -883,7 +883,7 @@ declare namespace CarrierPlugin {
         * @param from       The friend's user ID.
         * @param message    The message content
         */
-        onGroupMessage?(from: string, message: string);
+        onGroupMessage?(group: Group, from: string, message: string);
 
         /**
         * The callback function that handles group title changed.
@@ -894,7 +894,7 @@ declare namespace CarrierPlugin {
         * @param from       The user ID of the modifier
         * @param title      New group title
         */
-        onGroupTitle?(from: string, title: string);
+        onGroupTitle?(group: Group, from: string, title: string);
 
         /**
         * The callback function that handles peer name changed.
@@ -905,7 +905,7 @@ declare namespace CarrierPlugin {
         * @param peerId     The peer's user ID.
         * @param peerName   The peer's name.
         */
-        onPeerName?(peerId: string, peerName: string);
+        onPeerName?(group: Group, peerId: string, peerName: string);
 
         /**
         * The callback function that handles peer list changed.
@@ -914,7 +914,7 @@ declare namespace CarrierPlugin {
         *
         * @param group      The group instance .
         */
-        onPeerListChanged?();
+        onPeerListChanged?(group: Group);
     }
 
     /**
