@@ -664,55 +664,7 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
         Object.freeze(FileTransferImpl.prototype);
 
         exec(function () { }, null, 'CarrierPlugin', 'initVal', []);
-    }
 
-    //FriendInviteResponseHandler
-    addFriendInviteResponseCB(callback, carrier) {
-        this.FriendInviteCount++;
-        this.FriendInviteEvent[this.FriendInviteCount] = new Object;
-        this.FriendInviteEvent[this.FriendInviteCount].callback = callback;
-        this.FriendInviteEvent[this.FriendInviteCount].carrier = carrier
-        return this.FriendInviteCount;
-    }
-
-    //SessionRequestCompleteHandler
-    addSessionRequestCompleteCB(callback, session) {
-        this.SRCCount++;
-        this.SRCEvent[this.SRCCount] = new Object;
-        this.SRCEvent[this.SRCCount].callback = callback;
-        this.SRCEvent[this.SRCCount].session = session
-        return this.SRCCount;
-    }
-
-    setListener(type, eventCallback) {
-        exec(eventCallback, null, 'CarrierPlugin', 'setListener', [type]);
-    }
-
-    getVersion(onSuccess: (version: string) => void, onError?: (err: string) => void) {
-        exec(onSuccess, onError, 'CarrierPlugin', 'getVersion', []);
-    }
-
-    isValidId(id: string, onSuccess: (isValid: Boolean) => void, onError?: (err: string) => void) {
-        var _onSuccess = function (ret) {
-            if (onSuccess) onSuccess(ret == "true" ? true : false);
-        };
-
-        exec(_onSuccess, onError, 'CarrierPlugin', 'isValidAddress', [id]);
-    }
-
-    isValidAddress(address: string, onSuccess: (isValid: Boolean) => void, onError?: (err: string) => void) {
-        var _onSuccess = function (ret) {
-            if (onSuccess) onSuccess(ret == "true" ? true : false);
-        };
-
-        exec(_onSuccess, onError, 'CarrierPlugin', 'isValidAddress', [address]);
-    }
-
-    getIdFromAddress(address: string, onSuccess: (userId: string) => void, onError?: (err: string) => void) {
-        exec(onSuccess, onError, 'CarrierPlugin', 'getIdFromAddress', [address]);
-    }
-
-    createObject(callbacks: CarrierPlugin.CarrierCallbacks, options: any, onSuccess: (carrier: CarrierPlugin.Carrier) => void, onError?: (err: string) => void) {
         this.setListener(CARRIER, (event) => {
             event.carrier = this.carriers[event.id];
             if (event.carrier) {
@@ -773,7 +725,55 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
                 alert(event.name);
             }
         });
+    }
 
+    //FriendInviteResponseHandler
+    addFriendInviteResponseCB(callback, carrier) {
+        this.FriendInviteCount++;
+        this.FriendInviteEvent[this.FriendInviteCount] = new Object;
+        this.FriendInviteEvent[this.FriendInviteCount].callback = callback;
+        this.FriendInviteEvent[this.FriendInviteCount].carrier = carrier
+        return this.FriendInviteCount;
+    }
+
+    //SessionRequestCompleteHandler
+    addSessionRequestCompleteCB(callback, session) {
+        this.SRCCount++;
+        this.SRCEvent[this.SRCCount] = new Object;
+        this.SRCEvent[this.SRCCount].callback = callback;
+        this.SRCEvent[this.SRCCount].session = session
+        return this.SRCCount;
+    }
+
+    setListener(type, eventCallback) {
+        exec(eventCallback, null, 'CarrierPlugin', 'setListener', [type]);
+    }
+
+    getVersion(onSuccess: (version: string) => void, onError?: (err: string) => void) {
+        exec(onSuccess, onError, 'CarrierPlugin', 'getVersion', []);
+    }
+
+    isValidId(id: string, onSuccess: (isValid: Boolean) => void, onError?: (err: string) => void) {
+        var _onSuccess = function (ret) {
+            if (onSuccess) onSuccess(ret == "true" ? true : false);
+        };
+
+        exec(_onSuccess, onError, 'CarrierPlugin', 'isValidAddress', [id]);
+    }
+
+    isValidAddress(address: string, onSuccess: (isValid: Boolean) => void, onError?: (err: string) => void) {
+        var _onSuccess = function (ret) {
+            if (onSuccess) onSuccess(ret == "true" ? true : false);
+        };
+
+        exec(_onSuccess, onError, 'CarrierPlugin', 'isValidAddress', [address]);
+    }
+
+    getIdFromAddress(address: string, onSuccess: (userId: string) => void, onError?: (err: string) => void) {
+        exec(onSuccess, onError, 'CarrierPlugin', 'getIdFromAddress', [address]);
+    }
+
+    createObject(callbacks: CarrierPlugin.CarrierCallbacks, options: any, onSuccess: (carrier: CarrierPlugin.Carrier) => void, onError?: (err: string) => void) {
         var carrier = new CarrierImpl();
         var me = this;
         var _onSuccess = function (ret) {
