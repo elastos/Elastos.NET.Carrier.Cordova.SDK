@@ -404,6 +404,15 @@
               r.put("address", carrierHandler.mCarrier.getAddress());
               r.put("nospam", carrierHandler.mCarrier.getNospam());
               r.put("presence", carrierHandler.mCarrier.getPresence().value());
+              JSONArray a = new JSONArray();
+              for (Group group: carrierHandler.mCarrier.getGroups()) {
+                  String groupId = getGroupId();
+                  addGroupMap(groupId, group);
+                  carrierHandler.groups.put(group, groupId);
+                  a.put(groupId);
+              }
+              r.put("groups", a);
+
               callbackContext.success(r);
           } else {
               callbackContext.error("error");

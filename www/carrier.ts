@@ -773,6 +773,13 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
             carrier._presence = ret.presence;
             carrier.carrierManager = me;
             me.carriers[carrier.objId] = carrier;
+            for (const groupId of ret.groups) {
+                let group = new GroupImpl();
+                group.groupId = groupId;
+                group.carrier = carrier;
+                me.groups[groupId] = group;
+                carrier.groups[groupId] = group;
+            }
 
             if (onSuccess)
                 onSuccess(carrier);
