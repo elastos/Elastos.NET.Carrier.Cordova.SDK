@@ -63,7 +63,7 @@
       private Map<Integer, PluginCarrierHandler> mCarrierMap;
       private HashMap<Integer, Session> mSessionMap;
       private HashMap<Integer, PluginStreamHandler> mStreamMap;
-      private HashMap<String, PluginGroupHandler> mGroupHandlerMap;
+      private HashMap<String, Group> mGroupMap;
       private HashMap<Integer, PluginFileTransferHandler> mFileTransferHandlerMap;
 
       private CallbackContext mCarrierCallbackContext = null;
@@ -77,7 +77,7 @@
           mCarrierMap = new HashMap();
           mSessionMap = new HashMap();
           mStreamMap = new HashMap();
-          mGroupHandlerMap = new HashMap<>();
+          mGroupMap = new HashMap<>();
           mFileTransferHandlerMap = new HashMap<>();
       }
 
@@ -390,7 +390,8 @@
 
           dir = cordova.getActivity().getFilesDir() + "/data/carrier/" + dir;
 
-          PluginCarrierHandler carrierHandler = PluginCarrierHandler.createInstance(dir, config, mCarrierCallbackContext, this);
+          PluginCarrierHandler carrierHandler = PluginCarrierHandler.createInstance(dir, config,
+                  mCarrierCallbackContext, mGroupCallbackContext, this);
 
           if (carrierHandler != null) {
               mCarrierMap.put(carrierHandler.mCode, carrierHandler);
@@ -1025,14 +1026,11 @@
 
           if (carrierHandler != null) {
               String groupId = getGroupId();
-              PluginGroupHandler groupHandler = new PluginGroupHandler(mGroupCallbackContext);
-              Group group = carrierHandler.mCarrier.newGroup(groupHandler);
+              Group group = carrierHandler.mCarrier.newGroup();
               group.setTitle("Untitled");
 
-              groupHandler.setGroup(group);
-              groupHandler.setGroupId(groupId);
-
-              addGroupMap(groupId, groupHandler);
+              addGroupMap(groupId, group);
+              carrierHandler.groups.put(group, groupId);
 
               JSONObject jsonObject = new JSONObject();
               jsonObject.put("groupId", groupId);
@@ -1052,13 +1050,11 @@
           byte[] cookie = Base58.decode(cookieBase58);
           if (carrierHandler != null) {
               String groupId = getGroupId();
-              PluginGroupHandler groupHandler = new PluginGroupHandler(mGroupCallbackContext);
 
-              Group group = carrierHandler.mCarrier.groupJoin(friendId, cookie, groupHandler);
-              groupHandler.setGroupId(groupId);
-              groupHandler.setGroup(group);
+              Group group = carrierHandler.mCarrier.groupJoin(friendId, cookie);
 
-              addGroupMap(groupId, groupHandler);
+              addGroupMap(groupId, group);
+              carrierHandler.groups.put(group, groupId);
 
               JSONObject jsonObject = new JSONObject();
               jsonObject.put("groupId", groupId);
@@ -1075,7 +1071,7 @@
 
           Group group = null;
           try {
-              group = Objects.requireNonNull(mGroupHandlerMap.get(groupId)).mGroup;
+              group = Objects.requireNonNull(mGroupMap.get(groupId));
           } catch (NullPointerException e) {
           }
           if (group != null) {
@@ -1093,12 +1089,13 @@
           PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
           Group group = null;
           try {
-              group = Objects.requireNonNull(mGroupHandlerMap.get(groupId)).mGroup;
+              group = Objects.requireNonNull(mGroupMap.get(groupId));
           } catch (NullPointerException e) {
           }
           if (carrierHandler != null && group != null) {
               carrierHandler.mCarrier.groupLeave(group);
               deleteGroupHandlerFromMap(groupId);
+              carrierHandler.groups.remove(group);
 
               callbackContext.success(SUCCESS);
           } else {
@@ -1112,7 +1109,7 @@
 
           Group group = null;
           try {
-              group = Objects.requireNonNull(mGroupHandlerMap.get(groupId)).mGroup;
+              group = Objects.requireNonNull(mGroupMap.get(groupId));
           } catch (NullPointerException e) {
           }
           byte[] message = messageData.getBytes(Charset.forName("UTF-8"));
@@ -1129,7 +1126,7 @@
           String groupId = args.getString(0);
           Group group = null;
           try {
-              group = Objects.requireNonNull(mGroupHandlerMap.get(groupId)).mGroup;
+              group = Objects.requireNonNull(mGroupMap.get(groupId));
           } catch (NullPointerException e) {
           }
           if (group != null) {
@@ -1145,7 +1142,7 @@
 
           Group group = null;
           try {
-              group = Objects.requireNonNull(mGroupHandlerMap.get(groupId)).mGroup;
+              group = Objects.requireNonNull(mGroupMap.get(groupId));
           } catch (NullPointerException e) {
           }
           if (group != null) {
@@ -1161,7 +1158,7 @@
 
           Group group = null;
           try {
-              group = Objects.requireNonNull(mGroupHandlerMap.get(groupId)).mGroup;
+              group = Objects.requireNonNull(mGroupMap.get(groupId));
           } catch (NullPointerException e) {
           }
           if (group != null) {
@@ -1179,7 +1176,7 @@
 
           Group group = null;
           try {
-              group = Objects.requireNonNull(mGroupHandlerMap.get(groupId)).mGroup;
+              group = Objects.requireNonNull(mGroupMap.get(groupId));
           } catch (NullPointerException e) {
           }
           if (group != null && peerId != null) {
@@ -1192,11 +1189,11 @@
       }
 
       private void clearGroupHandlerMap() {
-          mGroupHandlerMap.clear();
+          mGroupMap.clear();
       }
 
       private void deleteGroupHandlerFromMap(String groupHandlerId) {
-          mGroupHandlerMap.remove(groupHandlerId);
+          mGroupMap.remove(groupHandlerId);
       }
 
       private String getGroupId() {
@@ -1208,8 +1205,8 @@
           return UUID.randomUUID().toString().replace("-", "");
       }
 
-      private void addGroupMap(String groupId, PluginGroupHandler groupHandler) {
-          mGroupHandlerMap.put(groupId, groupHandler);
+      private void addGroupMap(String groupId, Group group) {
+          mGroupMap.put(groupId, group);
       }
 
       private JSONObject getGroupPeersInfoJson(Group group) throws JSONException, CarrierException {

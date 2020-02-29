@@ -626,7 +626,7 @@ declare namespace CarrierPlugin {
         * @param fileInfo    Information of the file which the requester wants to send
         */
         onConnectRequest?(carrier: Carrier, from: string, fileInfo: FileTransferInfo);
-    }
+    } & GroupCallbacks;
 
     /**
     * The class representing Carrier.
@@ -796,7 +796,7 @@ declare namespace CarrierPlugin {
         * @param {Function} onSuccess  The function to call when success, the param is Group object.
         * @param {Function} onError    The function to call when error, the param is a string. Or set to null.
         */
-        newGroup(callbacks: GroupCallbacks, onSuccess:(group: Group)=>void, onError?:(err: string)=>void);
+        newGroup(onSuccess:(group: Group)=>void, onError?:(err: string)=>void);
 
         /**
         * Join a group request.
@@ -807,7 +807,7 @@ declare namespace CarrierPlugin {
         * @param friendId   The friend who sends a group invitation
         * @param cookieCode The cookieCode information to join group,from onGroupInvite.
         */
-        groupJoin(friendId: string, cookieCode: string, callbacks: GroupCallbacks, onSuccess:(group: Group)=>void, onError?:(err: string)=>void);
+        groupJoin(friendId: string, cookieCode: string, onSuccess:(group: Group)=>void, onError?:(err: string)=>void);
 
         /**
         * Leave a group.
@@ -922,7 +922,6 @@ declare namespace CarrierPlugin {
     */
     interface Group {
         groupId: Int;
-        callbacks: GroupCallbacks;
 
         /**
         * Invite a friend into group request.

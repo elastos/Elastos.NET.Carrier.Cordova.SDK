@@ -286,6 +286,11 @@ class CarrierImpl implements CarrierPlugin.Carrier {
         onSessionRequest: null,
         onGroupInvite: null,
         onConnectRequest: null,
+        onGroupConnected: null,
+        onGroupMessage: null,
+        onGroupTitle: null,
+        onPeerName: null,
+        onPeerListChanged: null
     }
 
     /** @property {number} nospam The nospam for Carrier address is used to eliminate spam friend. **/
@@ -396,20 +401,13 @@ class CarrierImpl implements CarrierPlugin.Carrier {
         this.process(onSuccess, onError, "replyFriendInvite", [this.objId, to, status, reason, data]);
     }
 
-    newGroup(callbacks: CarrierPlugin.GroupCallbacks, onSuccess: (group: CarrierPlugin.Group) => void, onError?: (err: string) => void) {
+    newGroup(onSuccess: (group: CarrierPlugin.Group) => void, onError?: (err: string) => void) {
         var me = this;
         var _onSuccess = function(ret){
             var group = new GroupImpl();
             group.groupId = ret.groupId;
+            group.carrier = me;
             me.carrierManager.groups[group.groupId] = group;
-
-            if (typeof (callbacks) != "undefined" && callbacks != null) {
-                for (var i = 0; i < GROUP_CB_NAMES.length; i++) {
-                    var name = GROUP_CB_NAMES[i];
-                    me.carrierManager.groups[group.groupId].callbacks[name] = callbacks[name];
-                }
-            }
-
             me.groups[group.groupId] = group;
 
             if (onSuccess) onSuccess(group);
@@ -417,20 +415,13 @@ class CarrierImpl implements CarrierPlugin.Carrier {
         this.process(_onSuccess, onError, "createGroup", [this.objId]);
     }
 
-    groupJoin(friendId: string, cookieCode: string, callbacks: CarrierPlugin.GroupCallbacks, onSuccess: (group: CarrierPlugin.Group) => void, onError?: (err: string) => void) {
+    groupJoin(friendId: string, cookieCode: string, onSuccess: (group: CarrierPlugin.Group) => void, onError?: (err: string) => void) {
         var me = this;
         var _onSuccess = function(ret){
             var group = new GroupImpl();
             group.groupId = ret.groupId;
+            group.carrier = me;
             me.carrierManager.groups[group.groupId] = group;
-
-            if (typeof (callbacks) != "undefined" && callbacks != null) {
-                for (var i = 0; i < GROUP_CB_NAMES.length; i++) {
-                    var name = GROUP_CB_NAMES[i];
-                    me.carrierManager.groups[group.groupId].callbacks[name] = callbacks[name];
-                }
-            }
-
             me.groups[group.groupId] = group;
 
             if (onSuccess) onSuccess(group);
@@ -501,14 +492,7 @@ class CarrierImpl implements CarrierPlugin.Carrier {
 
 class GroupImpl implements CarrierPlugin.Group {
     groupId = null;
-
-    callbacks = {
-        onGroupConnected: null,
-        onGroupMessage: null,
-        onGroupTitle: null,
-        onPeerName: null,
-        onPeerListChanged: null
-    }
+    carrier = null;
 
     process(onSuccess, onError, name, args) {
         var me = this;
@@ -710,8 +694,9 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
         this.setListener(GROUP, (event) => {
             var group = this.groups[event.groupId];
             if (group) {
-                if (group.callbacks[event.name]) {
-                    group.callbacks[event.name](event);
+                var carrier = group.carrier;
+                if (carrier.callbacks[event.name]) {
+                    carrier.callbacks[event.name](event);
                 }
             }else {
                 alert(event.name);
@@ -799,6 +784,11 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
         if (typeof (callbacks) != "undefined" && callbacks != null) {
             for (var i = 0; i < CARRIER_CB_NAMES.length; i++) {
                 var name = CARRIER_CB_NAMES[i];
+                carrier.callbacks[name] = callbacks[name];
+            }
+
+            for (i = 0; i < GROUP_CB_NAMES.length; i++) {
+                name = GROUP_CB_NAMES[i];
                 carrier.callbacks[name] = callbacks[name];
             }
         }

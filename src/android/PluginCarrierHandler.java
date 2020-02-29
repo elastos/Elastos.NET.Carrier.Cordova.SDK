@@ -30,6 +30,7 @@
   import org.json.JSONObject;
 
   import java.nio.charset.StandardCharsets;
+  import java.util.HashMap;
   import java.util.List;
   import java.util.ArrayList;
   import java.io.File;
@@ -38,20 +39,24 @@
   import org.elastos.carrier.exceptions.CarrierException;
   import org.elastos.carrier.session.Manager;
 
-  public class PluginCarrierHandler extends AbstractCarrierHandler implements ManagerHandler , org.elastos.carrier.filetransfer.ManagerHandler {
+  public class PluginCarrierHandler extends AbstractCarrierHandler implements ManagerHandler, org.elastos.carrier.filetransfer.ManagerHandler {
 	  private static String TAG = "PluginCarrierHandler";
 
 	  public Carrier mCarrier;
 	  public int mCode;
 	  public Manager mSessionManager;
 	  public CallbackContext mCallbackContext = null;
+	  public CallbackContext mGroupCallbackContext = null;
+	  public HashMap<Group, String> groups;
 
 	  private org.elastos.carrier.filetransfer.Manager mFileTransferManager;
 
 	  public static int AGENT_READY = 0;
 
-	  private PluginCarrierHandler(CallbackContext callbackContext) {
+	  private PluginCarrierHandler(CallbackContext callbackContext, CallbackContext groupCallbackContext) {
 		  mCallbackContext = callbackContext;
+		  mGroupCallbackContext = groupCallbackContext;
+		  groups = new HashMap<>();
 	  }
 
 	  private Carrier createCarrier(String dir, String configString, CarrierPlugin plugin) throws JSONException, CarrierException {
@@ -109,8 +114,9 @@
 
 	  public static PluginCarrierHandler createInstance(String dir, String configString,
 														CallbackContext callbackContext,
+														CallbackContext groupCallbackContext,
 														CarrierPlugin plugin) throws JSONException, CarrierException {
-		  PluginCarrierHandler handler = new PluginCarrierHandler(callbackContext);
+		  PluginCarrierHandler handler = new PluginCarrierHandler(callbackContext, groupCallbackContext);
 		  if (handler != null) {
 			  Carrier carrier = handler.createCarrier(dir, configString, plugin);
 			  if (carrier == null) {
@@ -206,6 +212,15 @@
 			  PluginResult result = new PluginResult(PluginResult.Status.OK, info);
 			  result.setKeepCallback(true);
 			  mCallbackContext.sendPluginResult(result);
+		  }
+	  }
+
+	  private void sendGroupEvent(JSONObject info, String groupId) throws JSONException {
+		  info.put("groupId", groupId);
+		  if (mCallbackContext != null) {
+			  PluginResult result = new PluginResult(PluginResult.Status.OK, info);
+			  result.setKeepCallback(true);
+			  mGroupCallbackContext.sendPluginResult(result);
 		  }
 	  }
 
@@ -415,8 +430,70 @@
 		  }
 	  }
 
+	  @Override
+	  public void onGroupConnected(Group group) {
+		  JSONObject r = new JSONObject();
+		  try {
+			  r.put("name", "onConnection");
+			  sendGroupEvent(r, groups.get(group));
+		  } catch (JSONException e) {
+			  e.printStackTrace();
+		  }
+	  }
+
+	  @Override
+	  public void onGroupMessage(Group group, String from, byte[] message) {
+		  JSONObject r = new JSONObject();
+		  String messageData = new String(message, StandardCharsets.UTF_8);
+		  try {
+			  r.put("name", "onGroupMessage");
+			  r.put("from", from);
+			  r.put("message",messageData);
+			  sendGroupEvent(r, groups.get(group));
+		  } catch (JSONException e) {
+			  e.printStackTrace();
+		  }
+	  }
+
+	  @Override
+	  public void onGroupTitle(Group group, String from, String title) {
+		  JSONObject r = new JSONObject();
+		  try {
+			  r.put("name", "onGroupTitle");
+			  r.put("from", from);
+			  r.put("title", title);
+			  sendGroupEvent(r, groups.get(group));
+		  } catch (JSONException e) {
+			  e.printStackTrace();
+		  }
+	  }
+
+	  @Override
+	  public void onPeerName(Group group, String peerId, String peerName) {
+		  JSONObject r = new JSONObject();
+		  try {
+			  r.put("name", "onPeerName");
+			  r.put("peerId", peerId);
+			  r.put("peerName", peerName);
+			  sendGroupEvent(r, groups.get(group));
+		  } catch (JSONException e) {
+			  e.printStackTrace();
+		  }
+	  }
+
+	  @Override
+	  public void onPeerListChanged(Group group) {
+		  JSONObject r = new JSONObject();
+		  try {
+			  r.put("name", "onPeerListChanged");
+			  sendGroupEvent(r, groups.get(group));
+		  } catch (JSONException e) {
+			  e.printStackTrace();
+		  }
+	  }
+
 	  private JSONObject createFileTransferJSON(FileTransferInfo info){
-	  	  JSONObject jsonObject = new JSONObject();
+		  JSONObject jsonObject = new JSONObject();
 		  try {
 			  jsonObject.put("fileId",info.getFileId());
 			  jsonObject.put("filename",info.getFileName());
