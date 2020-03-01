@@ -48,6 +48,14 @@ public class BootstrapsGetter {
         public String publicKey;
     }
 
+    @SerializedName("ipfsnodes")
+    ArrayList<IpfsNode> ipfsNodes;
+
+    static class IpfsNode {
+        @SerializedName("addr")
+        public String addr;
+    }
+
     private static String asJsonFile(InputStream inputStream) {
         try {
             byte[] bytes = new byte[inputStream.available()];
@@ -67,6 +75,16 @@ public class BootstrapsGetter {
 
         BootstrapsGetter getter = new Gson().fromJson(jsonFile, BootstrapsGetter.class);
         return getter.bootstrapNodes;
+    }
+
+    static ArrayList<IpfsNode> getIpfsNodes(CarrierPlugin plugin) {
+        Resources res = plugin.cordova.getActivity().getResources();
+        String jsonFile = asJsonFile(res.openRawResource(R.raw.ipfsnodes));
+        if (jsonFile == null)
+            return null;
+
+        BootstrapsGetter getter = new Gson().fromJson(jsonFile, BootstrapsGetter.class);
+        return getter.ipfsNodes;
     }
 }
 

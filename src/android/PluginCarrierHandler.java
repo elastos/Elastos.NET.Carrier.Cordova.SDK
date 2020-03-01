@@ -71,13 +71,23 @@
 			  bootstraps.add(bootstrapNode);
 		  }
 
+		  List<Carrier.Options.HiveBootstrapNode> ipfsNodes = new ArrayList<>();
+		  ArrayList<BootstrapsGetter.IpfsNode> ipfsList = BootstrapsGetter.getIpfsNodes(plugin);
+		  for (BootstrapsGetter.IpfsNode node: ipfsList) {
+			  Carrier.Options.HiveBootstrapNode ipfsNode = new Carrier.Options.HiveBootstrapNode();
+			  String part[] = node.addr.split(":");
+			  ipfsNode.setIpv4(part[0]);
+			  ipfsNode.setPort(part[1]);
+		  }
+
 		  JSONObject jsonObject = new JSONObject(configString);
 		  udpEnabled = jsonObject.getBoolean("udpEnabled");
 
 		  Carrier.Options options = new Carrier.Options();
-		  options.setPersistentLocation(dir).
-				  setUdpEnabled(udpEnabled).
-				  setBootstrapNodes(bootstraps);
+		  options.setPersistentLocation(dir)
+				  .setUdpEnabled(udpEnabled)
+				  .setBootstrapNodes(bootstraps)
+				  .setHiveBootstrapNodes(ipfsNodes);
 
 		  Carrier.initializeInstance(options, this);
 		  mCarrier = Carrier.getInstance();
@@ -94,9 +104,7 @@
 		  mFileTransferManager = org.elastos.carrier.filetransfer.Manager.getInstance();
 		  Log.i(TAG, "Agent file transfer manager created successfully");
 
-		  //		mCarrier.start(50);
 		  mCode = System.identityHashCode(mCarrier);
-  //		mCarrierMap.put(dir, carrier);
 
 		  return mCarrier;
 	  }
