@@ -396,15 +396,16 @@ class CarrierImpl implements CarrierPlugin.Carrier {
     }
 
     newGroup(callbacks: CarrierPlugin.CarrierCallbacks, onSuccess: (group: CarrierPlugin.Group) => void, onError?: (err: string) => void) {
+        var me = this;
         var _onSuccess = function(ret){
             var group = new GroupImpl();
             group.groupId = ret.groupId;
-            this.carrierManager.groups[group.groupId] = group;
+            me.carrierManager.groups[group.groupId] = group;
 
             if (typeof (callbacks) != "undefined" && callbacks != null) {
                 for (var i = 0; i < GROUP_CB_NAMES.length; i++) {
                     var name = GROUP_CB_NAMES[i];
-                    this.carrierManager.groups[group.groupId].callbacks[name] = callbacks[name];
+                    me.carrierManager.groups[group.groupId].callbacks[name] = callbacks[name];
                 }
             }
 
