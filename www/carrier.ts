@@ -395,7 +395,7 @@ class CarrierImpl implements CarrierPlugin.Carrier {
         this.process(onSuccess, onError, "replyFriendInvite", [this.objId, to, status, reason, data]);
     }
 
-    newGroup(callbacks: CarrierPlugin.CarrierCallbacks, onSuccess: (group: CarrierPlugin.Group) => void, onError?: (err: string) => void) {
+    newGroup(callbacks: CarrierPlugin.GroupCallbacks, onSuccess: (group: CarrierPlugin.Group) => void, onError?: (err: string) => void) {
         var me = this;
         var _onSuccess = function(ret){
             var group = new GroupImpl();
