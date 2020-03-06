@@ -78,6 +78,7 @@
 			  String part[] = node.addr.split(":");
 			  ipfsNode.setIpv4(part[0]);
 			  ipfsNode.setPort(part[1]);
+			  ipfsNodes.add(ipfsNode);
 		  }
 
 		  JSONObject jsonObject = new JSONObject(configString);
