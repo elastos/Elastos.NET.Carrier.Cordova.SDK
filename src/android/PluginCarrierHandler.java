@@ -85,24 +85,21 @@
 		  udpEnabled = jsonObject.getBoolean("udpEnabled");
 
 		  Carrier.Options options = new Carrier.Options();
-		  options.setPersistentLocation(dir)
+		  options.setPersistentLocation(dir + '/' + jsonObject.getString("persistentLocation"))
 				  .setUdpEnabled(udpEnabled)
 				  .setBootstrapNodes(bootstraps)
 				  .setHiveBootstrapNodes(ipfsNodes);
 
-		  Carrier.initializeInstance(options, this);
-		  mCarrier = Carrier.getInstance();
+		  mCarrier = Carrier.createInstance(options, this);
 		  Log.i(TAG, "Agent elastos carrier instance created successfully");
 		  if (mCarrier == null) {
 			  return null;
 		  }
 
-		  Manager.initializeInstance(mCarrier,  this);
-		  mSessionManager = Manager.getInstance();
+		  mSessionManager = Manager.createInstance(mCarrier,  this);
 		  Log.i(TAG, "Agent session manager created successfully");
 
-		  org.elastos.carrier.filetransfer.Manager.initializeInstance(mCarrier,this);
-		  mFileTransferManager = org.elastos.carrier.filetransfer.Manager.getInstance();
+		  mFileTransferManager = org.elastos.carrier.filetransfer.Manager.createInstance(mCarrier,this);
 		  Log.i(TAG, "Agent file transfer manager created successfully");
 
 		  mCode = System.identityHashCode(mCarrier);

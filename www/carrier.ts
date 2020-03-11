@@ -261,6 +261,7 @@ class SessionImpl implements CarrierPlugin.Session {
 class CarrierImpl implements CarrierPlugin.Carrier {
     objId = null;
     carrierManager = null;
+    groups = {};
 
     nodeId = null;
     userId = null;
@@ -409,6 +410,8 @@ class CarrierImpl implements CarrierPlugin.Carrier {
                 }
             }
 
+            me.groups[group.groupId] = group;
+
             if (onSuccess) onSuccess(group);
          };
         this.process(_onSuccess, onError, "createGroup", [this.objId]);
@@ -428,6 +431,8 @@ class CarrierImpl implements CarrierPlugin.Carrier {
                 }
             }
 
+            me.groups[group.groupId] = group;
+
             if (onSuccess) onSuccess(group);
         };
         this.process(_onSuccess, onError, "joinGroup", [this.objId,friendId,cookieCode]);
@@ -437,6 +442,7 @@ class CarrierImpl implements CarrierPlugin.Carrier {
         var me = this;
         var _onSuccess = function(ret){
             delete me.carrierManager.groups[group.groupId];
+            delete me.groups[group.groupId];
             if (onSuccess)
                 onSuccess(group);
         };
@@ -444,12 +450,9 @@ class CarrierImpl implements CarrierPlugin.Carrier {
     }
 
     getGroups(onSuccess: (groups: CarrierPlugin.Group[]) => void, onError?: (err: string) => void) {
-        var groups = [];
-        var index = 0;
-        for(var i in this.carrierManager.groups) {
-            groups[index] = this.carrierManager.groups[i];
-            index = index+1;
-        }
+        let groups = [];
+        for (let groupID in this.groups)
+            groups.push(this.groups[groupID]);
         if (onSuccess) onSuccess(groups);
     }
 
