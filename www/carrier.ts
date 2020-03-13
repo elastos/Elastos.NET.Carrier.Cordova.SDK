@@ -116,7 +116,7 @@ class StreamImpl implements CarrierPlugin.Stream {
     process(onSuccess, onError, name, args) {
         var me = this;
         var _onSuccess = function (ret) {
-            ret.stream = me;
+            if (typeof ret === 'object') ret.stream = me;
             if (onSuccess) onSuccess(ret);
         };
         exec(_onSuccess, onError, 'CarrierPlugin', name, args);
@@ -169,7 +169,7 @@ class SessionImpl implements CarrierPlugin.Session {
     process(onSuccess, onError, name, args) {
         var me = this;
         exec((ret) => {
-            ret.session = me;
+            if (typeof ret === 'object') ret.session = me;
             if (onSuccess)
                 onSuccess(ret);
         }, onError, 'CarrierPlugin', name, args);
@@ -510,6 +510,7 @@ class GroupImpl implements CarrierPlugin.Group {
     process(onSuccess, onError, name, args) {
         var me = this;
         var _onSuccess = function (ret) {
+           if (typeof ret === 'object') ret.group = me
            if (onSuccess) onSuccess(ret);
         };
         exec(_onSuccess, onError, 'CarrierPlugin', name, args);
@@ -573,7 +574,7 @@ class FileTransferImpl implements CarrierPlugin.FileTransfer {
     process(onSuccess, onError, name, args) {
         var me = this;
         var _onSuccess = function (ret) {
-            ret.fileTransfer = me;
+            if (typeof ret === 'object') ret.fileTransfer = me;
             if (onSuccess)
                 onSuccess(ret);
         }
