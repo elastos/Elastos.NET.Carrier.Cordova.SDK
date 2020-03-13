@@ -510,7 +510,6 @@ class GroupImpl implements CarrierPlugin.Group {
     process(onSuccess, onError, name, args) {
         var me = this;
         var _onSuccess = function (ret) {
-           ret.group = me;
            if (onSuccess) onSuccess(ret);
         };
         exec(_onSuccess, onError, 'CarrierPlugin', name, args);
