@@ -43,8 +43,8 @@ class CarrierPlugin : TrinityPlugin {
     var mCarrierDict = [Int: PluginCarrierHandler]()
     var mSessionDict = [Int: Session]()
     var mStreamDict = [Int: PluginStreamHandler]()
-    var mGroupDict = [Int: PluginGroupHandler]()
     var mFileTransferDict = [Int: PluginFileTransferHandler]()
+    var mGroupDict = [Int: CarrierGroup]()
 
     var carrierCallbackId: String = ""
     var sessionCallbackId: String = ""
@@ -169,7 +169,7 @@ class CarrierPlugin : TrinityPlugin {
         let config = command.arguments[1] as? String ?? ""
 
         do {
-        let carrierHandler = try PluginCarrierHandler.createInstance(dir, config, carrierCallbackId, self.commandDelegate);
+            let carrierHandler = try PluginCarrierHandler.createInstance(dir, config, carrierCallbackId, self.commandDelegate);
 
             count += 1;
             carrierHandler.mCode = count;
@@ -505,7 +505,7 @@ class CarrierPlugin : TrinityPlugin {
         let message = command.arguments[2] as? String ?? ""
         if let carrierHandler: PluginCarrierHandler = mCarrierDict[id] {
             do {
-                try carrierHandler.mCarrier.sendFriendMessage(to: to, withMessage: message);
+                _ = try carrierHandler.mCarrier.sendFriendMessage(to: to, withMessage: message);
                 self.success(command, retAsString: "success!");
             }
             catch {
@@ -1266,20 +1266,12 @@ class CarrierPlugin : TrinityPlugin {
         
         if let carrierHandler: PluginCarrierHandler = mCarrierDict[id] {
             do {
-                let groupHandler = PluginGroupHandler(groupCallbackId,self.commandDelegate);
-                
-                let group = try carrierHandler.mCarrier.createGroup(withDelegate: groupHandler);
-                
-                groupCount = groupCount + 1;
-                
-                let groupId = groupCount;
-                groupHandler.setGroup(group);
-                groupHandler.setGroupId(groupId);
-                
-                mGroupDict[groupId]=groupHandler;
+                let group = try carrierHandler.mCarrier.createGroup();
+                groupCount += 1
+                mGroupDict[groupCount] = group
                 
                 let ret: NSDictionary = [
-                    "groupId": groupId,
+                    "groupId": groupCount,
                 ]
                 self.success(command, retAsDict: ret);
             }
@@ -1302,19 +1294,13 @@ class CarrierPlugin : TrinityPlugin {
 
         if let carrierHandler: PluginCarrierHandler = mCarrierDict[id] {
             do {
-                let groupHandler = PluginGroupHandler(groupCallbackId,self.commandDelegate);
-                
-                let group = try carrierHandler.mCarrier.joinGroup(createdBy: friendId, withCookie: cookieRawData!, delegate: groupHandler);
-                
-                groupCount = groupCount + 1;
-                let groupId = groupCount;
-                groupHandler.setGroup(group);
-                groupHandler.setGroupId(groupId);
-                
-                mGroupDict[groupId]=groupHandler;
+
+                let group = try carrierHandler.mCarrier.joinGroup(createdBy: friendId, withCookie: cookieRawData!);
+                groupCount += 1
+                mGroupDict[groupCount] = group;
                 
                 let ret: NSDictionary = [
-                    "groupId": groupId,
+                    "groupId": groupCount,
                 ]
                 self.success(command, retAsDict: ret);
             }
@@ -1334,9 +1320,7 @@ class CarrierPlugin : TrinityPlugin {
         if  mCarrierDict[id] != nil && mGroupDict[groupId] != nil {
             do {
                 let carrierHandler: PluginCarrierHandler! = mCarrierDict[id];
-                let groupHandler: PluginGroupHandler! = mGroupDict[groupId];
-
-                try carrierHandler.mCarrier.leaveGroup(from: groupHandler.mGroup);
+                try carrierHandler.mCarrier.leaveGroup(from: mGroupDict[groupId]!);
 
                 mGroupDict.removeValue(forKey: groupId);
 
@@ -1355,17 +1339,12 @@ class CarrierPlugin : TrinityPlugin {
         let groupId = command.arguments[0] as? Int ?? 0
         let friendId = command.arguments[1] as? String ?? ""
 
-        if let groupHandler: PluginGroupHandler = mGroupDict[groupId] {
-            do {
-                try groupHandler.mGroup.inviteFriend(friendId);
-                self.success(command, retAsString: "success!");
-            }
-            catch {
-                self.error(command, retAsString: error.localizedDescription);
-            }
+        do {
+            try mGroupDict[groupId]!.inviteFriend(friendId);
+            self.success(command, retAsString: "success!");
         }
-        else {
-            self.error(command, retAsString: "Id invalid!");
+        catch {
+            self.error(command, retAsString: error.localizedDescription);
         }
     }
 
@@ -1375,37 +1354,27 @@ class CarrierPlugin : TrinityPlugin {
         
         let messageRawData:Data = message.data(using: .utf8)!
 
-        if let groupHandler: PluginGroupHandler = mGroupDict[groupId] {
-            do {
-                try groupHandler.mGroup.sendMessage(messageRawData);
-                self.success(command, retAsString: "success!");
-            }
-            catch {
-                self.error(command, retAsString: error.localizedDescription);
-            }
+        do {
+            try mGroupDict[groupId]!.sendMessage(messageRawData);
+            self.success(command, retAsString: "success!");
         }
-        else {
-            self.error(command, retAsString: "Id invalid!");
+        catch {
+            self.error(command, retAsString: error.localizedDescription);
         }
     }
 
     @objc func getGroupTitle(_ command: CDVInvokedUrlCommand) {
         let groupId = command.arguments[0] as? Int ?? 0
 
-        if let groupHandler: PluginGroupHandler = mGroupDict[groupId] {
-            do {
-                let title = try groupHandler.mGroup.getTitle();
-                let ret: NSDictionary = [
-                    "groupTitle": title,
-                ]
-                self.success(command, retAsDict: ret);
-            }
-            catch {
-                self.error(command, retAsString: error.localizedDescription);
-            }
+        do {
+            let title = try mGroupDict[groupId]!.getTitle();
+            let ret: NSDictionary = [
+                "groupTitle": title,
+            ]
+            self.success(command, retAsDict: ret);
         }
-        else {
-            self.error(command, retAsString: "Id invalid!");
+        catch {
+            self.error(command, retAsString: error.localizedDescription);
         }
     }
 
@@ -1413,43 +1382,33 @@ class CarrierPlugin : TrinityPlugin {
         let groupId = command.arguments[0] as? Int ?? 0
         let groupTitle = command.arguments[1] as? String ?? ""
 
-        if let groupHandler: PluginGroupHandler = mGroupDict[groupId] {
-            do {
-                try groupHandler.mGroup.setTitle(groupTitle);
-                let title = try groupHandler.mGroup.getTitle();
-                let ret: NSDictionary = [
-                    "groupTitle": title,
-                ]
-                self.success(command, retAsDict: ret);
-            }
-            catch {
-                self.error(command, retAsString: error.localizedDescription);
-            }
+        do {
+            try mGroupDict[groupId]!.setTitle(groupTitle);
+            let title = try mGroupDict[groupId]!.getTitle();
+            let ret: NSDictionary = [
+                "groupTitle": title,
+            ]
+            self.success(command, retAsDict: ret);
         }
-        else {
-            self.error(command, retAsString: "Id invalid!");
+        catch {
+            self.error(command, retAsString: error.localizedDescription);
         }
     }
 
     @objc func getGroupPeers(_ command: CDVInvokedUrlCommand) {
         let groupId = command.arguments[0] as? Int ?? 0
 
-        if let groupHandler: PluginGroupHandler = mGroupDict[groupId] {
-            do {
-                let peers = try groupHandler.mGroup.getPeers();
-                let peersInfo = groupHandler.getGroupPeersInfoDict(peers);
-                let ret : NSDictionary = [
-                    "peers": peersInfo,
-                ]
-                
-                self.success(command, retAsDict: ret);
-            }
-            catch {
-                self.error(command, retAsString: error.localizedDescription);
-            }
+        do {
+            let peers = try mGroupDict[groupId]!.getPeers();
+            let peersInfo = PluginGroupHelper.getGroupPeersInfoDict(peers);
+            let ret : NSDictionary = [
+                "peers": peersInfo,
+            ]
+
+            self.success(command, retAsDict: ret);
         }
-        else {
-            self.error(command, retAsString: "Id invalid!");
+        catch {
+            self.error(command, retAsString: error.localizedDescription);
         }
     }
 
@@ -1457,21 +1416,16 @@ class CarrierPlugin : TrinityPlugin {
         let groupId = command.arguments[0] as? Int ?? 0
         let peerId = command.arguments[1] as? String ?? ""
 
-        if let groupHandler: PluginGroupHandler = mGroupDict[groupId] {
-            do {
-                let peer = try groupHandler.mGroup.getPeer(byPeerid: peerId);
-                let peerInfo = groupHandler.getGroupPeerInfoDict(peer);
-                let ret : NSDictionary = [
-                    "peer": peerInfo,
-                ]
-                self.success(command, retAsDict: ret);
-            }
-            catch {
-                self.error(command, retAsString: error.localizedDescription);
-            }
+        do {
+            let peer = try mGroupDict[groupId]!.getPeer(byPeerid: peerId);
+            let peerInfo = PluginGroupHelper.getGroupPeerInfoDict(peer);
+            let ret : NSDictionary = [
+                "peer": peerInfo,
+            ]
+            self.success(command, retAsDict: ret);
         }
-        else {
-            self.error(command, retAsString: "Id invalid!");
+        catch {
+            self.error(command, retAsString: error.localizedDescription);
         }
     }
 }

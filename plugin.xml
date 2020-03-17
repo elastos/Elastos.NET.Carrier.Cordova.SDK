@@ -46,7 +46,7 @@
         <source-file src="src/ios/PluginCarrierHandler.swift" />
         <source-file src="src/ios/PluginStreamHandler.swift" />
         <source-file src="src/ios/PluginFileTransferHandler.swift" />
-        <source-file src="src/ios/PluginGroupHandler.swift" />
+        <source-file src="src/ios/PluginGroupHelper.swift" />
         <source-file src="src/ios/FIRHandler.swift" />
         <source-file src="src/ios/SRCHandler.swift" />
         <framework src="src/ios/libs/ElastosCarrierSDK.framework" custom="true" embed="true" />

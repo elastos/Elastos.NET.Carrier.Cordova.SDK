@@ -91,18 +91,14 @@ class PluginCarrierHandler: CarrierDelegate {
             }
         }
 
-        options.persistentLocation = carrierDirectory
+        options.persistentLocation = carrierDirectory + "/" + (decodedJsonDict["persistentLocation"] as! String)
 
-        try Carrier.initializeSharedInstance(options: options, delegate: self)
+        try mCarrier = Carrier.createInstance(options: options, delegate: self)
         print("carrier instance created")
 
-        mCarrier = Carrier.sharedInstance()
+        try mSessionManager = CarrierSessionManager.createInstance(carrier: mCarrier, sessionRequestHandler: didReceiveSessionRequest);
 
-        try CarrierSessionManager.initializeSharedInstance(carrier: mCarrier, sessionRequestHandler: didReceiveSessionRequest);
-        mSessionManager = CarrierSessionManager.sharedInstance();
-
-        try CarrierFileTransferManager.initializeSharedInstance(carrier: mCarrier, connectHandler: didReceiveFileTransferConnectHandler)
-        mFileTransferManager = CarrierFileTransferManager.sharedInstance()
+        try mFileTransferManager = CarrierFileTransferManager.createInstance(carrier: mCarrier, connectHandler: didReceiveFileTransferConnectHandler)
 
         return mCarrier;
     }
@@ -331,6 +327,50 @@ class PluginCarrierHandler: CarrierDelegate {
             "cookieCode": cookieData ,
         ]
 
+        sendEvent(ret);
+    }
+
+    func groupDidConnect(_ group: CarrierGroup) {
+        let ret: NSMutableDictionary = [
+            "name" : "onGroupConnected",
+            ]
+        sendEvent(ret);
+    }
+
+    func didReceiveGroupMessage(_ group: CarrierGroup, _ from: String, _ data: Data) {
+        let message = String(data: data, encoding: .utf8)!;
+
+        let ret: NSMutableDictionary = [
+            "name" : "onGroupMessage",
+            "from" : from,
+            "message" : message,
+            ]
+        sendEvent(ret);
+    }
+
+    func groupTitleDidChange(_ group: CarrierGroup, _ from: String, _ newTitle: String) {
+        let ret: NSMutableDictionary = [
+            "name" : "onGroupTitle",
+            "from" : from,
+            "title" : newTitle,
+            ]
+        sendEvent(ret);
+    }
+
+    func groupPeerNameDidChange(_ group: CarrierGroup, _ from: String, _ newName: String) {
+        let ret: NSMutableDictionary = [
+            "name" : "onPeerName",
+            "peerId" : from,
+            "peerName" : newName,
+            ]
+
+        sendEvent(ret);
+    }
+
+    func groupPeerListDidChange(_ group: CarrierGroup) {
+        let ret: NSMutableDictionary = [
+            "name" : "onPeerListChanged",
+            ]
         sendEvent(ret);
     }
 }
