@@ -176,6 +176,13 @@ class CarrierPlugin : TrinityPlugin {
             carrierHandler.mCode = count;
             mCarrierDict[count] = carrierHandler;
 
+            let groups = try carrierHandler.mCarrier.getGroups()
+            for group in groups {
+                groupCount += 1
+                mGroupDict[groupCount] = group
+                carrierHandler.mGroups[group] = groupCount
+            }
+
             let selfInfo: UserInfo = try carrierHandler.mCarrier.getSelfUserInfo();
             let ret: NSDictionary = [
                 "id": carrierHandler.mCode,
@@ -184,7 +191,9 @@ class CarrierPlugin : TrinityPlugin {
                 "address": carrierHandler.mCarrier.getAddress(),
                 "nospam" : try carrierHandler.mCarrier.getSelfNospam(),
                 "presence" : try carrierHandler.mCarrier.getSelfPresence().rawValue,
-                ]
+                "groups" : NSMutableArray(array: Array(mGroupDict.keys))
+            ]
+
             self.success(command, retAsDict: ret);
         }
         catch {
