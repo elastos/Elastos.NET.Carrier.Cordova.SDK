@@ -497,7 +497,7 @@ class GroupImpl implements CarrierPlugin.Group {
     process(onSuccess, onError, name, args) {
         var me = this;
         var _onSuccess = function (ret) {
-           if (typeof ret === 'object') ret.group = me
+           if (typeof ret === 'object') ret.group = me;
            if (onSuccess) onSuccess(ret);
         };
         exec(_onSuccess, onError, 'CarrierPlugin', name, args);
@@ -665,7 +665,7 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
             }
         });
 
-        this.setListener(STREAM, function(event) {
+        this.setListener(STREAM, (event) => {
             event.stream = this.streams[event.id];
             event.id = null;
             if (event.stream && event.stream.callbacks[event.name]) {
