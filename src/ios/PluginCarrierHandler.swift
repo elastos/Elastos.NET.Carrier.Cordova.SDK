@@ -34,11 +34,14 @@ class PluginCarrierHandler: CarrierDelegate {
     var mCode:Int = 0
     var mSessionManager: CarrierSessionManager!;
     var callbackId:String?
+    var groupCallbackId:String?
     var commandDelegate:CDVCommandDelegate?
     var mFileTransferManager: CarrierFileTransferManager?
+    var mGroups: [CarrierGroup: Int] = [:]
 
-    init(_ callbackId: String, _ commandDelegate:CDVCommandDelegate) {
+    init(_ callbackId: String, _ groupCallbackId: String,_ commandDelegate:CDVCommandDelegate) {
         self.callbackId = callbackId;
+        self.groupCallbackId = groupCallbackId;
         self.commandDelegate = commandDelegate;
     }
 
@@ -103,8 +106,9 @@ class PluginCarrierHandler: CarrierDelegate {
         return mCarrier;
     }
 
-    static func createInstance(_ dir: String, _ configString: String, _ callbackId:String, _ commandDelegate:CDVCommandDelegate) throws -> PluginCarrierHandler {
-        let handler: PluginCarrierHandler = PluginCarrierHandler(callbackId, commandDelegate);
+    static func createInstance(_ dir: String, _ configString: String, _ callbackId:String,
+                               _ groupCallbackId: String, _ commandDelegate:CDVCommandDelegate) throws -> PluginCarrierHandler {
+        let handler: PluginCarrierHandler = PluginCarrierHandler(callbackId, groupCallbackId, commandDelegate);
         let _:Carrier = try handler.createCarrier(dir, configString);
         return handler;
     }
@@ -334,7 +338,7 @@ class PluginCarrierHandler: CarrierDelegate {
         let ret: NSMutableDictionary = [
             "name" : "onGroupConnected",
             ]
-        sendEvent(ret);
+        sendGroupEvent(group, ret);
     }
 
     func didReceiveGroupMessage(_ group: CarrierGroup, _ from: String, _ data: Data) {
@@ -345,7 +349,7 @@ class PluginCarrierHandler: CarrierDelegate {
             "from" : from,
             "message" : message,
             ]
-        sendEvent(ret);
+        sendGroupEvent(group, ret);
     }
 
     func groupTitleDidChange(_ group: CarrierGroup, _ from: String, _ newTitle: String) {
@@ -354,7 +358,7 @@ class PluginCarrierHandler: CarrierDelegate {
             "from" : from,
             "title" : newTitle,
             ]
-        sendEvent(ret);
+        sendGroupEvent(group, ret)
     }
 
     func groupPeerNameDidChange(_ group: CarrierGroup, _ from: String, _ newName: String) {
@@ -364,13 +368,21 @@ class PluginCarrierHandler: CarrierDelegate {
             "peerName" : newName,
             ]
 
-        sendEvent(ret);
+        sendGroupEvent(group, ret);
     }
 
     func groupPeerListDidChange(_ group: CarrierGroup) {
         let ret: NSMutableDictionary = [
             "name" : "onPeerListChanged",
             ]
-        sendEvent(ret);
+        sendGroupEvent(group, ret);
+    }
+
+    private func sendGroupEvent(_ group: CarrierGroup, _ ret: NSMutableDictionary) {
+        guard let groupId = mGroups[group] else {return}
+        ret["groupId"] = groupId
+        let result = CDVPluginResult(status: CDVCommandStatus_OK,messageAs: ret as? [AnyHashable : Any]);
+        result?.setKeepCallbackAs(true);
+        self.commandDelegate?.send(result, callbackId:self.groupCallbackId);
     }
 }

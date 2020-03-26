@@ -169,7 +169,8 @@ class CarrierPlugin : TrinityPlugin {
         let config = command.arguments[1] as? String ?? ""
 
         do {
-            let carrierHandler = try PluginCarrierHandler.createInstance(dir, config, carrierCallbackId, self.commandDelegate);
+            let carrierHandler = try PluginCarrierHandler.createInstance(dir, config, carrierCallbackId,
+                    groupCallbackId, self.commandDelegate);
 
             count += 1;
             carrierHandler.mCode = count;
@@ -1269,7 +1270,8 @@ class CarrierPlugin : TrinityPlugin {
                 let group = try carrierHandler.mCarrier.createGroup();
                 groupCount += 1
                 mGroupDict[groupCount] = group
-                
+                carrierHandler.mGroups[group] = groupCount
+
                 let ret: NSDictionary = [
                     "groupId": groupCount,
                 ]
@@ -1298,7 +1300,8 @@ class CarrierPlugin : TrinityPlugin {
                 let group = try carrierHandler.mCarrier.joinGroup(createdBy: friendId, withCookie: cookieRawData!);
                 groupCount += 1
                 mGroupDict[groupCount] = group;
-                
+                carrierHandler.mGroups[group] = groupCount
+
                 let ret: NSDictionary = [
                     "groupId": groupCount,
                 ]
@@ -1322,7 +1325,9 @@ class CarrierPlugin : TrinityPlugin {
                 let carrierHandler: PluginCarrierHandler! = mCarrierDict[id];
                 try carrierHandler.mCarrier.leaveGroup(from: mGroupDict[groupId]!);
 
-                mGroupDict.removeValue(forKey: groupId);
+                if let group = mGroupDict.removeValue(forKey: groupId) {
+                    carrierHandler.mGroups.removeValue(forKey: group)
+                }
 
                 self.success(command, retAsString: "success!");
             }
