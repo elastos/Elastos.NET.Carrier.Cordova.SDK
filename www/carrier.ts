@@ -650,8 +650,6 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
         Object.freeze(GroupImpl.prototype);
         Object.freeze(FileTransferImpl.prototype);
 
-        exec(function () { }, null, 'CarrierPlugin', 'initVal', []);
-
         this.setListener(CARRIER, (event) => {
             event.carrier = this.carriers[event.id];
             if (event.carrier) {

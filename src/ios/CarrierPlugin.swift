@@ -56,16 +56,12 @@ class CarrierPlugin : TrinityPlugin {
 
     var groupCallbackId: String = ""
     var groupCount: Int = 0;
-    
+
     var count: Int = 1;
 
     //    override init() {
     //        super.init();
     //    }
-
-    @objc func initVal(_ command: CDVInvokedUrlCommand) {
-
-    }
 
     @objc func success(_ command: CDVInvokedUrlCommand, retAsString: String) {
         let result = CDVPluginResult(status: CDVCommandStatus_OK,
@@ -86,10 +82,6 @@ class CarrierPlugin : TrinityPlugin {
                                      messageAs: retAsString);
 
         self.commandDelegate.send(result, callbackId: command.callbackId)
-    }
-
-    @objc func test(_ command: CDVInvokedUrlCommand) {
-
     }
 
     @objc func getVersion(_ command: CDVInvokedUrlCommand) {
@@ -991,7 +983,7 @@ class CarrierPlugin : TrinityPlugin {
             self.error(command, retAsString: "Id invalid!");
         }
     }
-    
+
     @objc func closeFileTrans(_ command: CDVInvokedUrlCommand) {
         let fileTransferId = command.arguments[0] as? Int ?? 0
 
@@ -1003,7 +995,7 @@ class CarrierPlugin : TrinityPlugin {
             self.error(command, retAsString: "Id invalid!");
         }
     }
-    
+
     @objc func getFileTransFileId(_ command: CDVInvokedUrlCommand) {
         let fileTransferId = command.arguments[0] as? Int ?? 0
         let filename = command.arguments[1] as? String ?? ""
@@ -1012,7 +1004,7 @@ class CarrierPlugin : TrinityPlugin {
         if let fileTransferHandler: PluginFileTransferHandler = mFileTransferDict[fileTransferId] {
             do {
                 let fileId = try fileTransferHandler.fileTransfer?.acquireFileId(by: filename);
-                
+
                 let ret: NSDictionary = [
                     "fileId": fileId,
                     ]
@@ -1034,7 +1026,7 @@ class CarrierPlugin : TrinityPlugin {
 
         if let fileTransferHandler: PluginFileTransferHandler = mFileTransferDict[fileTransferId] {
             do {
-               
+
                 let filename = try fileTransferHandler.fileTransfer?.acquireFileName(by: fileId);
                 let ret: NSDictionary = [
                     "filename": filename,
@@ -1066,7 +1058,7 @@ class CarrierPlugin : TrinityPlugin {
             self.error(command, retAsString: "Id invalid!");
         }
     }
-    
+
     @objc func acceptFileTransConnect(_ command: CDVInvokedUrlCommand) {
         let fileTransferId = command.arguments[0] as? Int ?? 0
 
@@ -1083,11 +1075,11 @@ class CarrierPlugin : TrinityPlugin {
             self.error(command, retAsString: "Id invalid!");
         }
     }
-    
+
     @objc func addFileTransFile(_ command: CDVInvokedUrlCommand) {
         let fileTransferId = command.arguments[0] as? Int ?? 0
         let fileInfo = command.arguments[1] as? CarrierFileTransferInfo ?? CarrierFileTransferInfo();
-        
+
         if let fileTransferHandler: PluginFileTransferHandler = mFileTransferDict[fileTransferId] {
             do {
                 try fileTransferHandler.fileTransfer?.addFile(fileInfo);
@@ -1101,7 +1093,7 @@ class CarrierPlugin : TrinityPlugin {
             self.error(command, retAsString: "Id invalid!");
         }
     }
-    
+
     @objc func pullFileTransData(_ command: CDVInvokedUrlCommand) {
         let fileTransferId = command.arguments[0] as? Int ?? 0
         let fileId = command.arguments[1] as? String ?? ""
@@ -1126,7 +1118,7 @@ class CarrierPlugin : TrinityPlugin {
         let fileId = command.arguments[1] as? String ?? ""
         let data = command.arguments[2] as? String ?? ""
         let rawData:Data = data.data(using: .utf8)!
-        
+
         if let fileTransferHandler: PluginFileTransferHandler = mFileTransferDict[fileTransferId] {
             do {
                 try fileTransferHandler.fileTransfer?.sendData(fileId: fileId, withData: rawData)
@@ -1140,11 +1132,11 @@ class CarrierPlugin : TrinityPlugin {
             self.error(command, retAsString: "Id invalid!");
         }
     }
-    
+
     @objc func sendFileTransFinish(_ command: CDVInvokedUrlCommand) {
         let fileTransferId = command.arguments[0] as? Int ?? 0
         let fileId = command.arguments[1] as? String ?? ""
-        
+
         if let fileTransferHandler: PluginFileTransferHandler = mFileTransferDict[fileTransferId] {
             do {
                 //TODO
@@ -1183,7 +1175,7 @@ class CarrierPlugin : TrinityPlugin {
     @objc func pendFileTrans(_ command: CDVInvokedUrlCommand) {
         let fileTransferId = command.arguments[0] as? Int ?? 0
         let fileId = command.arguments[1] as? String ?? ""
-       
+
         if let fileTransferHandler: PluginFileTransferHandler = mFileTransferDict[fileTransferId] {
             do {
                 try fileTransferHandler.fileTransfer?.pendTransfering(fileId: fileId)
@@ -1201,7 +1193,7 @@ class CarrierPlugin : TrinityPlugin {
     @objc func resumeFileTrans(_ command: CDVInvokedUrlCommand) {
         let fileTransferId = command.arguments[0] as? Int ?? 0
         let fileId = command.arguments[1] as? String ?? ""
-       
+
         if let fileTransferHandler: PluginFileTransferHandler = mFileTransferDict[fileTransferId] {
             do {
                 try fileTransferHandler.fileTransfer?.resumeTransfering(fileId: fileId)
@@ -1220,18 +1212,18 @@ class CarrierPlugin : TrinityPlugin {
         let id = command.arguments[0] as? Int ?? 0
         let to = command.arguments[1] as? String ?? ""
         let fileInfo = command.arguments[2] as? NSMutableDictionary
-        
+
         let fileId:String = fileInfo?["fileId"] as! String
         let filename:String = fileInfo?["filename"] as! String
         let size: String = fileInfo?["size"] as! String
         let isize: Int = Int(size) ?? 0
         let usize: UInt64 = UInt64(isize)
-        
+
         let fileTransFileInfo = CarrierFileTransferInfo();
         fileTransFileInfo.fileId = fileId
         fileTransFileInfo.fileName = filename
         fileTransFileInfo.fileSize = usize
-        
+
         if let carrierHandler: PluginCarrierHandler = mCarrierDict[id] {
             do {
                 let pluginFileTransferHandler = PluginFileTransferHandler(fileTransferCallbackId, self.commandDelegate)
@@ -1244,7 +1236,7 @@ class CarrierPlugin : TrinityPlugin {
                 pluginFileTransferHandler.fileTransferId = fileTransferCount;
 
                 mFileTransferDict[fileTransferCount] = pluginFileTransferHandler;
-                
+
                 let ret: NSDictionary = [
                     "fileTransferId": fileTransferCount,
                     ]
@@ -1270,10 +1262,10 @@ class CarrierPlugin : TrinityPlugin {
             self.error(command, retAsString: error.localizedDescription);
         }
     }
-    
+
     @objc func createGroup(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
-        
+
         if let carrierHandler: PluginCarrierHandler = mCarrierDict[id] {
             do {
                 let group = try carrierHandler.mCarrier.createGroup();
@@ -1365,7 +1357,7 @@ class CarrierPlugin : TrinityPlugin {
     @objc func sendGroupMessage(_ command: CDVInvokedUrlCommand) {
         let groupId = command.arguments[0] as? Int ?? 0
         let message = command.arguments[1] as? String ?? ""
-        
+
         let messageRawData:Data = message.data(using: .utf8)!
 
         do {
