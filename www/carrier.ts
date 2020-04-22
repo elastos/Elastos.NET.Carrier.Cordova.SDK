@@ -642,6 +642,8 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
     SRCEvent = [];
     SRCCount = 0;
 
+    hasSetListener = false;
+
     constructor() {
         Object.freeze(CarrierManagerImpl.prototype);
         Object.freeze(CarrierImpl.prototype);
@@ -649,68 +651,6 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
         Object.freeze(StreamImpl.prototype);
         Object.freeze(GroupImpl.prototype);
         Object.freeze(FileTransferImpl.prototype);
-
-        this.setListener(CARRIER, (event) => {
-            event.carrier = this.carriers[event.id];
-            if (event.carrier) {
-                //        event.id = null;
-                if (event.carrier.callbacks[event.name]) {
-                    event.carrier.callbacks[event.name](event);
-                }
-            }
-            else {
-                alert(event.name);
-            }
-        });
-
-        this.setListener(STREAM, (event) => {
-            event.stream = this.streams[event.id];
-            event.id = null;
-            if (event.stream && event.stream.callbacks[event.name]) {
-                event.stream.callbacks[event.name](event);
-            }
-        });
-
-        this.setListener(FRIEND_INVITE, (event) => {
-            var id = event.id;
-            event.id = null;
-            if (this.FriendInviteEvent[id].callback) {
-                event.carrier = this.FriendInviteEvent[id].carrier;
-                this.FriendInviteEvent[id].callback(event);
-            }
-        });
-
-        this.setListener(SESSION, (event) => {
-            var id = event.id;
-            event.id = null;
-            if (this.SRCEvent[id].callback) {
-                event.session = this.SRCEvent[id].session;
-                this.SRCEvent[id].callback(event);
-            }
-        });
-
-        this.setListener(GROUP, (event) => {
-            var group = this.groups[event.groupId];
-            if (group) {
-                var carrier = group.carrier;
-                if (carrier.callbacks[event.name]) {
-                    carrier.callbacks[event.name](event);
-                }
-            }else {
-                alert(event.name);
-            }
-        });
-
-        this.setListener(FILE_TRANSFER, (event) => {
-            var fileTransfer = this.fileTransfers[event.fileTransferId];
-            if (fileTransfer) {
-                if (fileTransfer.callbacks[event.name]) {
-                    fileTransfer.callbacks[event.name](event);
-                }
-            } else {
-                alert(event.name);
-            }
-        });
     }
 
     //FriendInviteResponseHandler
@@ -729,6 +669,74 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
         this.SRCEvent[this.SRCCount].callback = callback;
         this.SRCEvent[this.SRCCount].session = session
         return this.SRCCount;
+    }
+
+    initListener() {
+        if (!this.hasSetListener) {
+            this.setListener(CARRIER, (event) => {
+                event.carrier = this.carriers[event.id];
+                if (event.carrier) {
+                    //        event.id = null;
+                    if (event.carrier.callbacks[event.name]) {
+                        event.carrier.callbacks[event.name](event);
+                    }
+                }
+                else {
+                    alert(event.name);
+                }
+            });
+
+            this.setListener(STREAM, (event) => {
+                event.stream = this.streams[event.id];
+                event.id = null;
+                if (event.stream && event.stream.callbacks[event.name]) {
+                    event.stream.callbacks[event.name](event);
+                }
+            });
+
+            this.setListener(FRIEND_INVITE, (event) => {
+                var id = event.id;
+                event.id = null;
+                if (this.FriendInviteEvent[id].callback) {
+                    event.carrier = this.FriendInviteEvent[id].carrier;
+                    this.FriendInviteEvent[id].callback(event);
+                }
+            });
+
+            this.setListener(SESSION, (event) => {
+                var id = event.id;
+                event.id = null;
+                if (this.SRCEvent[id].callback) {
+                    event.session = this.SRCEvent[id].session;
+                    this.SRCEvent[id].callback(event);
+                }
+            });
+
+            this.setListener(GROUP, (event) => {
+                var group = this.groups[event.groupId];
+                if (group) {
+                    var carrier = group.carrier;
+                    if (carrier.callbacks[event.name]) {
+                        carrier.callbacks[event.name](event);
+                    }
+                }else {
+                    alert(event.name);
+                }
+            });
+
+            this.setListener(FILE_TRANSFER, (event) => {
+                var fileTransfer = this.fileTransfers[event.fileTransferId];
+                if (fileTransfer) {
+                    if (fileTransfer.callbacks[event.name]) {
+                        fileTransfer.callbacks[event.name](event);
+                    }
+                } else {
+                    alert(event.name);
+                }
+            });
+
+            this.hasSetListener = true;
+        }
     }
 
     setListener(type, eventCallback) {
@@ -760,6 +768,8 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
     }
 
     createObject(callbacks: CarrierPlugin.CarrierCallbacks, options: any, onSuccess: (carrier: CarrierPlugin.Carrier) => void, onError?: (err: string) => void) {
+        this.initListener();
+
         var carrier = new CarrierImpl();
         var me = this;
         var _onSuccess = function (ret) {
