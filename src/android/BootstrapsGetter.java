@@ -79,7 +79,7 @@ public class BootstrapsGetter {
 
     static ArrayList<IpfsNode> getIpfsNodes(CarrierPlugin plugin) {
         Resources res = plugin.cordova.getActivity().getResources();
-        String jsonFile = asJsonFile(res.openRawResource(R.raw.ipfsnodes));
+        String jsonFile = asJsonFile(res.openRawResource(R.raw.bootstraps));
         if (jsonFile == null)
             return null;
 
