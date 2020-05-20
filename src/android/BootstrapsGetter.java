@@ -26,6 +26,7 @@ import android.content.res.Resources;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
+import org.elastos.carrier.Carrier;
 import org.elastos.trinity.runtime.R;
 
 import java.io.InputStream;
@@ -48,12 +49,18 @@ public class BootstrapsGetter {
         public String publicKey;
     }
 
-    @SerializedName("ipfsnodes")
-    ArrayList<IpfsNode> ipfsNodes;
+    @SerializedName("expressNodes")
+    public ArrayList<ExpressNode0> expressNode0s;
 
-    static class IpfsNode {
-        @SerializedName("addr")
-        public String addr;
+    static public class ExpressNode0 {
+        @SerializedName("ipv4")
+        public String ipv4;
+
+        @SerializedName("port")
+        public int port;
+
+        @SerializedName("publicKey")
+        public String publicKey;
     }
 
     private static String asJsonFile(InputStream inputStream) {
@@ -77,14 +84,14 @@ public class BootstrapsGetter {
         return getter.bootstrapNodes;
     }
 
-    static ArrayList<IpfsNode> getIpfsNodes(CarrierPlugin plugin) {
+    static ArrayList<ExpressNode0> getExpressNodes(CarrierPlugin plugin) {
         Resources res = plugin.cordova.getActivity().getResources();
         String jsonFile = asJsonFile(res.openRawResource(R.raw.bootstraps));
         if (jsonFile == null)
             return null;
 
         BootstrapsGetter getter = new Gson().fromJson(jsonFile, BootstrapsGetter.class);
-        return getter.ipfsNodes;
+        return getter.expressNode0s;
     }
 }
 

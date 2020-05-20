@@ -33,6 +33,7 @@
   import java.util.HashMap;
   import java.util.List;
   import java.util.ArrayList;
+  import java.util.Date;
   import java.io.File;
 
   import org.elastos.carrier.*;
@@ -76,14 +77,14 @@
 			  bootstraps.add(bootstrapNode);
 		  }
 
-		  List<Carrier.Options.HiveBootstrapNode> ipfsNodes = new ArrayList<>();
-		  ArrayList<BootstrapsGetter.IpfsNode> ipfsList = BootstrapsGetter.getIpfsNodes(plugin);
-		  for (BootstrapsGetter.IpfsNode node: ipfsList) {
-			  Carrier.Options.HiveBootstrapNode ipfsNode = new Carrier.Options.HiveBootstrapNode();
-			  String part[] = node.addr.split(":");
-			  ipfsNode.setIpv4(part[0]);
-			  ipfsNode.setPort(part[1]);
-			  ipfsNodes.add(ipfsNode);
+		  List<Carrier.Options.ExpressNode> expressNodes = new ArrayList<>();
+		  ArrayList<BootstrapsGetter.ExpressNode0> list2 = BootstrapsGetter.getExpressNodes(plugin);
+		  for (BootstrapsGetter.ExpressNode0 node: list2) {
+			  Carrier.Options.ExpressNode expNode = new Carrier.Options.ExpressNode();
+			  expNode.setIpv4(node.ipv4);
+			  expNode.setPort(String.valueOf(node.port));
+			  expNode.setPublicKey(node.publicKey);
+			  expressNodes.add(expNode);
 		  }
 
 		  JSONObject jsonObject = new JSONObject(configString);
@@ -93,7 +94,7 @@
 		  options.setPersistentLocation(dir + '/' + jsonObject.getString("persistentLocation"))
 				  .setUdpEnabled(udpEnabled)
 				  .setBootstrapNodes(bootstraps)
-				  .setHiveBootstrapNodes(ipfsNodes);
+				  .setExpressNodes(expressNodes);
 
 		  mCarrier = Carrier.createInstance(options, this);
 		  Log.i(TAG, "Agent elastos carrier instance created successfully");
@@ -363,13 +364,14 @@
 	  }
 
 	  @Override
-	  public void onFriendMessage(Carrier carrier, String from, byte[] data, boolean isOffline) {
+	  public void onFriendMessage(Carrier carrier, String from, byte[] data, Date timestamp, boolean isOffline) {
 		  JSONObject r = new JSONObject();
 		  String message = new String(data, StandardCharsets.UTF_8);
 		  try {
 			  r.put("name", "onFriendMessage");
 			  r.put("from", from);
 			  r.put("message", message);
+			  r.put("timestamp", timestamp.toString());
 			  r.put("isOffline", isOffline);
 			  sendEvent(r);
 		  } catch (JSONException e) {
