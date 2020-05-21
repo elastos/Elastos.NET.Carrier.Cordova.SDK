@@ -37,6 +37,7 @@ const CARRIER_CB_NAMES = [
     "onFriendAdded",
     "onFriendRemoved",
     "onFriendMessage",
+    "onFriendMessageWithReceipt",
     "onFriendInviteRequest",
     "onSessionRequest",
     "onGroupInvite",
@@ -79,6 +80,7 @@ const STREAM = 3;
 const FRIEND_INVITE = 4;
 const GROUP = 5 ;
 const FILE_TRANSFER = 6 ;
+const MESSAGE_RECEIPT = 7;
 
 class StreamImpl implements CarrierPlugin.Stream {
     objId = null;
@@ -389,12 +391,20 @@ class CarrierImpl implements CarrierPlugin.Carrier {
         this.process(onSuccess, onError, "sendFriendMessage", [this.objId, to, message]);
     }
 
+    sendFriendMessageWithReceipt(to: string, message: string, handler: CarrierPlugin.OnFriendMessageReceipt,  onSuccess: (messageId: number) => void, onError?: (err: string) => void) {
+        var handlerId = 0;
+        if (typeof(handler) == "function") {
+            handlerId = this.carrierManager.addFriendMessageReceiptCB(handler,  this);
+        }
+        this.process(onSuccess, onError, "sendFriendMessageWithReceipt", [this.objId, to, message]);
+    }
+
     inviteFriend(to: string, data: string, handler: CarrierPlugin.OnFriendInviteResponse, onSuccess: () => void, onError?: (err: string) => void) {
         var handlerId = 0;
-           if (typeof handler == "function") {
-               handlerId = this.carrierManager.addFriendInviteResponseCB(handler, this);
-           }
-           this.process(onSuccess, onError, "inviteFriend", [this.objId, to, data, handlerId]);
+        if (typeof handler == "function") {
+            handlerId = this.carrierManager.addFriendInviteResponseCB(handler, this);
+        }
+        this.process(onSuccess, onError, "inviteFriend", [this.objId, to, data, handlerId]);
     }
 
     replyFriendInvite(to: string, status: Number, reason: string, data: string, onSuccess: () => void, onError?: (err: string) => void) {
@@ -639,6 +649,10 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
 
     FriendInviteEvent = [];
     FriendInviteCount = 0;
+
+    MessageReceiptEvent = [];
+    MessageReceiptCount = 0;
+
     SRCEvent = [];
     SRCCount = 0;
 
@@ -660,6 +674,14 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
         this.FriendInviteEvent[this.FriendInviteCount].callback = callback;
         this.FriendInviteEvent[this.FriendInviteCount].carrier = carrier
         return this.FriendInviteCount;
+    }
+
+    addFriendMessageReceiptCB(callback, carrier) {
+        this.MessageReceiptCount++;
+        this.MessageReceiptEvent[this.MessageReceiptCount] = new Object;
+        this.MessageReceiptEvent[this.MessageReceiptCount].callback = callback;
+        this.MessageReceiptEvent[this.MessageReceiptCount].carrier = carrier;
+        return this.MessageReceiptCount;
     }
 
     //SessionRequestCompleteHandler
@@ -700,6 +722,15 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
                 if (this.FriendInviteEvent[id].callback) {
                     event.carrier = this.FriendInviteEvent[id].carrier;
                     this.FriendInviteEvent[id].callback(event);
+                }
+            });
+
+            this.setListener(MESSAGE_RECEIPT, (event) => {
+                var id = event.id;
+                event.id = null;
+                if (this.MessageReceiptEvent[id].callback) {
+                    event.carrier = this.addFriendMessageReceiptCB[id].carrier;
+                    this.MessageReceiptEvent[id].callback(event);
                 }
             });
 

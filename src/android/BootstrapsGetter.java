@@ -26,13 +26,11 @@ import android.content.res.Resources;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
-import org.elastos.carrier.Carrier;
 import org.elastos.trinity.runtime.R;
 
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.io.IOException;
-import java.io.InputStream;
 
 public class BootstrapsGetter {
     @SerializedName("bootstraps")

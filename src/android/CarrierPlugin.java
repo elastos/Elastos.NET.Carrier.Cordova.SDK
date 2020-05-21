@@ -56,6 +56,7 @@
       private static final int FRIEND_INVITE = 4;
       private static final int GROUP = 5;
       private static final int FILE_TRANSFER = 6;
+      private static final int MESSAGE_RECEIPT = 7;
 
       private static final String SUCCESS = "Success!";
       private static final String INVALID_ID = "Id invalid!";
@@ -70,6 +71,7 @@
       private CallbackContext mSessionCallbackContext = null;
       private CallbackContext mStreamCallbackContext = null;
       private CallbackContext mFIRCallbackContext = null;
+      private CallbackContext mReceiptCallbackContext = null;
       private CallbackContext mGroupCallbackContext = null;
       private CallbackContext mFileTransferCallbackContext = null;
 
@@ -138,6 +140,9 @@
                       break;
                   case "sendFriendMessage":
                       this.sendFriendMessage(args, callbackContext);
+                      break;
+                  case "sendFriendMessageWithReceipt":
+                      this.sendFriendMessageWithReceipt(args, callbackContext);
                       break;
                   case "getSelfInfo":
                       this.getSelfInfo(args, callbackContext);
@@ -369,6 +374,9 @@
                   break;
               case FRIEND_INVITE:
                   mFIRCallbackContext = callbackContext;
+                  break;
+              case MESSAGE_RECEIPT:
+                  mReceiptCallbackContext = callbackContext;
                   break;
               case GROUP:
                   mGroupCallbackContext = callbackContext;
@@ -670,6 +678,22 @@
           }
       }
 
+      private void sendFriendMessageWithReceipt(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
+          Integer id = args.getInt(0);
+          String to = args.getString(1);
+          String message = args.getString(2);
+          int handlerId = args.getInt(3);
+          PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
+          if (carrierHandler != null) {
+              ReceiptHandler handler = new ReceiptHandler(handlerId, mReceiptCallbackContext);
+              long messageid = carrierHandler.mCarrier.sendFriendMessage(to, message, handler);
+              JSONObject r = new JSONObject();
+              r.put("messageId", messageid);
+              callbackContext.success(r);
+          } else {
+              callbackContext.error(INVALID_ID);
+          }
+      }
       private void inviteFriend(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);
           String to = args.getString(1);
