@@ -396,7 +396,7 @@ class CarrierImpl implements CarrierPlugin.Carrier {
         if (typeof(handler) == "function") {
             handlerId = this.carrierManager.addFriendMessageReceiptCB(handler,  this);
         }
-        this.process(onSuccess, onError, "sendFriendMessageWithReceipt", [this.objId, to, message]);
+        this.process(onSuccess, onError, "sendFriendMessageWithReceipt", [this.objId, to, message, handlerId]);
     }
 
     inviteFriend(to: string, data: string, handler: CarrierPlugin.OnFriendInviteResponse, onSuccess: () => void, onError?: (err: string) => void) {
@@ -729,7 +729,7 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
                 var id = event.id;
                 event.id = null;
                 if (this.MessageReceiptEvent[id].callback) {
-                    event.carrier = this.addFriendMessageReceiptCB[id].carrier;
+                    event.carrier = this.MessageReceiptEvent[id].carrier;
                     this.MessageReceiptEvent[id].callback(event);
                 }
             });
