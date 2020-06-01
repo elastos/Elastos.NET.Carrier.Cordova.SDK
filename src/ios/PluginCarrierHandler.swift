@@ -58,7 +58,7 @@ class PluginCarrierHandler: CarrierDelegate {
 
         let options = CarrierOptions()
         options.bootstrapNodes = [BootstrapNode]()
-        options.hivebootstrapNodes = [HiveBootstrapNode]()
+        options.expressNodes = [ExpressNode]()
 
         let jsonData = configString.data(using: .utf8)
         let decodedJsonDict:[String:Any] = (try JSONSerialization.jsonObject(with: jsonData!, options: []) as? [String: Any])!
@@ -84,13 +84,13 @@ class PluginCarrierHandler: CarrierDelegate {
 
             let hiveIpfsNodes = json["ipfsnodes"] as! Array<AnyObject>
             for item in hiveIpfsNodes {
-                let ipfsNode = HiveBootstrapNode()
+                let expressNode = ExpressNode()
                 let node = item as! [String: String]
                 let parts = node["addr"]!.split(separator: ":")
-                ipfsNode.ipv4 = String(parts[0])
-                ipfsNode.port = String(parts[1])
+                expressNode.ipv4 = String(parts[0])
+                expressNode.port = String(parts[1])
 
-                options.hivebootstrapNodes?.append(ipfsNode)
+                options.expressNodes?.append(expressNode)
             }
         }
 

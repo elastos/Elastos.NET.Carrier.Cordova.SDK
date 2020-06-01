@@ -39,6 +39,7 @@ class CarrierPlugin : TrinityPlugin {
     var FRIEND_INVITE = 4;
     var GROUP = 5;
     var FILETRANSFER = 6 ;
+    var MESSAGE_RECEIPT = 7
 
     var mCarrierDict = [Int: PluginCarrierHandler]()
     var mSessionDict = [Int: Session]()
@@ -50,6 +51,7 @@ class CarrierPlugin : TrinityPlugin {
     var sessionCallbackId: String = ""
     var streamCallbackId: String = ""
     var FIRCallbackId: String = ""
+    var receiptCallbackId: String = ""
 
     var fileTransferCallbackId: String = ""
     var fileTransferCount: Int = 0;
@@ -509,6 +511,27 @@ class CarrierPlugin : TrinityPlugin {
             do {
                 _ = try carrierHandler.mCarrier.sendFriendMessage(to: to, withMessage: message);
                 self.success(command, retAsString: "success!");
+            }
+            catch {
+                self.error(command, retAsString: error.localizedDescription);
+            }
+        }
+        else {
+            self.error(command, retAsString: "Id invalid!");
+        }
+    }
+
+    @objc func sendFriendMessageWithReceipt(_ command: CDVInvokedUrlCommand) {
+        let id = command.arguments[0] as? Int ?? 0
+        let to = command.arguments[1] as? String ?? ""
+        let message = command.arguments[2] as? String ?? ""
+        let handlerId = command.arguments[3] as? Int ?? 0
+        if let carrierHandler: PluginCarrierHandler = mCarrierDict[id] {
+            do {
+                let handler = ReceiptHandler(handlerId, receiptCallbackId, self.commandDelegate)
+                let messageid = try carrierHandler.mCarrier.sendMessageWithReceipt(to: to, withMessage: message, responseHandler: handler.onReceived(_:_:))
+                let r: NSDictionary = ["messageId": messageid]
+                self.success(command, retAsDict: r)
             }
             catch {
                 self.error(command, retAsString: error.localizedDescription);
