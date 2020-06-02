@@ -147,6 +147,9 @@ class CarrierPlugin : TrinityPlugin {
         case FILETRANSFER:
             fileTransferCallbackId = command.callbackId;
             break;
+        case MESSAGE_RECEIPT:
+            receiptCallbackId = command.callbackId
+            break;
         default:
             self.error(command, retAsString: "Expected one non-empty let argument.");
             break;
