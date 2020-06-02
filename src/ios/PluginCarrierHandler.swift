@@ -82,13 +82,14 @@ class PluginCarrierHandler: CarrierDelegate {
                 options.bootstrapNodes?.append(bootstrapNode)
             }
 
-            let hiveIpfsNodes = json["ipfsnodes"] as! Array<AnyObject>
-            for item in hiveIpfsNodes {
+            let expressNodes = json["expressNodes"] as! Array<AnyObject>
+            for item in expressNodes {
                 let expressNode = ExpressNode()
-                let node = item as! [String: String]
-                let parts = node["addr"]!.split(separator: ":")
-                expressNode.ipv4 = String(parts[0])
-                expressNode.port = String(parts[1])
+                let node: [String: Any] = item as! [String: Any]
+
+                expressNode.ipv4 = node["ipv4"] as? String
+                expressNode.port = String(node["port"] as! Int)
+                expressNode.publicKey = node["publicKey"] as? String
 
                 options.expressNodes?.append(expressNode)
             }

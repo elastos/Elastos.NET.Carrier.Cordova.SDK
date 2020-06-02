@@ -17,12 +17,12 @@
             <runs />
         </js-module>
     </platform>
-	<platform name="android">
-		<config-file target="config.xml" parent="/*">
-			<feature name="CarrierPlugin">
-				<param name="android-package" value="org.elastos.trinity.plugins.carrier.CarrierPlugin" />
-			</feature>
-		</config-file>
+    <platform name="android">
+        <config-file target="config.xml" parent="/*">
+            <feature name="CarrierPlugin">
+                <param name="android-package" value="org.elastos.trinity.plugins.carrier.CarrierPlugin" />
+            </feature>
+        </config-file>
         <resource-file src="bootstraps.json" target="res/raw/bootstraps.json" />
         <source-file src="src/android/BootstrapsGetter.java" target-dir="src/org/elastos/trinity/plugins/carrier" />
         <source-file src="src/android/CarrierPlugin.java" target-dir="src/org/elastos/trinity/plugins/carrier" />
@@ -34,7 +34,7 @@
         <source-file src="src/android/ReceiptHandler.java" target-dir="src/org/elastos/trinity/plugins/carrier" />
         <source-file src="src/android/Base58.java" target-dir="src/org/elastos/trinity/plugins/carrier" />
         <framework src="src/android/carrier.gradle" custom="true" type="gradleReference"/>
-	</platform>
+    </platform>
     <platform name="ios">
         <config-file target="config.xml" parent="/*">
             <feature name="CarrierPlugin">
@@ -49,6 +49,7 @@
         <source-file src="src/ios/PluginFileTransferHandler.swift" />
         <source-file src="src/ios/PluginGroupHelper.swift" />
         <source-file src="src/ios/FIRHandler.swift" />
+        <source-file src="src/ios/ReceiptHandler.swift" />
         <source-file src="src/ios/SRCHandler.swift" />
         <framework src="src/ios/libs/ElastosCarrierSDK.framework" custom="true" embed="true" />
         <!-- <source-file src="src/ios/libs/ElastosCarrier.framework" target-dir="src/libs" framework="true" /> -->
