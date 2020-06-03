@@ -86,9 +86,8 @@ class PluginCarrierHandler: CarrierDelegate {
             for item in expressNodes {
                 let expressNode = ExpressNode()
                 let node = item as! [String: String]
-                let parts = node["addr"]!.split(separator: ":")
-                expressNode.ipv4 = String(parts[0])
-                expressNode.port = String(parts[1])
+                expressNode.ipv4 = node["ipv4"]
+                expressNode.port = String(node["port"]!)
                 expressNode.publicKey = node["publicKey"]
 
                 options.expressNodes?.append(expressNode)
