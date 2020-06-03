@@ -85,10 +85,10 @@ class PluginCarrierHandler: CarrierDelegate {
             let expressNodes = json["expressNodes"] as! Array<AnyObject>
             for item in expressNodes {
                 let expressNode = ExpressNode()
-                let node = item as! [String: String]
-                expressNode.ipv4 = node["ipv4"]
-                expressNode.port = String(node["port"]!)
-                expressNode.publicKey = node["publicKey"]
+                let node = item as! [String: Any]
+                expressNode.ipv4 = node["ipv4"] as? String
+                expressNode.port = String(node["port"] as! Int)
+                expressNode.publicKey = node["publicKey"] as? String
 
                 options.expressNodes?.append(expressNode)
             }
@@ -284,11 +284,15 @@ class PluginCarrierHandler: CarrierDelegate {
                                  _ timestamp: Date,
                                  _ isOffline: Bool) {
         let message = String(data: data, encoding: .utf8)!;
+        let dateformatter = DateFormatter()
+        dateformatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        let time = dateformatter.string(from: timestamp)
+
         let ret: NSMutableDictionary = [
             "name": "onFriendMessage",
             "from": from,
             "message": message,
-            "timestamp": timestamp,
+            "timestamp": time,
             "isOffline": isOffline
             ]
         sendEvent(ret);
