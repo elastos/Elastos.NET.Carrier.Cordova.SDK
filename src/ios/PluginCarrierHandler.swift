@@ -82,7 +82,7 @@ class PluginCarrierHandler: CarrierDelegate {
                 options.bootstrapNodes?.append(bootstrapNode)
             }
 
-            let expressNodes = json["expressnodes"] as! Array<AnyObject>
+            let expressNodes = json["expressNodes"] as! Array<AnyObject>
             for item in expressNodes {
                 let expressNode = ExpressNode()
                 let node = item as! [String: String]
