@@ -289,7 +289,7 @@ class PluginCarrierHandler: CarrierDelegate {
             "name": "onFriendMessage",
             "from": from,
             "message": message,
-            // "timestamp": timestamp,
+            "timestamp": timestamp,
             "isOffline": isOffline
             ]
         sendEvent(ret);
