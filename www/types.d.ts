@@ -94,8 +94,8 @@ declare namespace CarrierPlugin {
         udpEnabled: Boolean;
         /** Set the persistent data location. The location must be set. */
         persistentLocation: string;
-        /** BootstrapNode Array. */
-        bootstraps: BootstrapNode[];
+        /** Send/receive binary message */
+        binaryUsed: Boolean;
     }
 
     /**
@@ -581,7 +581,7 @@ declare namespace CarrierPlugin {
         onFriendRemoved?(carrier: Carrier, friendId: string);
 
         /**
-        * The callback function to process the friend message.
+        * The callback function to process the friend text message.
         *
         * @callback onFriendMessage
         *
@@ -595,6 +595,22 @@ declare namespace CarrierPlugin {
         *   online message, otherwise as offline message.
         */
         onFriendMessage?(carrier: Carrier, from: string, message: string, timestamp: Date, isOffline: Boolean);
+
+        /**
+        * The callback function to process the friend binary message.
+        *
+        * @callback onFriendBinaryMessage
+        *
+        * @param carrier    Carrier node instance
+        * @param from       The ID of who sends the message
+        * @param message    The message content
+        * @param timestamp  The message sent time as the number of seconds
+        *                   since the Epoch, 1970-01-01 00:00:00 +0000 (UTC).
+        * @param isOffline  Whether this message was sent as online message or
+        *   offline message. The value of true means the message was sent as
+        *   online message, otherwise as offline message.
+        */
+        onFriendBinaryMessage?(carrier: Carrier, from: string, message: Uint8Array, timestamp: Date, isOffline: Boolean);
 
         /**
         * The callback function to process the friend invite request.
@@ -764,7 +780,7 @@ declare namespace CarrierPlugin {
         removeFriend(userId: string, onSuccess:()=>void, onError?:(err: string)=>void);
 
         /**
-        * Send a message to a friend.
+        * Send a text message to a friend.
         * The message length may not exceed MAX_APP_MESSAGE_LEN, and message itself
         * should be text-formatted. Larger messages must be split by application
         * and sent as separate messages. Other nodes can reassemble the fragments.
@@ -777,7 +793,20 @@ declare namespace CarrierPlugin {
         sendFriendMessage(to: string, message: string, onSuccess:()=>void, onError?:(err: string)=>void);
 
         /**
-        * Send a message to a friend.
+        * Send a binary message to a friend.
+        * The message length may not exceed MAX_APP_MESSAGE_LEN, and message itself
+        * should be text-formatted. Larger messages must be split by application
+        * and sent as separate messages. Other nodes can reassemble the fragments.
+        *
+        * @param onSuccess  The function to call when success.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
+        * @param to         The target ID
+        * @param message    The message content defined by application
+        */
+        sendFriendBinaryMessage(to: string, message: Uint8Array, onSuccess:()=>void, onError?:(err: string)=>void);
+
+        /**
+        * Send a text message to a friend  with receipt notification.
         * The message length may not exceed MAX_APP_MESSAGE_LEN, and message itself
         * should be text-formatted. Larger messages must be split by application
         * and sent as separate messages. Other nodes can reassemble the fragments.
@@ -789,6 +818,20 @@ declare namespace CarrierPlugin {
         * @param handler    The handler to receive message receipt notification
         */
         sendFriendMessageWithReceipt(to: string, message: string, handler: OnFriendMessageReceipt, onSuccess:(messageId: number)=>void, onError?:(err: string)=>void);
+
+        /**
+        * Send a binary message to a friend with receipt notification.
+        * The message length may not exceed MAX_APP_MESSAGE_LEN, and message itself
+        * should be text-formatted. Larger messages must be split by application
+        * and sent as separate messages. Other nodes can reassemble the fragments.
+        *
+        * @param onSuccess  The function to call when success.
+        * @param onError    The function to call when error, the param is a string. Or set to null.
+        * @param to         The target ID
+        * @param message    The message content defined by application
+        * @param handler    The handler to receive message receipt notification
+        */
+        sendFriendBinaryMessageWithReceipt(to: string, message: Uint8Array, handler: OnFriendMessageReceipt, onSuccess:(messageId: number)=>void, onError?:(err: string)=>void);
 
         /**
         * Send invite request to a friend.
@@ -1455,6 +1498,6 @@ declare namespace CarrierPlugin {
         * @param [onSuccess]  The function to call when success, the param is a carrier object.
         * @param onError    The function to call when error, the param is a string. Or set to null.
         */
-        createObject(callbacks: CarrierCallbacks, options?: any, onSuccess?:(carrier: Carrier)=>void, onError?:(err: string)=>void); // TODO: need a type for options
+        createObject(callbacks: CarrierCallbacks, options: Options, onSuccess?:(carrier: Carrier)=>void, onError?:(err: string)=>void);
     }
 }

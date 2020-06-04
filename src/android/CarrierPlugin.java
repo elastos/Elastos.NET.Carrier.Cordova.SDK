@@ -39,6 +39,7 @@
   import java.util.HashMap;
   import java.util.Objects;
   import java.util.UUID;
+  import android.util.Base64;
   import org.elastos.carrier.*;
   import org.elastos.carrier.exceptions.CarrierException;
 
@@ -141,8 +142,14 @@
                   case "sendFriendMessage":
                       this.sendFriendMessage(args, callbackContext);
                       break;
+                  case "sendFriendBinaryMessage":
+                      this.sendFriendBinaryMessage(args, callbackContext);
+                      break;
                   case "sendFriendMessageWithReceipt":
                       this.sendFriendMessageWithReceipt(args, callbackContext);
+                      break;
+                case "sendFriendBinaryMessageWithReceipt":
+                      this.sendFriendBinaryMessageWithReceipt(args, callbackContext);
                       break;
                   case "getSelfInfo":
                       this.getSelfInfo(args, callbackContext);
@@ -664,9 +671,27 @@
       }
 
       private void sendFriendMessage(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
-          Integer id = args.getInt(0);
+        Integer id = args.getInt(0);
+        String to = args.getString(1);
+        String message = args.getString(2);
+
+        PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
+        if (carrierHandler != null) {
+            boolean isOffline = carrierHandler.mCarrier.sendFriendMessage(to, message);
+            JSONObject r = new JSONObject();
+            r.put("isOffline", isOffline);
+            callbackContext.success(r);
+        } else {
+            callbackContext.error(INVALID_ID);
+        }
+      }
+
+    private void sendFriendBinaryMessage(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
+        Integer id = args.getInt(0);
           String to = args.getString(1);
-          String message = args.getString(2);
+          String data = args.getString(2);
+          byte[] message = Base64.decode(data, Base64.DEFAULT);
+
           PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
           if (carrierHandler != null) {
               boolean isOffline = carrierHandler.mCarrier.sendFriendMessage(to, message);
@@ -693,6 +718,24 @@
           } else {
               callbackContext.error(INVALID_ID);
           }
+      }
+
+      private void sendFriendBinaryMessageWithReceipt(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
+        Integer id = args.getInt(0);
+        String to = args.getString(1);
+        String data = args.getString(2);
+        byte[] message = Base64.decode(data, Base64.DEFAULT);
+        int handlerId = args.getInt(3);
+        PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
+        if (carrierHandler != null) {
+            ReceiptHandler handler = new ReceiptHandler(handlerId, mReceiptCallbackContext);
+            long messageid = carrierHandler.mCarrier.sendFriendMessage(to, message, handler);
+            JSONObject r = new JSONObject();
+            r.put("messageId", messageid);
+            callbackContext.success(r);
+        } else {
+            callbackContext.error(INVALID_ID);
+        }
       }
       private void inviteFriend(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           Integer id = args.getInt(0);

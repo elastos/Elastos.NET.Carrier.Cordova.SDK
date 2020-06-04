@@ -20,7 +20,7 @@
   * SOFTWARE.
   */
 
-  package org.elastos.trinity.plugins.carrier;
+package org.elastos.trinity.plugins.carrier;
 
   import org.apache.cordova.CallbackContext;
   import org.apache.cordova.PluginResult;
@@ -35,6 +35,7 @@
   import java.util.ArrayList;
   import java.util.Date;
   import java.io.File;
+  import android.util.Base64;
 
   import org.elastos.carrier.*;
   import org.elastos.carrier.exceptions.CarrierException;
@@ -49,6 +50,7 @@
 	  public CallbackContext mCallbackContext = null;
 	  public CallbackContext mGroupCallbackContext = null;
 	  public HashMap<Group, String> groups;
+	  private boolean binaryUsed = false;
 
 	  private org.elastos.carrier.filetransfer.Manager mFileTransferManager;
 
@@ -88,7 +90,8 @@
 		  }
 
 		  JSONObject jsonObject = new JSONObject(configString);
-		  udpEnabled = jsonObject.getBoolean("udpEnabled");
+		  udpEnabled = jsonObject.optBoolean("udpEnabled", true);
+		  binaryUsed = jsonObject.optBoolean("binaryUsed", false);
 
 		  Carrier.Options options = new Carrier.Options();
 		  options.setPersistentLocation(dir + '/' + jsonObject.getString("persistentLocation"))
@@ -366,9 +369,16 @@
 	  @Override
 	  public void onFriendMessage(Carrier carrier, String from, byte[] data, Date timestamp, boolean isOffline) {
 		  JSONObject r = new JSONObject();
-		  String message = new String(data, StandardCharsets.UTF_8);
+		  String message = null;
 		  try {
-			  r.put("name", "onFriendMessage");
+			  if (binaryUsed) {
+				  message = Base64.encodeToString(data, Base64.NO_WRAP);
+				  r.put("name", "onFriendBinaryMessage");
+			  } else {
+				  message = new String(data, StandardCharsets.UTF_8);
+				  r.put("name", "onFriendMessage");
+			  }
+
 			  r.put("from", from);
 			  r.put("message", message);
 			  r.put("timestamp", timestamp.toString());

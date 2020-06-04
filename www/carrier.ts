@@ -37,6 +37,7 @@ const CARRIER_CB_NAMES = [
     "onFriendAdded",
     "onFriendRemoved",
     "onFriendMessage",
+    "onFriendBinaryMessage",
     "onFriendMessageWithReceipt",
     "onFriendInviteRequest",
     "onSessionRequest",
@@ -272,6 +273,8 @@ class CarrierImpl implements CarrierPlugin.Carrier {
     _nospam = null;
     _presence = null;
 
+    _binaryUsed: Boolean = false;
+
     callbacks = {
         onConnection: null,
         onReady: null,
@@ -284,6 +287,7 @@ class CarrierImpl implements CarrierPlugin.Carrier {
         onFriendAdded: null,
         onFriendRemoved: null,
         onFriendMessage: null,
+        onFriendBinaryMessage: null,
         onFriendInviteRequest: null,
         onSessionRequest: null,
         onGroupInvite: null,
@@ -387,16 +391,48 @@ class CarrierImpl implements CarrierPlugin.Carrier {
         this.process(onSuccess, onError, "removeFriend", [this.objId, userId]);
     }
 
-    sendFriendMessage(to: string, message: string, onSuccess: () => void, onError?: (err: string) => void) {
+    sendFriendMessage(to: string, message: String, onSuccess: () => void, onError?: (err: string) => void) {
+        if (this._binaryUsed) {
+            if (onError)
+                onError("Binary message sending/receiving allowed only");
+            return;
+        }
         this.process(onSuccess, onError, "sendFriendMessage", [this.objId, to, message]);
     }
 
+    sendFriendBinaryMessage(to: string, message: Uint8Array, onSuccess: () => void, onError?: (err: string) => void) {
+        if (!this._binaryUsed) {
+            if (onError)
+                onError("Text message sending/receiving allowed only");
+            return;
+        }
+        this.process(onSuccess, onError, "sendFriendBinaryMessage", [this.objId, to, message.buffer]);
+    }
+
     sendFriendMessageWithReceipt(to: string, message: string, handler: CarrierPlugin.OnFriendMessageReceipt,  onSuccess: (messageId: number) => void, onError?: (err: string) => void) {
-        var handlerId = 0;
+        var handlerId: number = 0;
         if (typeof(handler) == "function") {
             handlerId = this.carrierManager.addFriendMessageReceiptCB(handler,  this);
         }
+        if (this._binaryUsed) {
+            if (onError)
+                onError("Binary message sending/receiving allowed only");
+            return;
+        }
         this.process(onSuccess, onError, "sendFriendMessageWithReceipt", [this.objId, to, message, handlerId]);
+    }
+
+    sendFriendBinaryMessageWithReceipt(to: string, message: Uint8Array, handler: CarrierPlugin.OnFriendMessageReceipt,  onSuccess: (messageId: number) => void, onError?: (err: string) => void) {
+        var handlerId: number = 0;
+        if (typeof(handler) == "function") {
+            handlerId = this.carrierManager.addFriendMessageReceiptCB(handler,  this);
+        }
+        if (!this._binaryUsed) {
+            if (onError)
+                onError("Text message sending/receiving allowed only");
+            return;
+        }
+        this.process(onSuccess, onError, "sendFriendBinaryMessageWithReceipt", [this.objId, to, message.buffer, handlerId]);
     }
 
     inviteFriend(to: string, data: string, handler: CarrierPlugin.OnFriendInviteResponse, onSuccess: () => void, onError?: (err: string) => void) {
@@ -644,7 +680,8 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
 
     options: {
         udpEnabled: true,
-        persistentLocation: ".data"
+        persistentLocation: ".data",
+        binaryUsed: false
     }
 
     FriendInviteEvent = [];
@@ -699,6 +736,11 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
                 event.carrier = this.carriers[event.id];
                 if (event.carrier) {
                     //        event.id = null;
+                    if (event.name == "onFriendBinaryMessage") {
+                        let base64 = cordova.require("cordova/base64");
+                        var data = base64.toArrayBuffer(event.message);
+                        event.message = new Uint8Array(data);
+                    }
                     if (event.carrier.callbacks[event.name]) {
                         event.carrier.callbacks[event.name](event);
                     }
@@ -798,7 +840,7 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
         exec(onSuccess, onError, 'CarrierPlugin', 'getIdFromAddress', [address]);
     }
 
-    createObject(callbacks: CarrierPlugin.CarrierCallbacks, options: any, onSuccess: (carrier: CarrierPlugin.Carrier) => void, onError?: (err: string) => void) {
+    createObject(callbacks: CarrierPlugin.CarrierCallbacks, options: CarrierPlugin.Options, onSuccess: (carrier: CarrierPlugin.Carrier) => void, onError?: (err: string) => void) {
         this.initListener();
 
         var carrier = new CarrierImpl();
@@ -811,6 +853,7 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
             carrier._nospam = ret.nospam;
             carrier._presence = ret.presence;
             carrier.carrierManager = me;
+
             me.carriers[carrier.objId] = carrier;
             for (const groupId of ret.groups) {
                 let group = new GroupImpl();
@@ -823,12 +866,15 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
             if (onSuccess)
                 onSuccess(carrier);
         };
+
         if (typeof (options) == "undefined" || options == null) {
             options = this.options;
         }
 
+        carrier._binaryUsed = options.binaryUsed;
+
         if (typeof (callbacks) != "undefined" && callbacks != null) {
-            for (var i = 0; i < CARRIER_CB_NAMES.length; i++) {
+           for (var i = 0; i < CARRIER_CB_NAMES.length; i++) {
                 var name = CARRIER_CB_NAMES[i];
                 carrier.callbacks[name] = callbacks[name];
             }
