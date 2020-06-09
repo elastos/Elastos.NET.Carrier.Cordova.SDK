@@ -23,8 +23,8 @@
 import Foundation
 import ElastosCarrierSDK
 
-typealias UserInfo = CarrierUserInfo
-typealias FriendInfo = CarrierFriendInfo
+public typealias UserInfo = CarrierUserInfo
+public typealias FriendInfo = CarrierFriendInfo
 
 //@objc(PluginCarrierHandler)
 class PluginCarrierHandler: CarrierDelegate {
