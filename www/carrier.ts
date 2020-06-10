@@ -886,7 +886,7 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
         }
 
         var configstring = JSON.stringify(options);
-        exec(_onSuccess, onError, 'CarrierPlugin', 'createObject', ["im", configstring]);
+        exec(_onSuccess, onError, 'CarrierPlugin', 'createObject', ["carrier", configstring]);
     }
 }
 

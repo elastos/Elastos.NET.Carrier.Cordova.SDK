@@ -162,8 +162,10 @@ class CarrierPlugin : TrinityPlugin {
     }
 
     @objc func createObject(_ command: CDVInvokedUrlCommand) {
-        let dir = command.arguments[0] as? String ?? ""
+        var dir = command.arguments[0] as? String ?? ""
         let config = command.arguments[1] as? String ?? ""
+
+        dir = getDataPath() + dir;
 
         do {
             let carrierHandler = try PluginCarrierHandler.createInstance(dir, config, carrierCallbackId,

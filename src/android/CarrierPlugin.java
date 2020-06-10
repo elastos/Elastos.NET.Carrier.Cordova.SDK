@@ -403,7 +403,7 @@
           String dir = args.getString(0);
           String config = args.getString(1);
 
-          dir = cordova.getActivity().getFilesDir() + "/data/carrier/" + dir;
+          dir = getDataPath() + dir;
 
           PluginCarrierHandler carrierHandler = PluginCarrierHandler.createInstance(dir, config,
                   mCarrierCallbackContext, mGroupCallbackContext, this);
