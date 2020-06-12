@@ -1440,23 +1440,45 @@
           }
       }
 
-      private void writeFileTransData(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
-          int fileTransferId = args.getInt(0);
-          String fileId = args.getString(1);
-          String data = args.getString(2);
+    private void writeFileTransData(JSONArray args, CallbackContext callbackContext) throws JSONException {
+        int fileTransferId = args.getInt(0);
+        String fileId = args.getString(1);
+        String data = args.getString(2);
 
-          FileTransfer fileTransfer = null;
-          try {
-              fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getmFileTransfer();
-          } catch (NullPointerException e) {
-          }
-          if (fileTransfer != null) {
-              fileTransfer.writeData(fileId,data.getBytes());
-              callbackContext.success(SUCCESS);
-          } else {
-              callbackContext.error(INVALID_ID);
-          }
-      }
+        FileTransfer fileTransfer;
+
+        fileTransfer = mFileTransferHandlerMap.get(fileTransferId).getmFileTransfer();
+        if (fileTransfer == null) {
+            callbackContext.error(INVALID_ID);
+            return;
+        }
+
+        cordova.getThreadPool().execute(new Runnable() {
+            FileTransfer transfer;
+
+            public void run() {
+                PluginResult result;
+
+                try {
+                    transfer.writeData(fileId, data.getBytes());
+                    result = new PluginResult(PluginResult.Status.OK, SUCCESS);
+                } catch (CarrierException e) {
+                    result = new PluginResult(PluginResult.Status.ERROR, INVALID_ID);
+                }
+                result.setKeepCallback(true);
+                callbackContext.sendPluginResult(result);
+            }
+
+            Runnable init(FileTransfer transfer) {
+                this.transfer = transfer;
+                return (this);
+            }
+        }.init(fileTransfer));
+
+        PluginResult result = new PluginResult(PluginResult.Status.NO_RESULT);
+        result.setKeepCallback(true);
+        callbackContext.sendPluginResult(result);
+    }
 
       private void sendFileTransFinish(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           int fileTransferId = args.getInt(0);
