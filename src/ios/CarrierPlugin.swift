@@ -1267,8 +1267,7 @@ class CarrierPlugin : TrinityPlugin {
 
         let fileId:String = fileInfo?["fileId"] as! String
         let filename:String = fileInfo?["filename"] as! String
-        let size: String = fileInfo?["size"] as? String ?? ""
-        let isize: Int = Int(size) ?? 0
+        let isize: Int = fileInfo?["size"] as? Int ?? 0
         let usize: UInt64 = UInt64(isize)
 
         if usize == 0 {
