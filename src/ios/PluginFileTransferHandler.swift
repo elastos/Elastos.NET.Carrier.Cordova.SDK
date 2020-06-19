@@ -34,11 +34,11 @@ class PluginFileTransferHandler: CarrierFileTransferDelegate {
         self.callbackId = callbackId;
         self.commandDelegate = commandDelegate;
     }
-    
+
     func setFileTransfer(_ fileTransfer: CarrierFileTransfer){
         self.fileTransfer = fileTransfer;
     }
-    
+
     func setFileTransferId(_ fileTransferId: Int){
         self.fileTransferId = fileTransferId;
     }
@@ -50,7 +50,7 @@ class PluginFileTransferHandler: CarrierFileTransferDelegate {
         result?.setKeepCallbackAs(true);
         self.commandDelegate?.send(result, callbackId:self.callbackId);
     }
-    
+
     func fileTransferStateDidChange(_ fileTransfer: CarrierFileTransfer,
                                     _ newState: CarrierFileTransferConnectionState){
         let ret: NSMutableDictionary = [
@@ -60,7 +60,7 @@ class PluginFileTransferHandler: CarrierFileTransferDelegate {
         sendEvent(ret);
     }
 
-    
+
     func didReceiveFileRequest(_ fileTransfer: CarrierFileTransfer,
                                _ fileId: String,
                                _ fileName: String,
@@ -91,7 +91,9 @@ class PluginFileTransferHandler: CarrierFileTransferDelegate {
         let ret: NSMutableDictionary = [
             "name": "onData",
             "fileId": fileId,
-            "data": String(data: data, encoding: .utf8)!,
+            // TODO: no crash, but can not recevie picture?
+            "data": String(format: "%@", data as CVarArg),
+//            "data": String(data: data, encoding: .utf8)!,
         ]
         sendEvent(ret);
         return true
@@ -125,7 +127,7 @@ class PluginFileTransferHandler: CarrierFileTransferDelegate {
                    "fileId": fileId,
                    "status": status,
                    "reason": reason,
-                   
+
         ]
         sendEvent(ret);
     }
