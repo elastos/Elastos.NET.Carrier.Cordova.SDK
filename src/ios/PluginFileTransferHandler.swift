@@ -91,9 +91,8 @@ class PluginFileTransferHandler: CarrierFileTransferDelegate {
         let ret: NSMutableDictionary = [
             "name": "onData",
             "fileId": fileId,
-            // TODO: no crash, but can not recevie picture?
-            "data": String(format: "%@", data as CVarArg),
-//            "data": String(data: data, encoding: .utf8)!,
+            // TODO: why data to string fail sometimes. and if fail, then cann't get any more data.
+            "data": String(data: data, encoding: .utf8) ?? "",
         ]
         sendEvent(ret);
         return true
