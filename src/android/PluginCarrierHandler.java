@@ -99,11 +99,16 @@ package org.elastos.trinity.plugins.carrier;
 				  .setBootstrapNodes(bootstraps)
 				  .setExpressNodes(expressNodes);
 
-		  mCarrier = Carrier.createInstance(options, this);
+      String optionSecret = jsonObject.optString("secret_key", "");
+      if (!optionSecret.isEmpty()) {
+          options.setSecretKey(optionSecret.getBytes());
+      }
+
+      mCarrier = Carrier.createInstance(options, this);
 		  Log.i(TAG, "Agent elastos carrier instance created successfully");
 		  if (mCarrier == null) {
-			  return null;
-		  }
+			    return null;
+      }
 
 		  mSessionManager = Manager.createInstance(mCarrier,  this);
 		  Log.i(TAG, "Agent session manager created successfully");
