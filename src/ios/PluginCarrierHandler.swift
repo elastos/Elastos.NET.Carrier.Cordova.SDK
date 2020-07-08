@@ -96,7 +96,10 @@ class PluginCarrierHandler: CarrierDelegate {
 
         options.persistentLocation = carrierDirectory + "/" + (decodedJsonDict["persistentLocation"] as! String)
 
-        options.secret_key = decodedJsonDict["secret_key"] as? String
+        let secretKeyString = decodedJsonDict["secret_key"] as? String
+        if (secretKeyString != nil && !secretKeyString!.isEmpty) {
+            options.secret_key = secretKeyString!.data(using: String.Encoding.utf8)
+        }
 
         try mCarrier = Carrier.createInstance(options: options, delegate: self)
         print("carrier instance created")
