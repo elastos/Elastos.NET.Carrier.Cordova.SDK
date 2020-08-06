@@ -534,10 +534,52 @@ class CarrierPlugin : TrinityPlugin {
         }
     }
 
+    @objc func sendFriendBinaryMessage(_ command: CDVInvokedUrlCommand) {
+        let id = command.arguments[0] as? Int ?? 0
+        let to = command.arguments[1] as? String ?? ""
+        let data = command.arguments[2] as? String ?? ""
+        let message = Data(base64Encoded: data)!
+
+        if let carrierHandler: PluginCarrierHandler = mCarrierDict[id] {
+            do {
+                _ = try carrierHandler.mCarrier.sendFriendMessage(to: to, withData: message);
+                self.success(command, retAsString: "success!");
+            }
+            catch {
+                self.error(command, retAsString: error.localizedDescription);
+            }
+        }
+        else {
+            self.error(command, retAsString: "Id invalid!");
+        }
+    }
+
     @objc func sendFriendMessageWithReceipt(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let to = command.arguments[1] as? String ?? ""
         let message = command.arguments[2] as? String ?? ""
+        let handlerId = command.arguments[3] as? Int ?? 0
+        if let carrierHandler: PluginCarrierHandler = mCarrierDict[id] {
+            do {
+                let handler = ReceiptHandler(handlerId, receiptCallbackId, self.commandDelegate)
+                let messageid = try carrierHandler.mCarrier.sendMessageWithReceipt(to: to, withMessage: message, responseHandler: handler.onReceived(_:_:))
+                let r: NSDictionary = ["messageId": messageid]
+                self.success(command, retAsDict: r)
+            }
+            catch {
+                self.error(command, retAsString: error.localizedDescription);
+            }
+        }
+        else {
+            self.error(command, retAsString: "Id invalid!");
+        }
+    }
+
+    @objc func sendFriendBinaryMessageWithReceipt(_ command: CDVInvokedUrlCommand) {
+        let id = command.arguments[0] as? Int ?? 0
+        let to = command.arguments[1] as? String ?? ""
+        let data = command.arguments[2] as? String ?? ""
+        let message = Data(base64Encoded: data)!
         let handlerId = command.arguments[3] as? Int ?? 0
         if let carrierHandler: PluginCarrierHandler = mCarrierDict[id] {
             do {

@@ -38,6 +38,7 @@ class PluginCarrierHandler: CarrierDelegate {
     var commandDelegate:CDVCommandDelegate?
     var mFileTransferManager: CarrierFileTransferManager?
     var mGroups: [CarrierGroup: Int] = [:]
+    var binaryUsed: Bool = false
 
     init(_ callbackId: String, _ groupCallbackId: String,_ commandDelegate:CDVCommandDelegate) {
         self.callbackId = callbackId;
@@ -65,6 +66,7 @@ class PluginCarrierHandler: CarrierDelegate {
         print("decodedJsonDict=\(decodedJsonDict)")
 
         options.udpEnabled = decodedJsonDict["udpEnabled"] as! Bool
+        binaryUsed = decodedJsonDict["binaryUsed"] as? Bool ?? false
 
         if let path:String = Bundle.main.path(forResource: "bootstraps", ofType: "json") {
             let data = try! Data(contentsOf: URL(fileURLWithPath: path))
@@ -288,13 +290,22 @@ class PluginCarrierHandler: CarrierDelegate {
                                  _ data: Data,
                                  _ timestamp: Date,
                                  _ isOffline: Bool) {
-        let message = String(data: data, encoding: .utf8)!;
+        let message: String
         let dateformatter = DateFormatter()
         dateformatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         let time = dateformatter.string(from: timestamp)
+        let callback: String
+
+        if binaryUsed {
+            message = data.base64EncodedString()
+            callback = "onFriendBinaryMessage"
+        } else {
+            message = String(data: data, encoding: .utf8)!
+            callback = "onFriendMessage"
+        }
 
         let ret: NSMutableDictionary = [
-            "name": "onFriendMessage",
+            "name": callback,
             "from": from,
             "message": message,
             "timestamp": time,
