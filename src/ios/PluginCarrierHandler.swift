@@ -37,7 +37,7 @@ class PluginCarrierHandler: CarrierDelegate {
     var groupCallbackId:String?
     var commandDelegate:CDVCommandDelegate?
     var mFileTransferManager: CarrierFileTransferManager?
-    var mGroups: [CarrierGroup: Int] = [:]
+    var mGroups: [String: CarrierGroup] = [:]
     var binaryUsed: Bool = false
 
     init(_ callbackId: String, _ groupCallbackId: String,_ commandDelegate:CDVCommandDelegate) {
@@ -103,6 +103,9 @@ class PluginCarrierHandler: CarrierDelegate {
             options.secret_key = secretKeyString!.data(using: String.Encoding.utf8)
         }
 
+        try mCarrier.getGroups().forEach{ group in
+            mGroups[group.getId()] = group
+        }
         try mCarrier = Carrier.createInstance(options: options, delegate: self)
         print("carrier instance created")
 
@@ -402,8 +405,9 @@ class PluginCarrierHandler: CarrierDelegate {
     }
 
     private func sendGroupEvent(_ group: CarrierGroup, _ ret: NSMutableDictionary) {
-        guard let groupId = mGroups[group] else {return}
+        guard let groupId = mGroups[group.getId()] else {return}
         ret["groupId"] = groupId
+        ret["id"] = mCode
         let result = CDVPluginResult(status: CDVCommandStatus_OK,messageAs: ret as? [AnyHashable : Any]);
         result?.setKeepCallbackAs(true);
         self.commandDelegate?.send(result, callbackId:self.groupCallbackId);
