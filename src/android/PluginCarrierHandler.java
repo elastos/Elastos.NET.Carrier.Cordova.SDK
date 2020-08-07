@@ -49,7 +49,7 @@ package org.elastos.trinity.plugins.carrier;
 	  public Manager mSessionManager;
 	  public CallbackContext mCallbackContext = null;
 	  public CallbackContext mGroupCallbackContext = null;
-	  public HashMap<Group, String> groups;
+	  public HashMap<String, Group> groups;
 	  private boolean binaryUsed = false;
 
 	  private org.elastos.carrier.filetransfer.Manager mFileTransferManager;
@@ -99,16 +99,20 @@ package org.elastos.trinity.plugins.carrier;
 				  .setBootstrapNodes(bootstraps)
 				  .setExpressNodes(expressNodes);
 
-      String optionSecret = jsonObject.optString("secret_key", "");
-      if (!optionSecret.isEmpty()) {
-          options.setSecretKey(optionSecret.getBytes());
-      }
+		  String optionSecret = jsonObject.optString("secret_key", "");
+		  if (!optionSecret.isEmpty()) {
+			  options.setSecretKey(optionSecret.getBytes());
+		  }
 
-      mCarrier = Carrier.createInstance(options, this);
+		  mCarrier = Carrier.createInstance(options, this);
 		  Log.i(TAG, "Agent elastos carrier instance created successfully");
 		  if (mCarrier == null) {
-			    return null;
-      }
+			  return null;
+      	  }
+
+          for (Group group: mCarrier.getGroups()) {
+              groups.put(group.getId(), group);
+          }
 
 		  mSessionManager = Manager.createInstance(mCarrier,  this);
 		  Log.i(TAG, "Agent session manager created successfully");
@@ -225,6 +229,7 @@ package org.elastos.trinity.plugins.carrier;
 	  }
 
 	  private void sendGroupEvent(JSONObject info, String groupId) throws JSONException {
+	      info.put("id", mCode);
 		  info.put("groupId", groupId);
 		  if (mCallbackContext != null) {
 			  PluginResult result = new PluginResult(PluginResult.Status.OK, info);
@@ -452,7 +457,7 @@ package org.elastos.trinity.plugins.carrier;
 		  JSONObject r = new JSONObject();
 		  try {
 			  r.put("name", "onConnection");
-			  sendGroupEvent(r, groups.get(group));
+			  sendGroupEvent(r, group.getId());
 		  } catch (JSONException e) {
 			  e.printStackTrace();
 		  }
@@ -466,7 +471,7 @@ package org.elastos.trinity.plugins.carrier;
 			  r.put("name", "onGroupMessage");
 			  r.put("from", from);
 			  r.put("message",messageData);
-			  sendGroupEvent(r, groups.get(group));
+			  sendGroupEvent(r, group.getId());
 		  } catch (JSONException e) {
 			  e.printStackTrace();
 		  }
@@ -479,7 +484,7 @@ package org.elastos.trinity.plugins.carrier;
 			  r.put("name", "onGroupTitle");
 			  r.put("from", from);
 			  r.put("title", title);
-			  sendGroupEvent(r, groups.get(group));
+			  sendGroupEvent(r, group.getId());
 		  } catch (JSONException e) {
 			  e.printStackTrace();
 		  }
@@ -492,7 +497,7 @@ package org.elastos.trinity.plugins.carrier;
 			  r.put("name", "onPeerName");
 			  r.put("peerId", peerId);
 			  r.put("peerName", peerName);
-			  sendGroupEvent(r, groups.get(group));
+			  sendGroupEvent(r, group.getId());
 		  } catch (JSONException e) {
 			  e.printStackTrace();
 		  }
@@ -503,7 +508,7 @@ package org.elastos.trinity.plugins.carrier;
 		  JSONObject r = new JSONObject();
 		  try {
 			  r.put("name", "onPeerListChanged");
-			  sendGroupEvent(r, groups.get(group));
+			  sendGroupEvent(r, group.getId());
 		  } catch (JSONException e) {
 			  e.printStackTrace();
 		  }

@@ -991,7 +991,7 @@ declare namespace CarrierPlugin {
     * The class representing Group.
     */
     interface Group {
-        groupId: Int;
+        groupId: string;
 
         /**
         * Invite a friend into group request.

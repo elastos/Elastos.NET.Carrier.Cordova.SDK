@@ -453,7 +453,6 @@ class CarrierImpl implements CarrierPlugin.Carrier {
             var group = new GroupImpl();
             group.groupId = ret.groupId;
             group.carrier = me;
-            me.carrierManager.groups[group.groupId] = group;
             me.groups[group.groupId] = group;
 
             if (onSuccess) onSuccess(group);
@@ -467,7 +466,6 @@ class CarrierImpl implements CarrierPlugin.Carrier {
             var group = new GroupImpl();
             group.groupId = ret.groupId;
             group.carrier = me;
-            me.carrierManager.groups[group.groupId] = group;
             me.groups[group.groupId] = group;
 
             if (onSuccess) onSuccess(group);
@@ -478,7 +476,6 @@ class CarrierImpl implements CarrierPlugin.Carrier {
     groupLeave(group: CarrierPlugin.Group, onSuccess: (group: CarrierPlugin.Group) => void, onError?: (err: string) => void) {
         var me = this;
         var _onSuccess = function(ret){
-            delete me.carrierManager.groups[group.groupId];
             delete me.groups[group.groupId];
             if (onSuccess)
                 onSuccess(group);
@@ -550,11 +547,11 @@ class GroupImpl implements CarrierPlugin.Group {
     }
 
     invite(friendId: string, onSuccess: () => void, onError?: (err: string) => void) {
-        this.process(onSuccess, onError, "inviteGroup", [this.groupId,friendId]);
+        this.process(onSuccess, onError, "inviteGroup", [this.carrier.objId,this.groupId,friendId]);
     }
 
     sendMessage(message: string, onSuccess: () => void, onError?: (err: string) => void) {
-        this.process(onSuccess, onError, "sendGroupMessage", [this.groupId,message]);
+        this.process(onSuccess, onError, "sendGroupMessage", [this.carrier.objId,this.groupId,message]);
     }
 
     getTitle(onSuccess: (groupTitle: string) => void, onError?: (err: string) => void) {
@@ -562,7 +559,7 @@ class GroupImpl implements CarrierPlugin.Group {
             var title = ret.groupTitle;
             if (onSuccess) onSuccess(title);
         };
-        this.process(_onSuccess, onError, "getGroupTitle", [this.groupId]);
+        this.process(_onSuccess, onError, "getGroupTitle", [this.carrier.objId,this.groupId]);
     }
 
     setTitle(groupTitle: string, onSuccess: (groupTitle: string) => void, onError?: (err: string) => void) {
@@ -570,7 +567,7 @@ class GroupImpl implements CarrierPlugin.Group {
             var title = ret.groupTitle;
             if (onSuccess) onSuccess(title);
         };
-        this.process(_onSuccess, onError, "setGroupTitle", [this.groupId,groupTitle]);
+        this.process(_onSuccess, onError, "setGroupTitle", [this.carrier.objId,this.groupId,groupTitle]);
     }
 
     getPeers(onSuccess: (peers: any) => void, onError?: (err: string) => void) {
@@ -578,7 +575,7 @@ class GroupImpl implements CarrierPlugin.Group {
             var peers = ret.peers;
             if (onSuccess) onSuccess(peers);
         };
-        this.process(_onSuccess, onError, "getGroupPeers", [this.groupId]);
+        this.process(_onSuccess, onError, "getGroupPeers", [this.carrier.objId,this.groupId]);
     }
 
     getPeer(peerId: string, onSuccess: (peer: any) => void, onError?: (err: string) => void) {
@@ -586,7 +583,7 @@ class GroupImpl implements CarrierPlugin.Group {
             var peer = ret.peer;
             if (onSuccess) onSuccess(peer);
         };
-        this.process(_onSuccess, onError, "getGroupPeer", [this.groupId,peerId]);
+        this.process(_onSuccess, onError, "getGroupPeer", [this.carrier.objId,this.groupId,peerId]);
     }
 }
 
@@ -675,7 +672,6 @@ class FileTransferImpl implements CarrierPlugin.FileTransfer {
 class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
     carriers = [];
     streams = [];
-    groups = {};
     fileTransfers = {};
 
     options: {
@@ -786,9 +782,16 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
             });
 
             this.setListener(GROUP, (event) => {
-                var group = this.groups[event.groupId];
+                var carrier = this.carriers[event.id];
+                var group;
+
+                if (!carrier) {
+                    alert(event.name);
+                    return;
+                }
+
+                group = carrier[event.groupId];
                 if (group) {
-                    var carrier = group.carrier;
                     if (carrier.callbacks[event.name]) {
                         carrier.callbacks[event.name](event);
                     }
@@ -859,7 +862,6 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
                 let group = new GroupImpl();
                 group.groupId = groupId;
                 group.carrier = carrier;
-                me.groups[groupId] = group;
                 carrier.groups[groupId] = group;
             }
 

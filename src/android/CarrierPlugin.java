@@ -65,7 +65,6 @@
       private Map<Integer, PluginCarrierHandler> mCarrierMap;
       private HashMap<Integer, Session> mSessionMap;
       private HashMap<Integer, PluginStreamHandler> mStreamMap;
-      private HashMap<String, Group> mGroupMap;
       private HashMap<Integer, PluginFileTransferHandler> mFileTransferHandlerMap;
 
       private CallbackContext mCarrierCallbackContext = null;
@@ -80,7 +79,6 @@
           mCarrierMap = new HashMap();
           mSessionMap = new HashMap();
           mStreamMap = new HashMap();
-          mGroupMap = new HashMap<>();
           mFileTransferHandlerMap = new HashMap<>();
       }
 
@@ -95,7 +93,6 @@
                   carrierHandler.mCarrier.kill();
               }
           }
-          clearGroupHandlerMap();
           super.onDestroy();
       }
 
@@ -420,11 +417,8 @@
               r.put("nospam", carrierHandler.mCarrier.getNospam());
               r.put("presence", carrierHandler.mCarrier.getPresence().value());
               JSONArray a = new JSONArray();
-              for (Group group: carrierHandler.mCarrier.getGroups()) {
-                  String groupId = getGroupId();
-                  addGroupMap(groupId, group);
-                  carrierHandler.groups.put(group, groupId);
-                  a.put(groupId);
+              for (String grpId: carrierHandler.groups.keySet()) {
+                  a.put(grpId);
               }
               r.put("groups", a);
 
@@ -780,7 +774,6 @@
           PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
           if (carrierHandler != null) {
               carrierHandler.mCarrier.kill();
-              clearGroupHandlerMap();
               JSONObject r = new JSONObject();
               callbackContext.success(r);
           } else {
@@ -1101,15 +1094,13 @@
           PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
 
           if (carrierHandler != null) {
-              String groupId = getGroupId();
               Group group = carrierHandler.mCarrier.newGroup();
               group.setTitle("Untitled");
 
-              addGroupMap(groupId, group);
-              carrierHandler.groups.put(group, groupId);
+              carrierHandler.groups.put(group.getId(), group);
 
               JSONObject jsonObject = new JSONObject();
-              jsonObject.put("groupId", groupId);
+              jsonObject.put("groupId", group.getId());
 
               callbackContext.success(jsonObject);
           } else {
@@ -1125,15 +1116,12 @@
           PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
           byte[] cookie = Base58.decode(cookieBase58);
           if (carrierHandler != null) {
-              String groupId = getGroupId();
-
               Group group = carrierHandler.mCarrier.groupJoin(friendId, cookie);
 
-              addGroupMap(groupId, group);
-              carrierHandler.groups.put(group, groupId);
+              carrierHandler.groups.put(group.getId(), group);
 
               JSONObject jsonObject = new JSONObject();
-              jsonObject.put("groupId", groupId);
+              jsonObject.put("groupId", group.getId());
 
               callbackContext.success(jsonObject);
           } else {
@@ -1142,12 +1130,14 @@
       }
 
       private void inviteGroup(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
-          String groupId = args.getString(0);
-          String friendId = args.getString(1);
+          int id = args.getInt(0);
+          String groupId = args.getString(1);
+          String friendId = args.getString(2);
 
+          PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
           Group group = null;
           try {
-              group = Objects.requireNonNull(mGroupMap.get(groupId));
+              group = Objects.requireNonNull(carrierHandler.groups.get(groupId));
           } catch (NullPointerException e) {
           }
           if (group != null) {
@@ -1165,13 +1155,12 @@
           PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
           Group group = null;
           try {
-              group = Objects.requireNonNull(mGroupMap.get(groupId));
+              group = Objects.requireNonNull(carrierHandler.groups.get(groupId));
           } catch (NullPointerException e) {
           }
           if (carrierHandler != null && group != null) {
               carrierHandler.mCarrier.groupLeave(group);
-              deleteGroupHandlerFromMap(groupId);
-              carrierHandler.groups.remove(group);
+              carrierHandler.groups.remove(groupId);
 
               callbackContext.success(SUCCESS);
           } else {
@@ -1180,12 +1169,14 @@
       }
 
       private void sendGroupMessage(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
-          String groupId = args.getString(0);
-          String messageData = args.getString(1);
+          int id = args.getInt(0);
+          String groupId = args.getString(1);
+          String messageData = args.getString(2);
 
+          PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
           Group group = null;
           try {
-              group = Objects.requireNonNull(mGroupMap.get(groupId));
+              group = Objects.requireNonNull(carrierHandler.groups.get(groupId));
           } catch (NullPointerException e) {
           }
           byte[] message = messageData.getBytes(Charset.forName("UTF-8"));
@@ -1199,10 +1190,12 @@
       }
 
       private void getGroupTitle(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
-          String groupId = args.getString(0);
+          int id = args.getInt(0);
+          String groupId = args.getString(1);
+          PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
           Group group = null;
           try {
-              group = Objects.requireNonNull(mGroupMap.get(groupId));
+              group = Objects.requireNonNull(carrierHandler.groups.get(groupId));
           } catch (NullPointerException e) {
           }
           if (group != null) {
@@ -1213,12 +1206,14 @@
       }
 
       private void setGroupTitle(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
-          String groupId = args.getString(0);
-          String groupTitle = args.getString(1);
+          int id = args.getInt(0);
+          String groupId = args.getString(1);
+          String groupTitle = args.getString(2);
 
+          PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
           Group group = null;
           try {
-              group = Objects.requireNonNull(mGroupMap.get(groupId));
+              group = Objects.requireNonNull(carrierHandler.groups.get(groupId));
           } catch (NullPointerException e) {
           }
           if (group != null) {
@@ -1230,11 +1225,13 @@
       }
 
       private void getGroupPeers(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
-          String groupId = args.getString(0);
+          int id = args.getInt(0);
+          String groupId = args.getString(1);
 
+          PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
           Group group = null;
           try {
-              group = Objects.requireNonNull(mGroupMap.get(groupId));
+              group = Objects.requireNonNull(carrierHandler.groups.get(groupId));
           } catch (NullPointerException e) {
           }
           if (group != null) {
@@ -1247,12 +1244,14 @@
       }
 
       private void getGroupPeer(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
-          String groupId = args.getString(0);
-          String peerId = args.getString(1);
+          int id = args.getInt(0);
+          String groupId = args.getString(1);
+          String peerId = args.getString(2);
 
+          PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
           Group group = null;
           try {
-              group = Objects.requireNonNull(mGroupMap.get(groupId));
+              group = Objects.requireNonNull(carrierHandler.groups.get(groupId));
           } catch (NullPointerException e) {
           }
           if (group != null && peerId != null) {
@@ -1264,25 +1263,8 @@
           }
       }
 
-      private void clearGroupHandlerMap() {
-          mGroupMap.clear();
-      }
-
-      private void deleteGroupHandlerFromMap(String groupHandlerId) {
-          mGroupMap.remove(groupHandlerId);
-      }
-
-      private String getGroupId() {
-          //TODO tobe modify , If can get groupid
-          return randomUUID();
-      }
-
       private String randomUUID() {
           return UUID.randomUUID().toString().replace("-", "");
-      }
-
-      private void addGroupMap(String groupId, Group group) {
-          mGroupMap.put(groupId, group);
       }
 
       private JSONObject getGroupPeersInfoJson(Group group) throws JSONException, CarrierException {
