@@ -22,6 +22,8 @@
 
   package org.elastos.trinity.plugins.carrier;
 
+  import android.os.Handler;
+  import android.os.HandlerThread;
   import android.util.Base64;
   import org.apache.cordova.CallbackContext;
   import org.apache.cordova.PluginResult;
@@ -66,6 +68,7 @@
       private HashMap<Integer, Session> mSessionMap;
       private HashMap<Integer, PluginStreamHandler> mStreamMap;
       private HashMap<Integer, PluginFileTransferHandler> mFileTransferHandlerMap;
+      private HashMap<Integer, HandlerThread> mFileTransferThreadMap;
 
       private CallbackContext mCarrierCallbackContext = null;
       private CallbackContext mSessionCallbackContext = null;
@@ -80,6 +83,7 @@
           mSessionMap = new HashMap();
           mStreamMap = new HashMap();
           mFileTransferHandlerMap = new HashMap<>();
+          mFileTransferThreadMap = new HashMap<>();
       }
 
       /**
@@ -1302,6 +1306,8 @@
       private void closeFileTrans(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           int fileTransferId = args.getInt(0);
 
+          mFileTransferThreadMap.remove(fileTransferId);
+
           FileTransfer fileTransfer = null;
           try {
               fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getmFileTransfer();
@@ -1435,14 +1441,22 @@
             return;
         }
 
-        cordova.getThreadPool().execute(new Runnable() {
+        HandlerThread ftransThread = mFileTransferThreadMap.get(fileTransferId);
+        if(ftransThread == null) {
+            callbackContext.error(INVALID_ID);
+            return;
+        }
+
+        Handler handler = new Handler(ftransThread.getLooper());
+        handler.post(new Runnable() {
             FileTransfer transfer;
 
             public void run() {
                 PluginResult result;
 
                 try {
-                    transfer.writeData(fileId, data.getBytes());
+                    byte[] binData = Base64.decode(data, Base64.DEFAULT);
+                    transfer.writeData(fileId, binData);
                     result = new PluginResult(PluginResult.Status.OK, SUCCESS);
                 } catch (CarrierException e) {
                     result = new PluginResult(PluginResult.Status.ERROR, INVALID_ID);
@@ -1549,6 +1563,9 @@
                   pluginFileTransferHandler.setFileTransferId(code);
 
                   mFileTransferHandlerMap.put(code, pluginFileTransferHandler);
+                  mFileTransferThreadMap.put(code, new HandlerThread("ftrans-" + code));
+                  mFileTransferThreadMap.get(code).start();
+
                   JSONObject r = new JSONObject();
                   r.put("fileTransferId", code);
                   callbackContext.success(r);

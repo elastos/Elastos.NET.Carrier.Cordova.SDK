@@ -22,6 +22,8 @@
 
  package org.elastos.trinity.plugins.carrier;
 
+ import android.util.Base64;
+
  import org.apache.cordova.CallbackContext;
  import org.apache.cordova.PluginResult;
  import org.elastos.carrier.filetransfer.FileTransfer;
@@ -112,7 +114,7 @@
          try {
              r.put("name", "onData");
              r.put("fileId", fileId);
-             r.put("data", new String(data, StandardCharsets.UTF_8));
+             r.put("data", Base64.encodeToString(data, Base64.NO_WRAP));
              sendEvent(r);
          } catch (JSONException e) {
              e.printStackTrace();

@@ -1104,7 +1104,7 @@ declare namespace CarrierPlugin {
          * @param fileId         The unique identifier of transferring file.
          * @param data           The received data.
          */
-        onData?(fileTransfer: FileTransfer, fileId: string, data: string);
+        onData?(fileTransfer: FileTransfer, fileId: string, data: Uint8Array);
 
         /**
          * An application-defined function that handles the event of end of receiving data.
@@ -1231,7 +1231,7 @@ declare namespace CarrierPlugin {
          * @param fileId     The file identifier.
          * @param data       The data to transfer for file.
          */
-        writeData(fileId: string, data: string, onSuccess?:()=>void, onError?:(err:string)=>void);
+        writeData(fileId: string, data: Uint8Array, onSuccess?:()=>void, onError?:(err:string)=>void);
 
         /**
          * Finish transferring file with a specified fileId(only available to sender).

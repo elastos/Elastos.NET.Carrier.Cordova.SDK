@@ -648,8 +648,8 @@ class FileTransferImpl implements CarrierPlugin.FileTransfer {
         this.process(onSuccess, onError, "pullFileTransData", [this.fileTransferId,fileId,offset]);
     }
 
-    writeData(fileId: string, data: string, onSuccess?: () => void, onError?: (err: string) => void) {
-        this.process(onSuccess, onError, "writeFileTransData", [this.fileTransferId,fileId,data]);
+    writeData(fileId: string, data: Uint8Array, onSuccess?: () => void, onError?: (err: string) => void) {
+        this.process(onSuccess, onError, "writeFileTransData", [this.fileTransferId,fileId,data.buffer]);
     }
 
     sendFinish(fileId: string, onSuccess?: () => void, onError?: (err: string) => void) {
@@ -803,6 +803,11 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
             this.setListener(FILE_TRANSFER, (event) => {
                 var fileTransfer = this.fileTransfers[event.fileTransferId];
                 if (fileTransfer) {
+                    if (event.name == "onData") {
+                        let base64 = cordova.require("cordova/base64");
+                        var data = base64.toArrayBuffer(event.data);
+                        event.data = new Uint8Array(data);
+                    }
                     if (fileTransfer.callbacks[event.name]) {
                         fileTransfer.callbacks[event.name](event);
                     }
