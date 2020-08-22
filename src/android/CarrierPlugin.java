@@ -1309,7 +1309,7 @@
           Runnable runnable = () -> {
               FileTransfer fileTransfer = null;
               try {
-                  fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getmFileTransfer();
+                  fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getFileTransfer();
               } catch (NullPointerException e) {
               }
               if (fileTransfer != null) {
@@ -1340,7 +1340,7 @@
           String filename = args.getString(1);
           FileTransfer fileTransfer = null;
           try {
-              fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getmFileTransfer();
+              fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getFileTransfer();
           } catch (NullPointerException e) {
           }
           if (fileTransfer != null) {
@@ -1360,7 +1360,7 @@
 
           FileTransfer fileTransfer = null;
           try {
-              fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getmFileTransfer();
+              fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getFileTransfer();
           } catch (NullPointerException e) {
           }
 
@@ -1380,7 +1380,7 @@
 
           FileTransfer fileTransfer = null;
           try {
-              fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getmFileTransfer();
+              fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getFileTransfer();
           } catch (NullPointerException e) {
           }
           if (fileTransfer != null) {
@@ -1396,7 +1396,7 @@
 
           FileTransfer fileTransfer = null;
           try {
-              fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getmFileTransfer();
+              fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getFileTransfer();
           } catch (NullPointerException e) {
           }
           if (fileTransfer != null) {
@@ -1413,7 +1413,7 @@
 
           FileTransfer fileTransfer = null;
           try {
-              fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getmFileTransfer();
+              fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getFileTransfer();
           } catch (NullPointerException e) {
           }
           if (fileTransfer != null) {
@@ -1431,7 +1431,7 @@
 
           FileTransfer fileTransfer = null;
           try {
-              fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getmFileTransfer();
+              fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getFileTransfer();
           } catch (NullPointerException e) {
           }
           if (fileTransfer != null) {
@@ -1449,7 +1449,7 @@
 
         FileTransfer fileTransfer;
 
-        fileTransfer = mFileTransferHandlerMap.get(fileTransferId).getmFileTransfer();
+        fileTransfer = mFileTransferHandlerMap.get(fileTransferId).getFileTransfer();
         if (fileTransfer == null) {
             callbackContext.error(INVALID_ID);
             return;
@@ -1496,7 +1496,7 @@
 
           FileTransfer fileTransfer = null;
           try {
-              fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getmFileTransfer();
+              fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getFileTransfer();
           } catch (NullPointerException e) {
           }
           if (fileTransfer != null) {
@@ -1515,7 +1515,7 @@
 
           FileTransfer fileTransfer = null;
           try {
-              fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getmFileTransfer();
+              fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getFileTransfer();
           } catch (NullPointerException e) {
           }
           if (fileTransfer != null) {
@@ -1532,7 +1532,7 @@
 
           FileTransfer fileTransfer = null;
           try {
-              fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getmFileTransfer();
+              fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getFileTransfer();
           } catch (NullPointerException e) {
           }
           if (fileTransfer != null) {
@@ -1549,7 +1549,7 @@
 
           FileTransfer fileTransfer = null;
           try {
-              fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getmFileTransfer();
+              fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getFileTransfer();
           } catch (NullPointerException e) {
           }
           if (fileTransfer != null) {
@@ -1573,7 +1573,7 @@
 
               if (fileTransfer != null) {
                   Integer code = System.identityHashCode(fileTransfer);
-                  pluginFileTransferHandler.setmFileTransfer(fileTransfer);
+                  pluginFileTransferHandler.setFileTransfer(fileTransfer);
                   pluginFileTransferHandler.setFileTransferId(code);
 
                   mFileTransferHandlerMap.put(code, pluginFileTransferHandler);

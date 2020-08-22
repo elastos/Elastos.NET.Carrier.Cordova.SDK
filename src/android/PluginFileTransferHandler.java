@@ -52,11 +52,11 @@
          this.fileTransferId = fileTransferId;
      }
 
-     FileTransfer getmFileTransfer() {
+     FileTransfer getFileTransfer() {
          return mFileTransfer;
      }
 
-     void setmFileTransfer(FileTransfer mFileTransfer) {
+     void setFileTransfer(FileTransfer mFileTransfer) {
          this.mFileTransfer = mFileTransfer;
      }
 
