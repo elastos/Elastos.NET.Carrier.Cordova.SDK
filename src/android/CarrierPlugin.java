@@ -1306,18 +1306,32 @@
       private void closeFileTrans(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
           int fileTransferId = args.getInt(0);
 
-          mFileTransferThreadMap.remove(fileTransferId);
+          Runnable runnable = () -> {
+              FileTransfer fileTransfer = null;
+              try {
+                  fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getmFileTransfer();
+              } catch (NullPointerException e) {
+              }
+              if (fileTransfer != null) {
+                  fileTransfer.close();
+                  callbackContext.success(SUCCESS);
+              } else {
+                  callbackContext.error(INVALID_ID);
+              }
 
-          FileTransfer fileTransfer = null;
-          try {
-              fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getmFileTransfer();
-          } catch (NullPointerException e) {
-          }
-          if (fileTransfer != null) {
-              fileTransfer.close();
-              callbackContext.success(SUCCESS);
+              HandlerThread ftransThread = mFileTransferThreadMap.get(fileTransferId);
+              if (ftransThread != null) {
+                  ftransThread.quitSafely();
+              }
+              mFileTransferThreadMap.remove(fileTransferId);
+          };
+
+          HandlerThread ftransThread = mFileTransferThreadMap.get(fileTransferId);
+          if (ftransThread != null) {
+              Handler handler = new Handler(ftransThread.getLooper());
+              handler.post(runnable);
           } else {
-              callbackContext.error(INVALID_ID);
+              runnable.run();
           }
       }
 
