@@ -1323,6 +1323,7 @@
               if (ftransThread != null) {
                   ftransThread.quitSafely();
               }
+              mFileTransferHandlerMap.remove(fileTransferId);
               mFileTransferThreadMap.remove(fileTransferId);
           };
 

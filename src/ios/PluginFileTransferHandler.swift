@@ -92,7 +92,7 @@ class PluginFileTransferHandler: CarrierFileTransferDelegate {
             "name": "onData",
             "fileId": fileId,
             // TODO: why data to string fail sometimes. and if fail, then cann't get any more data.
-            "data": String(data: data, encoding: .utf8) ?? "",
+            "data": data.base64EncodedString(),
         ]
         sendEvent(ret);
         return true

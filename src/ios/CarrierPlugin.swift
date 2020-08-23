@@ -53,7 +53,8 @@ class CarrierPlugin : TrinityPlugin {
     var mSessionDict = [Int: Session]()
     var mStreamDict = [Int: PluginStreamHandler]()
     var mFileTransferDict = [Int: PluginFileTransferHandler]()
-
+    var mFileTransferThreadDict = [Int: DispatchQueue]()
+  
     var carrierCallbackId: String = ""
     var sessionCallbackId: String = ""
     var streamCallbackId: String = ""
@@ -1059,12 +1060,26 @@ class CarrierPlugin : TrinityPlugin {
     @objc func closeFileTrans(_ command: CDVInvokedUrlCommand) {
         let fileTransferId = command.arguments[0] as? Int ?? 0
 
-        if let fileTransferHandler: PluginFileTransferHandler = mFileTransferDict[fileTransferId] {
-            fileTransferHandler.fileTransfer?.close();
-            self.success(command, retAsString: "success!");
+        func task() -> Void {
+            if let fileTransferHandler: PluginFileTransferHandler = mFileTransferDict[fileTransferId] {
+                fileTransferHandler.fileTransfer?.close();
+                self.success(command, retAsString: "success!");
+            }
+            else {
+                self.error(command, retAsString: "Id invalid!");
+            }
+
+            mFileTransferDict[fileTransferId] = nil
+            mFileTransferThreadDict[fileTransferId] = nil
         }
-        else {
-            self.error(command, retAsString: "Id invalid!");
+
+        let fileTransferThread = mFileTransferThreadDict[fileTransferId];
+        if fileTransferThread != nil {
+            fileTransferThread!.async {
+                task()
+            }
+        } else {
+            task()
         }
     }
 
@@ -1189,7 +1204,7 @@ class CarrierPlugin : TrinityPlugin {
         let transferId = getArgumentAsInt(command, 0)
         let fileId     = getArgumentAsString(command, 1)
         let data       = getArgumentAsString(command, 2)
-        let rawData    = data.data(using: .utf8)!
+        let rawData    = Data(base64Encoded: data)!
 
         let handler = mFileTransferDict[transferId];
         guard let _ = handler else {
@@ -1197,12 +1212,16 @@ class CarrierPlugin : TrinityPlugin {
             return
         }
 
-        let backgroundQueue = DispatchQueue(label: "org.elastos.carrier",
-                                              qos: .background,
-                                           target: nil)
+        
+        let fileTransferThread = mFileTransferThreadDict[transferId];
+        guard let _ = fileTransferThread else {
+            self.error(command, retAsString: "Id invalid")
+            return
+        }
+
         weak var weakHandler = handler
 
-        backgroundQueue.async {
+        fileTransferThread!.async {
             let result: CDVPluginResult
 
             do {
@@ -1327,7 +1346,10 @@ class CarrierPlugin : TrinityPlugin {
                 pluginFileTransferHandler.fileTransferId = fileTransferCount;
 
                 mFileTransferDict[fileTransferCount] = pluginFileTransferHandler;
-
+                mFileTransferThreadDict[fileTransferCount] = DispatchQueue(label: "org.elastos.carrier",
+                                                                           qos: .background,
+                                                                           target: nil)
+              
                 let ret: NSDictionary = [
                     "fileTransferId": fileTransferCount,
                     ]
