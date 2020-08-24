@@ -103,11 +103,12 @@ class PluginCarrierHandler: CarrierDelegate {
             options.secret_key = secretKeyString!.data(using: String.Encoding.utf8)
         }
 
+        try mCarrier = Carrier.createInstance(options: options, delegate: self)
+        print("carrier instance created")
+
         try mCarrier.getGroups().forEach{ group in
             mGroups[group.getId()] = group
         }
-        try mCarrier = Carrier.createInstance(options: options, delegate: self)
-        print("carrier instance created")
 
         try mSessionManager = CarrierSessionManager.createInstance(carrier: mCarrier, sessionRequestHandler: didReceiveSessionRequest);
 
