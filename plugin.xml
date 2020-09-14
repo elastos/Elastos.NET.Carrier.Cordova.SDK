@@ -54,5 +54,10 @@
         <framework src="src/ios/libs/ElastosCarrierSDK.framework" custom="true" embed="true" />
         <!-- <source-file src="src/ios/libs/ElastosCarrier.framework" target-dir="src/libs" framework="true" /> -->
     </platform>
+	<platform name="electron">
+        <js-module src="src/electron/CarrierPluginProxy.js" name="CarrierPluginProxy">
+            <runs />
+        </js-module>
+    </platform>
 </plugin>
 
