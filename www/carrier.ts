@@ -677,7 +677,8 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
     options: {
         udpEnabled: true,
         persistentLocation: ".data",
-        binaryUsed: false
+        binaryUsed: false,
+        expressEnabled: true
     }
 
     FriendInviteEvent = [];

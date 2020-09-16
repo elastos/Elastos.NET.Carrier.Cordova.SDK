@@ -84,15 +84,18 @@ class PluginCarrierHandler: CarrierDelegate {
                 options.bootstrapNodes?.append(bootstrapNode)
             }
 
-            let expressNodes = json["expressNodes"] as! Array<AnyObject>
-            for item in expressNodes {
-                let expressNode = ExpressNode()
-                let node = item as! [String: Any]
-                expressNode.ipv4 = node["ipv4"] as? String
-                expressNode.port = String(node["port"] as! Int)
-                expressNode.publicKey = node["publicKey"] as? String
+            let expressEnabled = decodedJsonDict["expressEnabled"] as ? Bool ?? false
+            if expressEnabled  {
+                let expressNodes = json["expressNodes"] as! Array<AnyObject>
+                for item in expressNodes {
+                    let expressNode = ExpressNode()
+                    let node = item as! [String: Any]
+                    expressNode.ipv4 = node["ipv4"] as? String
+                    expressNode.port = String(node["port"] as! Int)
+                    expressNode.publicKey = node["publicKey"] as? String
 
-                options.expressNodes?.append(expressNode)
+                    options.expressNodes?.append(expressNode)
+                }
             }
         }
 

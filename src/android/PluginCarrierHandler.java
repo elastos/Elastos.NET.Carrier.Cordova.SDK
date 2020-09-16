@@ -97,7 +97,10 @@ package org.elastos.trinity.plugins.carrier;
 		  options.setPersistentLocation(dir + '/' + jsonObject.getString("persistentLocation"))
 				  .setUdpEnabled(udpEnabled)
 				  .setBootstrapNodes(bootstraps)
+
+		  if jsonObject.optBoolean("expressEnabled", true) {
 				  .setExpressNodes(expressNodes);
+		  }
 
 		  String optionSecret = jsonObject.optString("secret_key", "");
 		  if (!optionSecret.isEmpty()) {
