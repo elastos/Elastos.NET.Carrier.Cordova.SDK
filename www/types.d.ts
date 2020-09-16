@@ -200,7 +200,7 @@ declare namespace CarrierPlugin {
         * @param stream      The carrier stream instance
         * @param data        The received packet data.
         */
-        onStreamData?(stream: Stream, data: string);
+        onStreamData?(stream: Stream, data: Uint8Array);
 
         /**
         * The callback function to be called when new multiplexing channel request to open.
@@ -243,7 +243,7 @@ declare namespace CarrierPlugin {
         * @param channel     The current channel ID.
         * @param data        The received packet data.
         */
-        onChannelData?(stream: Stream, channel: Number, data: string);
+        onChannelData?(stream: Stream, channel: Number, data: Uint8Array);
 
         /**
         * The callback function to be called when remote peer asks to pend data sending.
@@ -296,7 +296,7 @@ declare namespace CarrierPlugin {
         * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param data       The data to send.
         */
-        write(data: string, onSuccess: (bytesSent: Number) => void, onError?: (err: string) => void);
+        write(data: Uint8Array, onSuccess: (bytesSent: Number) => void, onError?: (err: string) => void);
 
         /**
         * Open a new channel on multiplexing stream.
@@ -327,7 +327,7 @@ declare namespace CarrierPlugin {
         * @param channel    The current channel ID.
         * @param data       The data to send.
         */
-        writeChannel(channel: Number, data: string, onSuccess: (bytesSent: Number) => void, onError?: (err: string) => void);
+        writeChannel(channel: Number, data: Uint8Array, onSuccess: (bytesSent: Number) => void, onError?: (err: string) => void);
 
         /**
         * Request remote peer to pend channel data sending.

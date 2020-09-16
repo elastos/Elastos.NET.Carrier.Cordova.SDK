@@ -129,7 +129,7 @@ class StreamImpl implements CarrierPlugin.Stream {
         this.process(onSuccess, onError, "getTransportInfo", [this.objId]);
     }
 
-    write(data: string, onSuccess: (bytesSent: Number) => void, onError?: (err: string) => void) {
+    write(data: Uint8Array, onSuccess: (bytesSent: Number) => void, onError?: (err: string) => void) {
         this.process(onSuccess, onError, "streamWrite", [this.objId, data]);
     }
 
@@ -141,7 +141,7 @@ class StreamImpl implements CarrierPlugin.Stream {
         this.process(onSuccess, onError, "closeChannel", [this.objId, channel]);
     }
 
-    writeChannel(channel: Number, data: string, onSuccess: (bytesSent: Number) => void, onError?: (err: string) => void) {
+    writeChannel(channel: Number, data: Uint8Array, onSuccess: (bytesSent: Number) => void, onError?: (err: string) => void) {
         this.process(onSuccess, onError, "writeChannel", [this.objId, channel, data]);
     }
 
@@ -731,8 +731,8 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
         if (!this.hasSetListener) {
             this.setListener(CARRIER, (event) => {
                 event.carrier = this.carriers[event.id];
+                event.id = null
                 if (event.carrier) {
-                    //        event.id = null;
                     if (event.name == "onFriendBinaryMessage") {
                         let base64 = cordova.require("cordova/base64");
                         var data = base64.toArrayBuffer(event.message);
@@ -750,8 +750,18 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
             this.setListener(STREAM, (event) => {
                 event.stream = this.streams[event.id];
                 event.id = null;
-                if (event.stream && event.stream.callbacks[event.name]) {
-                    event.stream.callbacks[event.name](event);
+                if (event.stream) {
+                    if (event.name = "onStreamData" || event.name == "onChannelData") {
+                        let base64 = cordova.require("cordova/base64");
+                        var data = base64.toArrayBuffer(event.data);
+                        event.data = new Uint8Array(data);
+                    }
+
+                    if (event.stream.callbacks[event.name]) {
+                        event.stream.callbacks[event.name](event);
+                    }
+                } else {
+                    alert(event.name)
                 }
             });
 
