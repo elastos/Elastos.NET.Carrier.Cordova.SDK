@@ -79,8 +79,8 @@ const CARRIER = 1;
 const SESSION = 2;
 const STREAM = 3;
 const FRIEND_INVITE = 4;
-const GROUP = 5 ;
-const FILE_TRANSFER = 6 ;
+const GROUP = 5;
+const FILE_TRANSFER = 6;
 const MESSAGE_RECEIPT = 7;
 
 class StreamImpl implements CarrierPlugin.Stream {
@@ -302,7 +302,7 @@ class CarrierImpl implements CarrierPlugin.Carrier {
     /** @property {number} nospam The nospam for Carrier address is used to eliminate spam friend. **/
     set nospam(value) {
         var me = this;
-        var success = function(ret) {
+        var success = function (ret) {
             me._nospam = value;
         };
         this.process(success, null, "setNospam", [this.objId, value]);
@@ -315,7 +315,7 @@ class CarrierImpl implements CarrierPlugin.Carrier {
     /** @property {number} presence Presence status. **/
     set presence(value) {
         var me = this;
-        var success = function(ret) {
+        var success = function (ret) {
             me._presence = value;
         };
         this.process(success, null, "setPresence", [this.objId, value]);
@@ -409,10 +409,10 @@ class CarrierImpl implements CarrierPlugin.Carrier {
         this.process(onSuccess, onError, "sendFriendBinaryMessage", [this.objId, to, message.buffer]);
     }
 
-    sendFriendMessageWithReceipt(to: string, message: string, handler: CarrierPlugin.OnFriendMessageReceipt,  onSuccess: (messageId: number) => void, onError?: (err: string) => void) {
+    sendFriendMessageWithReceipt(to: string, message: string, handler: CarrierPlugin.OnFriendMessageReceipt, onSuccess: (messageId: number) => void, onError?: (err: string) => void) {
         var handlerId: number = 0;
-        if (typeof(handler) == "function") {
-            handlerId = this.carrierManager.addFriendMessageReceiptCB(handler,  this);
+        if (typeof (handler) == "function") {
+            handlerId = this.carrierManager.addFriendMessageReceiptCB(handler, this);
         }
         if (this._binaryUsed) {
             if (onError)
@@ -422,10 +422,10 @@ class CarrierImpl implements CarrierPlugin.Carrier {
         this.process(onSuccess, onError, "sendFriendMessageWithReceipt", [this.objId, to, message, handlerId]);
     }
 
-    sendFriendBinaryMessageWithReceipt(to: string, message: Uint8Array, handler: CarrierPlugin.OnFriendMessageReceipt,  onSuccess: (messageId: number) => void, onError?: (err: string) => void) {
+    sendFriendBinaryMessageWithReceipt(to: string, message: Uint8Array, handler: CarrierPlugin.OnFriendMessageReceipt, onSuccess: (messageId: number) => void, onError?: (err: string) => void) {
         var handlerId: number = 0;
-        if (typeof(handler) == "function") {
-            handlerId = this.carrierManager.addFriendMessageReceiptCB(handler,  this);
+        if (typeof (handler) == "function") {
+            handlerId = this.carrierManager.addFriendMessageReceiptCB(handler, this);
         }
         if (!this._binaryUsed) {
             if (onError)
@@ -449,20 +449,20 @@ class CarrierImpl implements CarrierPlugin.Carrier {
 
     newGroup(onSuccess: (group: CarrierPlugin.Group) => void, onError?: (err: string) => void) {
         var me = this;
-        var _onSuccess = function(ret){
+        var _onSuccess = function (ret) {
             var group = new GroupImpl();
             group.groupId = ret.groupId;
             group.carrier = me;
             me.groups[group.groupId] = group;
 
             if (onSuccess) onSuccess(group);
-         };
+        };
         this.process(_onSuccess, onError, "createGroup", [this.objId]);
     }
 
     groupJoin(friendId: string, cookieCode: string, onSuccess: (group: CarrierPlugin.Group) => void, onError?: (err: string) => void) {
         var me = this;
-        var _onSuccess = function(ret){
+        var _onSuccess = function (ret) {
             var group = new GroupImpl();
             group.groupId = ret.groupId;
             group.carrier = me;
@@ -470,17 +470,17 @@ class CarrierImpl implements CarrierPlugin.Carrier {
 
             if (onSuccess) onSuccess(group);
         };
-        this.process(_onSuccess, onError, "joinGroup", [this.objId,friendId,cookieCode]);
+        this.process(_onSuccess, onError, "joinGroup", [this.objId, friendId, cookieCode]);
     }
 
     groupLeave(group: CarrierPlugin.Group, onSuccess: (group: CarrierPlugin.Group) => void, onError?: (err: string) => void) {
         var me = this;
-        var _onSuccess = function(ret){
+        var _onSuccess = function (ret) {
             delete me.groups[group.groupId];
             if (onSuccess)
                 onSuccess(group);
         };
-        this.process(_onSuccess, onError, "leaveGroup", [this.objId,group.groupId]);
+        this.process(_onSuccess, onError, "leaveGroup", [this.objId, group.groupId]);
     }
 
     getGroups(onSuccess: (groups: CarrierPlugin.Group[]) => void, onError?: (err: string) => void) {
@@ -492,7 +492,7 @@ class CarrierImpl implements CarrierPlugin.Carrier {
 
     newFileTransfer(to: string, fileTransferInfo: CarrierPlugin.FileTransferInfo, callbacks: any, onSuccess?: (fileTransfer: any) => void, onError?: (err: String) => void) {
         var me = this;
-        var _onSuccess = function(ret){
+        var _onSuccess = function (ret) {
             var fileTransfer = new FileTransferImpl();
             fileTransfer.fileTransferId = ret.fileTransferId;
             me.carrierManager.fileTransfers[fileTransfer.fileTransferId] = fileTransfer;
@@ -505,27 +505,27 @@ class CarrierImpl implements CarrierPlugin.Carrier {
             }
             if (onSuccess) onSuccess(fileTransfer);
         };
-        this.process(_onSuccess, onError, "newFileTransfer", [this.objId,to,fileTransferInfo]);
+        this.process(_onSuccess, onError, "newFileTransfer", [this.objId, to, fileTransferInfo]);
     }
 
     generateFileId(onSuccess: (fileId: Opaque<number, "Int">) => void) {
-        var _onSuccess = function(ret){
+        var _onSuccess = function (ret) {
             if (onSuccess) onSuccess(ret.fileId);
         };
-        this.process(_onSuccess,null, "generateFileTransFileId", []);
+        this.process(_onSuccess, null, "generateFileTransFileId", []);
     }
 
     newSession(to: string, onSuccess: (session: CarrierPlugin.Session) => void, onError?: (err: string) => void) {
         var me = this;
-           var _onSuccess = function (ret) {
-               var session = new SessionImpl();
-               session.objId = ret.id;
-               session.peer = ret.peer;
-               session.carrier = me;
-               session.carrierManager = me.carrierManager;
-               if (onSuccess) onSuccess(session);
-           };
-           exec(_onSuccess, onError, 'CarrierPlugin', 'newSession', [this.objId, to]);
+        var _onSuccess = function (ret) {
+            var session = new SessionImpl();
+            session.objId = ret.id;
+            session.peer = ret.peer;
+            session.carrier = me;
+            session.carrierManager = me.carrierManager;
+            if (onSuccess) onSuccess(session);
+        };
+        exec(_onSuccess, onError, 'CarrierPlugin', 'newSession', [this.objId, to]);
     }
 
     destroy(onSuccess?: () => void, onError?: (err: string) => void) {
@@ -540,50 +540,50 @@ class GroupImpl implements CarrierPlugin.Group {
     process(onSuccess, onError, name, args) {
         var me = this;
         var _onSuccess = function (ret) {
-           if (typeof ret === 'object') ret.group = me;
-           if (onSuccess) onSuccess(ret);
+            if (typeof ret === 'object') ret.group = me;
+            if (onSuccess) onSuccess(ret);
         };
         exec(_onSuccess, onError, 'CarrierPlugin', name, args);
     }
 
     invite(friendId: string, onSuccess: () => void, onError?: (err: string) => void) {
-        this.process(onSuccess, onError, "inviteGroup", [this.carrier.objId,this.groupId,friendId]);
+        this.process(onSuccess, onError, "inviteGroup", [this.carrier.objId, this.groupId, friendId]);
     }
 
     sendMessage(message: string, onSuccess: () => void, onError?: (err: string) => void) {
-        this.process(onSuccess, onError, "sendGroupMessage", [this.carrier.objId,this.groupId,message]);
+        this.process(onSuccess, onError, "sendGroupMessage", [this.carrier.objId, this.groupId, message]);
     }
 
     getTitle(onSuccess: (groupTitle: string) => void, onError?: (err: string) => void) {
-        var _onSuccess = function(ret){
+        var _onSuccess = function (ret) {
             var title = ret.groupTitle;
             if (onSuccess) onSuccess(title);
         };
-        this.process(_onSuccess, onError, "getGroupTitle", [this.carrier.objId,this.groupId]);
+        this.process(_onSuccess, onError, "getGroupTitle", [this.carrier.objId, this.groupId]);
     }
 
     setTitle(groupTitle: string, onSuccess: (groupTitle: string) => void, onError?: (err: string) => void) {
-        var _onSuccess = function(ret){
+        var _onSuccess = function (ret) {
             var title = ret.groupTitle;
             if (onSuccess) onSuccess(title);
         };
-        this.process(_onSuccess, onError, "setGroupTitle", [this.carrier.objId,this.groupId,groupTitle]);
+        this.process(_onSuccess, onError, "setGroupTitle", [this.carrier.objId, this.groupId, groupTitle]);
     }
 
     getPeers(onSuccess: (peers: any) => void, onError?: (err: string) => void) {
-        var _onSuccess = function(ret){
+        var _onSuccess = function (ret) {
             var peers = ret.peers;
             if (onSuccess) onSuccess(peers);
         };
-        this.process(_onSuccess, onError, "getGroupPeers", [this.carrier.objId,this.groupId]);
+        this.process(_onSuccess, onError, "getGroupPeers", [this.carrier.objId, this.groupId]);
     }
 
     getPeer(peerId: string, onSuccess: (peer: any) => void, onError?: (err: string) => void) {
-        var _onSuccess = function(ret){
+        var _onSuccess = function (ret) {
             var peer = ret.peer;
             if (onSuccess) onSuccess(peer);
         };
-        this.process(_onSuccess, onError, "getGroupPeer", [this.carrier.objId,this.groupId,peerId]);
+        this.process(_onSuccess, onError, "getGroupPeer", [this.carrier.objId, this.groupId, peerId]);
     }
 }
 
@@ -619,8 +619,8 @@ class FileTransferImpl implements CarrierPlugin.FileTransfer {
         var _onSuccess = function (ret) {
             var fileId = ret.fileId;
             if (onSuccess) onSuccess(fileId);
-         };
-         this.process(_onSuccess, onError, "getFileTransFileId", [this.fileTransferId,filename]);
+        };
+        this.process(_onSuccess, onError, "getFileTransFileId", [this.fileTransferId, filename]);
     }
 
     getFileName(fileId: string, onSuccess?: (filename: string) => void, onError?: (err: string) => void) {
@@ -628,8 +628,8 @@ class FileTransferImpl implements CarrierPlugin.FileTransfer {
             var filename = ret.filename;
             if (onSuccess)
                 onSuccess(filename);
-         };
-         this.process(_onSuccess, onError, "getFileTransFileName", [this.fileTransferId,fileId]);
+        };
+        this.process(_onSuccess, onError, "getFileTransFileName", [this.fileTransferId, fileId]);
     }
 
     connect(onSuccess?: () => void, onError?: (err: string) => void) {
@@ -641,31 +641,31 @@ class FileTransferImpl implements CarrierPlugin.FileTransfer {
     }
 
     addFile(fileInfo: CarrierPlugin.FileTransferInfo, onSuccess?: () => void, onError?: (err: string) => void) {
-        this.process(onSuccess, onError, "addFileTransFile", [this.fileTransferId,fileInfo]);
+        this.process(onSuccess, onError, "addFileTransFile", [this.fileTransferId, fileInfo]);
     }
 
     pullData(fileId: string, offset: number & { __opaque__: "Int"; }, onSuccess?: () => void, onError?: (err: string) => void) {
-        this.process(onSuccess, onError, "pullFileTransData", [this.fileTransferId,fileId,offset]);
+        this.process(onSuccess, onError, "pullFileTransData", [this.fileTransferId, fileId, offset]);
     }
 
     writeData(fileId: string, data: Uint8Array, onSuccess?: () => void, onError?: (err: string) => void) {
-        this.process(onSuccess, onError, "writeFileTransData", [this.fileTransferId,fileId,data.buffer]);
+        this.process(onSuccess, onError, "writeFileTransData", [this.fileTransferId, fileId, data.buffer]);
     }
 
     sendFinish(fileId: string, onSuccess?: () => void, onError?: (err: string) => void) {
-        this.process(onSuccess, onError, "sendFileTransFinish", [this.fileTransferId,fileId]);
+        this.process(onSuccess, onError, "sendFileTransFinish", [this.fileTransferId, fileId]);
     }
 
     cancelTransfer(fileId: string, status: Int, reason: string, onSuccess?: () => void, onError?: (err: string) => void) {
-        this.process(onSuccess, onError, "cancelFileTrans", [this.fileTransferId, fileId , status , reason]);
+        this.process(onSuccess, onError, "cancelFileTrans", [this.fileTransferId, fileId, status, reason]);
     }
 
     pendTransfer(fileId: string, onSuccess?: () => void, onError?: (err: string) => void) {
-        this.process(onSuccess, onError, "pendFileTrans", [this.fileTransferId , fileId]);
+        this.process(onSuccess, onError, "pendFileTrans", [this.fileTransferId, fileId]);
     }
 
     resumeTransfer(fileId: string, onSuccess?: () => void, onError?: (err: string) => void) {
-        this.process(onSuccess, onError, "resumeFileTrans", [this.fileTransferId , fileId]);
+        this.process(onSuccess, onError, "resumeFileTrans", [this.fileTransferId, fileId]);
     }
 }
 
@@ -796,7 +796,7 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
                     if (carrier.callbacks[event.name]) {
                         carrier.callbacks[event.name](event);
                     }
-                }else {
+                } else {
                     alert(event.name);
                 }
             });
@@ -882,7 +882,7 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
         carrier._binaryUsed = options.binaryUsed;
 
         if (typeof (callbacks) != "undefined" && callbacks != null) {
-           for (var i = 0; i < CARRIER_CB_NAMES.length; i++) {
+            for (var i = 0; i < CARRIER_CB_NAMES.length; i++) {
                 var name = CARRIER_CB_NAMES[i];
                 carrier.callbacks[name] = callbacks[name];
             }
