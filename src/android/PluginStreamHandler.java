@@ -40,40 +40,43 @@ public class PluginStreamHandler extends AbstractStreamHandler {
 	public int mCode;
 	public CallbackContext mCallbackContext = null;
 
-	public PluginStreamHandler(CallbackContext callbackContext) {
+	private PluginStreamHandler(CallbackContext callbackContext) {
 		this.mCallbackContext = callbackContext;
 	}
 
 	public static PluginStreamHandler createInstance(Session session, int type, int options, CallbackContext callbackContext) throws CarrierException {
 		PluginStreamHandler handler = new PluginStreamHandler(callbackContext);
-		if (handler != null) {
-			handler.mStream = session.addStream(StreamType.valueOf(type), options, handler);
-			if (handler.mStream != null) {
-				handler.mCode = System.identityHashCode(handler.mStream);
-			}
-		}
+		Stream stream = session.addStream(StreamType.valueOf(type), options, handler);
+
+		if (stream == null)
+			return null;
+
+		handler.mStream = stream;
+		handler.mCode = System.identityHashCode(handler.mStream);
 		return handler;
 	}
 
-	public JSONObject getAddressInfoJson(AddressInfo info) throws JSONException {
+	private JSONObject getAddressInfo(AddressInfo info) throws JSONException {
 		JSONObject r = new JSONObject();
 		r.put("type", info.getCandidateType().value());
 		r.put("address", info.getAddress().getAddress().toString());
 		r.put("port", info.getAddress().getPort());
-		InetSocketAddress relatedAddress = info.getRelatedAddress();
-		if (relatedAddress != null) {
-			r.put("relatedAddress", relatedAddress.getAddress().toString());
-			r.put("relatedPort", relatedAddress.getPort());
+
+		InetSocketAddress relatedAddr = info.getRelatedAddress();
+		if (relatedAddr != null) {
+			r.put("relatedAddress", relatedAddr.getAddress().toString());
+			r.put("relatedPort", relatedAddr.getPort());
 		}
 		return r;
 	}
 
-	public JSONObject getTransportInfoJson() throws JSONException, CarrierException{
+	public JSONObject getTransportInfo() throws JSONException, CarrierException{
 		TransportInfo info = mStream.getTransportInfo();
 		JSONObject r = new JSONObject();
+
 		r.put("topology", info.getTopology().value());
-		r.put("localAddr", getAddressInfoJson(info.getLocalAddressInfo()));
-		r.put("remoteAddr", getAddressInfoJson(info.getRemoteAddressInfo()));
+		r.put("localAddr", getAddressInfo(info.getLocalAddressInfo()));
+		r.put("remoteAddr", getAddressInfo(info.getRemoteAddressInfo()));
 		return r;
 	}
 

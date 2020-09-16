@@ -955,7 +955,7 @@
 
           PluginStreamHandler streamHandler = mStreamMap.get(id);
           if (streamHandler != null) {
-              JSONObject r = streamHandler.getTransportInfoJson();
+              JSONObject r = streamHandler.getTransportInfo();
               callbackContext.success(r);
           } else {
               callbackContext.error(INVALID_ID);
