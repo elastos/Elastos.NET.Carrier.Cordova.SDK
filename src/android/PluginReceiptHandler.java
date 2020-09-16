@@ -29,11 +29,11 @@ import org.json.JSONObject;
 
 import org.elastos.carrier.*;
 
-public class ReceiptHandler implements FriendMessageReceiptHandler {
+public class PluginReceiptHandler implements FriendMessageReceiptHandler {
 	private int mHandlerId;
 	public CallbackContext mCallbackContext = null;
 
-	public ReceiptHandler(int id, CallbackContext callbackContext) {
+	public PluginReceiptHandler(int id, CallbackContext callbackContext) {
 		this.mHandlerId = id;
 		this.mCallbackContext = callbackContext;
 	}

@@ -708,7 +708,7 @@
           int handlerId = args.getInt(3);
           PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
           if (carrierHandler != null) {
-              ReceiptHandler handler = new ReceiptHandler(handlerId, mReceiptCallbackContext);
+            PluginReceiptHandler handler = new PluginReceiptHandler(handlerId, mReceiptCallbackContext);
               long messageid = carrierHandler.mCarrier.sendFriendMessage(to, message, handler);
               JSONObject r = new JSONObject();
               r.put("messageId", messageid);
@@ -726,7 +726,7 @@
         int handlerId = args.getInt(3);
         PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
         if (carrierHandler != null) {
-            ReceiptHandler handler = new ReceiptHandler(handlerId, mReceiptCallbackContext);
+            PluginReceiptHandler handler = new PluginReceiptHandler(handlerId, mReceiptCallbackContext);
             long messageid = carrierHandler.mCarrier.sendFriendMessage(to, message, handler);
             JSONObject r = new JSONObject();
             r.put("messageId", messageid);
