@@ -22,55 +22,57 @@
 
 package org.elastos.trinity.plugins.carrier;
 
-  import org.apache.cordova.CallbackContext;
-  import org.apache.cordova.PluginResult;
-  import org.elastos.carrier.filetransfer.FileTransferInfo;
-  import org.elastos.carrier.session.ManagerHandler;
-  import org.json.JSONException;
-  import org.json.JSONObject;
+import org.apache.cordova.CallbackContext;
+import org.apache.cordova.PluginResult;
+import org.elastos.carrier.filetransfer.FileTransferInfo;
+import org.elastos.carrier.session.ManagerHandler;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-  import java.nio.charset.StandardCharsets;
-  import java.util.HashMap;
-  import java.util.List;
-  import java.util.ArrayList;
-  import java.util.Date;
-  import java.io.File;
-  import android.util.Base64;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Date;
+import java.io.File;
+import android.util.Base64;
 
-  import org.elastos.carrier.*;
-  import org.elastos.carrier.exceptions.CarrierException;
-  import org.elastos.carrier.session.Manager;
+import org.elastos.carrier.*;
+import org.elastos.carrier.exceptions.CarrierException;
+import org.elastos.carrier.session.Manager;
 
-  public class PluginCarrierHandler extends AbstractCarrierHandler implements ManagerHandler, org.elastos.carrier.filetransfer.ManagerHandler {
-	  private static String TAG = "PluginCarrierHandler";
+public class PluginCarrierHandler extends AbstractCarrierHandler implements ManagerHandler, org.elastos.carrier.filetransfer.ManagerHandler {
+	private static String TAG = "PluginCarrierHandler";
 
-	  public Carrier mCarrier;
-	  public int mCode;
-	  public Manager mSessionManager;
-	  public CallbackContext mCallbackContext = null;
-	  public CallbackContext mGroupCallbackContext = null;
-	  public HashMap<String, Group> groups;
-	  private boolean binaryUsed = false;
+	public Carrier mCarrier;
+	public int mCode;
+	public Manager mSessionManager;
+	public CallbackContext mCallbackContext = null;
+	public CallbackContext mGroupCallbackContext = null;
+	public HashMap<String, Group> groups;
+	private boolean binaryUsed = false;
 
-	  private org.elastos.carrier.filetransfer.Manager mFileTransferManager;
+	private org.elastos.carrier.filetransfer.Manager mFileTransferManager;
 
-	  public static int AGENT_READY = 0;
+	public static int AGENT_READY = 0;
 
-	  private PluginCarrierHandler(CallbackContext callbackContext, CallbackContext groupCallbackContext) {
-		  mCallbackContext = callbackContext;
-		  mGroupCallbackContext = groupCallbackContext;
-		  groups = new HashMap<>();
-	  }
+	private PluginCarrierHandler(CallbackContext callbackContext, CallbackContext groupCallbackContext) {
+		mCallbackContext = callbackContext;
+		mGroupCallbackContext = groupCallbackContext;
+		groups = new HashMap<>();
+	}
 
 	  private Carrier createCarrier(String dir, String configString, CarrierPlugin plugin) throws JSONException, CarrierException {
-		  File carrierDir = new File(dir);
+		File carrierDir = new File(dir);
 		  if (!carrierDir.exists()) {
 			  carrierDir.mkdirs();
 		  }
 
 		  boolean udpEnabled = false;
+		  BootstrapsGetter getter = BootstrapsGetter.getGetter(plugin);
+
 		  List<Carrier.Options.BootstrapNode> bootstraps = new ArrayList<>();
-		  ArrayList<BootstrapsGetter.BootstrapNode> list = BootstrapsGetter.getBootstrapNodes(plugin);
+		  ArrayList<BootstrapsGetter.BootstrapNode> list = getter.bootstrapNodes;
 		  for (BootstrapsGetter.BootstrapNode node: list) {
 			  Carrier.Options.BootstrapNode bootstrapNode = new Carrier.Options.BootstrapNode();
 			  bootstrapNode.setIpv4(node.ipv4);
@@ -80,7 +82,7 @@ package org.elastos.trinity.plugins.carrier;
 		  }
 
 		  List<Carrier.Options.ExpressNode> expressNodes = new ArrayList<>();
-		  ArrayList<BootstrapsGetter.ExpressNode0> list2 = BootstrapsGetter.getExpressNodes(plugin);
+		  ArrayList<BootstrapsGetter.ExpressNode0> list2 = getter.expressNode0s;
 		  for (BootstrapsGetter.ExpressNode0 node: list2) {
 			  Carrier.Options.ExpressNode expNode = new Carrier.Options.ExpressNode();
 			  expNode.setIpv4(node.ipv4);

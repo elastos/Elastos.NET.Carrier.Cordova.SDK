@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
+Ó
 package org.elastos.trinity.plugins.carrier;
 
 import android.content.res.Resources;
@@ -28,15 +28,15 @@ import com.google.gson.annotations.SerializedName;
 
 import org.elastos.trinity.runtime.R;
 
-import java.io.InputStream;
 import java.util.ArrayList;
+import java.io.InputStream;
 import java.io.IOException;
 
-public class BootstrapsGetter {
+class BootstrapsGetter {
     @SerializedName("bootstraps")
-    public ArrayList<BootstrapNode> bootstrapNodes;
+    ArrayList<BootstrapNode> bootstrapNodes;
 
-    static public class BootstrapNode {
+    static class BootstrapNode {
         @SerializedName("ipv4")
         public String ipv4;
 
@@ -48,9 +48,9 @@ public class BootstrapsGetter {
     }
 
     @SerializedName("expressNodes")
-    public ArrayList<ExpressNode0> expressNode0s;
+    ArrayList<ExpressNode0> expressNode0s;
 
-    static public class ExpressNode0 {
+    static class ExpressNode0 {
         @SerializedName("ipv4")
         public String ipv4;
 
@@ -61,35 +61,19 @@ public class BootstrapsGetter {
         public String publicKey;
     }
 
-    private static String asJsonFile(InputStream inputStream) {
+    static public BootstrapsGetter getGetter(CarrierPlugin plugin) {
+        Resources resources = plugin.cordova.getActivity().getResources();
+        InputStream inputStream = resources.openRawResource(R.raw.bootstraps);
+        String jsonResName;
+
         try {
             byte[] bytes = new byte[inputStream.available()];
             inputStream.read(bytes, 0, bytes.length);
-            String json = new String(bytes);
-            return json;
+            jsonResName = new String(bytes);
         } catch (IOException e) {
             return null;
         }
-    }
 
-    public static ArrayList<BootstrapNode> getBootstrapNodes(CarrierPlugin plugin) {
-        Resources res = plugin.cordova.getActivity().getResources();
-        String jsonFile = asJsonFile(res.openRawResource(R.raw.bootstraps));
-        if (jsonFile == null)
-            return null;
-
-        BootstrapsGetter getter = new Gson().fromJson(jsonFile, BootstrapsGetter.class);
-        return getter.bootstrapNodes;
-    }
-
-    static ArrayList<ExpressNode0> getExpressNodes(CarrierPlugin plugin) {
-        Resources res = plugin.cordova.getActivity().getResources();
-        String jsonFile = asJsonFile(res.openRawResource(R.raw.bootstraps));
-        if (jsonFile == null)
-            return null;
-
-        BootstrapsGetter getter = new Gson().fromJson(jsonFile, BootstrapsGetter.class);
-        return getter.expressNode0s;
+        return new Gson().fromJson(jsonResName, BootstrapsGetter.class);
     }
 }
-
