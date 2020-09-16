@@ -34,8 +34,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class PluginStreamHandler extends AbstractStreamHandler {
-	private static String TAG = "PluginStreamHandler";
-
 	public Stream mStream;
 	public int mCode;
 	public CallbackContext mCallbackContext = null;

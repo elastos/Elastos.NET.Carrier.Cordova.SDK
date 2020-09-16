@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-Ó
+
 package org.elastos.trinity.plugins.carrier;
 
 import android.content.res.Resources;
