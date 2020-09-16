@@ -20,155 +20,155 @@
   * SOFTWARE.
   */
 
- package org.elastos.trinity.plugins.carrier;
+package org.elastos.trinity.plugins.carrier;
 
- import android.util.Base64;
+import android.util.Base64;
 
- import org.apache.cordova.CallbackContext;
- import org.apache.cordova.PluginResult;
- import org.elastos.carrier.filetransfer.FileTransfer;
- import org.elastos.carrier.filetransfer.FileTransferHandler;
- import org.elastos.carrier.filetransfer.FileTransferState;
- import org.json.JSONException;
- import org.json.JSONObject;
+import org.apache.cordova.CallbackContext;
+import org.apache.cordova.PluginResult;
+import org.elastos.carrier.filetransfer.FileTransfer;
+import org.elastos.carrier.filetransfer.FileTransferHandler;
+import org.elastos.carrier.filetransfer.FileTransferState;
+import org.json.JSONException;
+import org.json.JSONObject;
 
- import java.nio.charset.StandardCharsets;
+import java.nio.charset.StandardCharsets;
 
- public class PluginFileTransferHandler implements FileTransferHandler {
-     private static String TAG = "PluginFileTransferHandler";
-     private CallbackContext mCallbackContext;
-     private int fileTransferId;
-     private FileTransfer mFileTransfer ;
+public class PluginFileTransferHandler implements FileTransferHandler {
+    private static String TAG = "PluginFileTransferHandler";
+    private CallbackContext mCallbackContext;
+    private int fileTransferId;
+    private FileTransfer mFileTransfer ;
 
-     PluginFileTransferHandler(CallbackContext callbackContext) {
-         this.mCallbackContext = callbackContext;
-     }
+    PluginFileTransferHandler(CallbackContext callbackContext) {
+        this.mCallbackContext = callbackContext;
+    }
 
-     int getFileTransferId() {
-         return fileTransferId;
-     }
+    int getFileTransferId() {
+        return fileTransferId;
+    }
 
-     void setFileTransferId(int fileTransferId) {
-         this.fileTransferId = fileTransferId;
-     }
+    void setFileTransferId(int fileTransferId) {
+        this.fileTransferId = fileTransferId;
+    }
 
-     FileTransfer getFileTransfer() {
-         return mFileTransfer;
-     }
+    FileTransfer getFileTransfer() {
+        return mFileTransfer;
+    }
 
-     void setFileTransfer(FileTransfer mFileTransfer) {
-         this.mFileTransfer = mFileTransfer;
-     }
+    void setFileTransfer(FileTransfer mFileTransfer) {
+        this.mFileTransfer = mFileTransfer;
+    }
 
-     private void sendEvent(JSONObject info) throws JSONException {
-         info.put("fileTransferId", fileTransferId);
-         if (mCallbackContext != null) {
-             PluginResult result = new PluginResult(PluginResult.Status.OK, info);
-             result.setKeepCallback(true);
-             mCallbackContext.sendPluginResult(result);
-         }
-     }
+    private void sendEvent(JSONObject info) throws JSONException {
+        info.put("fileTransferId", fileTransferId);
+        if (mCallbackContext != null) {
+            PluginResult result = new PluginResult(PluginResult.Status.OK, info);
+            result.setKeepCallback(true);
+            mCallbackContext.sendPluginResult(result);
+        }
+    }
 
-     @Override
-     public void onStateChanged(FileTransfer filetransfer, FileTransferState state) {
-         JSONObject r = new JSONObject();
-         try {
-             r.put("name", "onStateChanged");
-             r.put("state", state);
-             sendEvent(r);
-         } catch (JSONException e) {
-             e.printStackTrace();
-         }
-     }
+    @Override
+    public void onStateChanged(FileTransfer filetransfer, FileTransferState state) {
+        JSONObject r = new JSONObject();
+        try {
+            r.put("name", "onStateChanged");
+            r.put("state", state);
+            sendEvent(r);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
-     @Override
-     public void onFileRequest(FileTransfer filetransfer, String fileId, String filename, long size) {
-         JSONObject r = new JSONObject();
-         try {
-             r.put("name", "onFileRequest");
-             r.put("fileId", fileId);
-             r.put("filename", filename);
-             r.put("size", size);
-             sendEvent(r);
-         } catch (JSONException e) {
-             e.printStackTrace();
-         }
-     }
+    @Override
+    public void onFileRequest(FileTransfer filetransfer, String fileId, String filename, long size) {
+        JSONObject r = new JSONObject();
+        try {
+            r.put("name", "onFileRequest");
+            r.put("fileId", fileId);
+            r.put("filename", filename);
+            r.put("size", size);
+            sendEvent(r);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
-     @Override
-     public void onPullRequest(FileTransfer filetransfer, String fileId, long offset) {
-         JSONObject r = new JSONObject();
-         try {
-             r.put("name", "onPullRequest");
-             r.put("fileId", fileId);
-             r.put("offset", offset);
-             sendEvent(r);
-         } catch (JSONException e) {
-             e.printStackTrace();
-         }
-     }
+    @Override
+    public void onPullRequest(FileTransfer filetransfer, String fileId, long offset) {
+        JSONObject r = new JSONObject();
+        try {
+            r.put("name", "onPullRequest");
+            r.put("fileId", fileId);
+            r.put("offset", offset);
+            sendEvent(r);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
-     @Override
-     public boolean onData(FileTransfer filetransfer, String fileId, byte[] data) {
-         JSONObject r = new JSONObject();
-         try {
-             r.put("name", "onData");
-             r.put("fileId", fileId);
-             r.put("data", Base64.encodeToString(data, Base64.NO_WRAP));
-             sendEvent(r);
-         } catch (JSONException e) {
-             e.printStackTrace();
-         }
-         return true;
-     }
+    @Override
+    public boolean onData(FileTransfer filetransfer, String fileId, byte[] data) {
+        JSONObject r = new JSONObject();
+        try {
+            r.put("name", "onData");
+            r.put("fileId", fileId);
+            r.put("data", Base64.encodeToString(data, Base64.NO_WRAP));
+            sendEvent(r);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
 
-     @Override
-     public void onDataFinished(FileTransfer filetransfer, String fileId) {
-         JSONObject r = new JSONObject();
-         try {
-             r.put("name", "onDataFinished");
-             r.put("fileId", fileId);
-             sendEvent(r);
-         } catch (JSONException e) {
-             e.printStackTrace();
-         }
-     }
+    @Override
+    public void onDataFinished(FileTransfer filetransfer, String fileId) {
+        JSONObject r = new JSONObject();
+        try {
+            r.put("name", "onDataFinished");
+            r.put("fileId", fileId);
+            sendEvent(r);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
-     @Override
-     public void onPending(FileTransfer filetransfer, String fileId) {
-         JSONObject r = new JSONObject();
-         try {
-             r.put("name", "onPending");
-             r.put("fileId", fileId);
-             sendEvent(r);
-         } catch (JSONException e) {
-             e.printStackTrace();
-         }
-     }
+    @Override
+    public void onPending(FileTransfer filetransfer, String fileId) {
+        JSONObject r = new JSONObject();
+        try {
+            r.put("name", "onPending");
+            r.put("fileId", fileId);
+            sendEvent(r);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
-     @Override
-     public void onResume(FileTransfer filetransfer, String fileId) {
-         JSONObject r = new JSONObject();
-         try {
-             r.put("name", "onResume");
-             r.put("fileId", fileId);
-             sendEvent(r);
-         } catch (JSONException e) {
-             e.printStackTrace();
-         }
-     }
+    @Override
+    public void onResume(FileTransfer filetransfer, String fileId) {
+        JSONObject r = new JSONObject();
+        try {
+            r.put("name", "onResume");
+            r.put("fileId", fileId);
+            sendEvent(r);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
-     @Override
-     public void onCancel(FileTransfer filetransfer, String fileId, int status, String reason) {
-         JSONObject r = new JSONObject();
-         try {
-             r.put("name", "onCancel");
-             r.put("fileId", fileId);
-             r.put("status", status);
-             r.put("reason", reason);
-             sendEvent(r);
-         } catch (JSONException e) {
-             e.printStackTrace();
-         }
-     }
- }
+    @Override
+    public void onCancel(FileTransfer filetransfer, String fileId, int status, String reason) {
+        JSONObject r = new JSONObject();
+        try {
+            r.put("name", "onCancel");
+            r.put("fileId", fileId);
+            r.put("status", status);
+            r.put("reason", reason);
+            sendEvent(r);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+}
