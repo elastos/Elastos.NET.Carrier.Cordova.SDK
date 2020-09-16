@@ -742,7 +742,7 @@
           int handlerId = args.getInt(3);
           PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
           if (carrierHandler != null) {
-              FIRHandler handler = new FIRHandler(handlerId, mFIRCallbackContext);
+            PluginFriendInviteResponseHandler handler = new PluginFriendInviteResponseHandler(handlerId, mFIRCallbackContext);
               carrierHandler.mCarrier.inviteFriend(to, data, handler);
               JSONObject r = new JSONObject();
               r.put("to", to);

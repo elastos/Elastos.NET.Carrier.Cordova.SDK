@@ -20,7 +20,7 @@
   * SOFTWARE.
   */
 
- package org.elastos.trinity.plugins.carrier;
+package org.elastos.trinity.plugins.carrier;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.PluginResult;
@@ -29,13 +29,11 @@ import org.json.JSONObject;
 
 import org.elastos.carrier.*;
 
-public class FIRHandler implements FriendInviteResponseHandler {
-	private static String TAG = "FIRHandler";
-
+public class PluginFriendInviteResponseHandler implements FriendInviteResponseHandler {
 	private int mHandlerId;
 	public CallbackContext mCallbackContext = null;
 
-	public FIRHandler(int id, CallbackContext callbackContext) {
+	public PluginFriendInviteResponseHandler(int id, CallbackContext callbackContext) {
 		this.mHandlerId = id;
 		this.mCallbackContext = callbackContext;
 	}
@@ -64,4 +62,3 @@ public class FIRHandler implements FriendInviteResponseHandler {
 		}
 	}
 }
-
