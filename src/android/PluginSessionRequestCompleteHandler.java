@@ -29,13 +29,11 @@ import org.elastos.carrier.session.SessionRequestCompleteHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class SRCHandler implements SessionRequestCompleteHandler {
-	private static String TAG = "SRCHandler";
-
+public class PluginSessionRequestCompleteHandler implements SessionRequestCompleteHandler {
 	private int mHandlerId;
-	public CallbackContext mCallbackContext = null;
+	private CallbackContext mCallbackContext = null;
 
-	public SRCHandler(int id, CallbackContext callbackContext) {
+	public PluginSessionRequestCompleteHandler(int id, CallbackContext callbackContext) {
 		this.mHandlerId = id;
 		this.mCallbackContext = callbackContext;
 	}

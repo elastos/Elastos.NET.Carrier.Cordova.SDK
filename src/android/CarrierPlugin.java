@@ -835,7 +835,7 @@
           int handlerId = args.getInt(1);
           Session session = mSessionMap.get(id);
           if (session != null) {
-              SRCHandler handler = new SRCHandler(handlerId, mSessionCallbackContext);
+              PluginSessionRequestCompleteHandler handler = new PluginSessionRequestCompleteHandler(handlerId, mSessionCallbackContext);
               session.request(handler);
               callbackContext.success();
           } else {
