@@ -35,7 +35,6 @@ import org.json.JSONObject;
 import java.nio.charset.StandardCharsets;
 
 public class PluginFileTransferHandler implements FileTransferHandler {
-    private static String TAG = "PluginFileTransferHandler";
     private CallbackContext mCallbackContext;
     private int fileTransferId;
     private FileTransfer mFileTransfer ;
