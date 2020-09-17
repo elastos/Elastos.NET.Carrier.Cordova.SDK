@@ -1302,87 +1302,78 @@ private void sendFriendBinaryMessage(JSONArray args, CallbackContext callbackCon
         return jsonObject;
     }
 
-
-
     private void closeFileTrans(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
-        int fileTransferId = args.getInt(0);
+        int transferId = args.getInt(0);
 
         Runnable runnable = () -> {
-            FileTransfer fileTransfer = null;
+            FileTransfer filetransfer;
+            HandlerThread filetransferThread;
             try {
-                fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getFileTransfer();
-            } catch (NullPointerException e) {
-            }
-            if (fileTransfer != null) {
-                fileTransfer.close();
+                filetransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(transferId)).getFileTransfer();
+                filetransferThead = Objects.requireNonNull(mFileTransferThreadMap.get(transferId));
+                filetransfer.close();
                 callbackContext.success(SUCCESS);
-            } else {
+
+                filetransferThead.quitSafely();
+            } catch (NullPointerException | CarrierException e) {
                 callbackContext.error(INVALID_ID);
             }
 
-            HandlerThread ftransThread = mFileTransferThreadMap.get(fileTransferId);
-            if (ftransThread != null) {
-                ftransThread.quitSafely();
-            }
-            mFileTransferHandlerMap.remove(fileTransferId);
-            mFileTransferThreadMap.remove(fileTransferId);
+            mFileTransferHandlerMap.remove(transferId);
+            mFileTransferThreadMap.remove(transferId);
         };
 
-        HandlerThread ftransThread = mFileTransferThreadMap.get(fileTransferId);
-        if (ftransThread != null) {
-            Handler handler = new Handler(ftransThread.getLooper());
+        try {
+            HandlerThread thread = Objects.requireNonNull(mFileTransferThreadMap.get(transferId));
+            Handler handler = new Handler(thread.getLooper());
             handler.post(runnable);
-        } else {
-            runnable.run();
+        }  catch (NullPointerException e) {
+            runnable.run()
         }
     }
 
-    private void getFileTransFileId(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
-        int fileTransferId = args.getInt(0);
-        String filename = args.getString(1);
-        FileTransfer fileTransfer = null;
-        try {
-            fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getFileTransfer();
-        } catch (NullPointerException e) {
-        }
-        if (fileTransfer != null) {
+    private void getFileTransFileId(JSONArray args, CallbackContext callbackContext) throws JSONException {
+        int index = 0;
+        int transferId = args.getInt(index++);
+        String fileName = args.getString(index++);
+        FileTransfer filetransfer;
 
-            String fileId = fileTransfer.getFileId(filename);
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("fileId",fileId);
-            callbackContext.success(jsonObject);
-        } else {
+        try {
+            filetransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(transferId)).getFileTransfer();
+
+            String fileId = fileTransfer.getFileId(fileName);
+            JSONObject json = new JSONObject();
+            json.put("fileId", fileId);
+            callbackContext.success(json);
+        } catch (NullPointerException e) {
             callbackContext.error(INVALID_ID);
         }
     }
 
-    private void getFileTransFileName(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
-        int fileTransferId = args.getInt(0);
-        String fileId = args.getString(1);
+    private void getFileTransFileName(JSONArray args, CallbackContext callbackContext) throws JSONException {
+        int index = 0;
+        int transferId = args.getInt(index++);
+        String  fileId = args.getString(index++);
+        FileTransfer filetransfer;
 
-        FileTransfer fileTransfer = null;
         try {
-            fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getFileTransfer();
-        } catch (NullPointerException e) {
-        }
+            filetransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(transferId)).getFileTransfer();
 
-        if (fileTransfer != null) {
-            String filename = fileTransfer.getFileName(fileId);
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("filename",filename);
-            callbackContext.success(jsonObject);
-        } else {
+            String fileName = filetransfer.getFileName(fileId);
+            JSONObject json = new JSONObject();
+            json.put("filename", fileName);
+            callbackContext.success(json);
+        } catch (NullPointerException e) {
             callbackContext.error(INVALID_ID);
         }
     }
 
+    private void fileTransConnect(JSONArray args, CallbackContext callbackContext) {
+        int transferId = args.getInt(0);
+        FileTransfer filetransfer;
 
-    private void fileTransConnect(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
-        int fileTransferId = args.getInt(0);
-
-        FileTransfer fileTransfer = null;
         try {
-            fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getFileTransfer();
+            fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(transferId)).getFileTransfer();
         } catch (NullPointerException e) {
         }
         if (fileTransfer != null) {
@@ -1393,209 +1384,194 @@ private void sendFriendBinaryMessage(JSONArray args, CallbackContext callbackCon
         }
     }
 
-    private void acceptFileTransConnect(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
-        int fileTransferId = args.getInt(0);
+    private void acceptFileTransConnect(JSONArray args, CallbackContext callbackContext) {
+        int transferId = args.getInt(0);
+        FileTransfer filetransfer;
 
-        FileTransfer fileTransfer = null;
         try {
-            fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getFileTransfer();
-        } catch (NullPointerException e) {
-        }
-        if (fileTransfer != null) {
-            fileTransfer.acceptConnect();
+            filetransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(transferId)).getFileTransfer();
+            filetransfer.acceptConnect();
             callbackContext.success(SUCCESS);
-        } else {
+        } catch (NullPointerException | CarrierException e) {
             callbackContext.error(INVALID_ID);
         }
     }
 
-    private void addFileTransFile(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
-        int fileTransferId = args.getInt(0);
-        JSONObject fileinfo = args.getJSONObject(1);
+    private void addFileTransFile(JSONArray args, CallbackContext callbackContext) {
+        int index = 0;
+        int transferId = args.getInt(index++);
+        JSONObject fileInfo = args.getJSONObject(index++);
+        FileTransfer filetransfer;
 
-        FileTransfer fileTransfer = null;
         try {
-            fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getFileTransfer();
-        } catch (NullPointerException e) {
-        }
-        if (fileTransfer != null) {
-            fileTransfer.addFile(decodeFileTransferInfo(fileinfo));
+            filetransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(transferId)).getFileTransfer();
+            filetransfer.addFile(decodeFileTransferInfo(fileInfo));
             callbackContext.success(SUCCESS);
-        } else {
+        } catch (NullPointerException | CarrierException e) {
             callbackContext.error(INVALID_ID);
         }
     }
 
-    private void pullFileTransData(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
-        int fileTransferId = args.getInt(0);
-        String fileId = args.getString(1);
-        long offset = args.getLong(2);
+    private void pullFileTransData(JSONArray args, CallbackContext callbackContext) {
+        int index = 0;
+        int transferId = args.getInt(index++);
+        String  fileId = args.getString(index++);
+        long    offset = args.getLong(index++);
+        FileTransfer filetransfer;
 
-        FileTransfer fileTransfer = null;
         try {
-            fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getFileTransfer();
-        } catch (NullPointerException e) {
-        }
-        if (fileTransfer != null) {
-            fileTransfer.pullData(fileId,offset);
+            filetransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(transferId)).getFileTransfer();
+            filetransfer.pullData(fileId, offset);
             callbackContext.success(SUCCESS);
-        } else {
+        } catch (NullPointerException e) {
             callbackContext.error(INVALID_ID);
         }
     }
 
-private void writeFileTransData(JSONArray args, CallbackContext callbackContext) throws JSONException {
-    int fileTransferId = args.getInt(0);
-    String fileId = args.getString(1);
-    String data = args.getString(2);
+    private void writeFileTransData(JSONArray args, CallbackContext callbackContext) throws JSONException {
+        int index = 0;
+        int tranferId = args.getInt(index++);
+        String fileId = args.getString(index++);
+        String data   = args.getString(index++);
+        FileTransfer filetransfer;
+        HandlerThread filetransferThread;
 
-    FileTransfer fileTransfer;
+        try {
+            filetransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(tranferId)).getFileTransfer();
+            transThread  = Objects.requireNonNull(mFileTransferThreadMap.get(tranferId));
+        } catch (NullPointerException | CarrierException e) {
+            callbackContext.error(INVALID_ID);
+            return;
+        }
 
-    fileTransfer = mFileTransferHandlerMap.get(fileTransferId).getFileTransfer();
-    if (fileTransfer == null) {
-        callbackContext.error(INVALID_ID);
-        return;
-    }
+        Handler handler = new Handler(transThread.getLooper());
+        handler.post(new Runnable() {
+            FileTransfer filetransfer;
 
-    HandlerThread ftransThread = mFileTransferThreadMap.get(fileTransferId);
-    if(ftransThread == null) {
-        callbackContext.error(INVALID_ID);
-        return;
-    }
+            public void run() {
+                PluginResult result;
 
-    Handler handler = new Handler(ftransThread.getLooper());
-    handler.post(new Runnable() {
-        FileTransfer transfer;
-
-        public void run() {
-            PluginResult result;
-
-            try {
-                byte[] binData = Base64.decode(data, Base64.DEFAULT);
-                transfer.writeData(fileId, binData);
-                result = new PluginResult(PluginResult.Status.OK, SUCCESS);
-            } catch (CarrierException e) {
-                result = new PluginResult(PluginResult.Status.ERROR, INVALID_ID);
+                try {
+                    byte[] binData = Base64.decode(data, Base64.DEFAULT);
+                    transfer.writeData(fileId, binData);
+                    result = new PluginResult(PluginResult.Status.OK, SUCCESS);
+                } catch (CarrierException e) {
+                    result = new PluginResult(PluginResult.Status.ERROR, INVALID_ID);
+                }
+                result.setKeepCallback(true);
+                callbackContext.sendPluginResult(result);
             }
-            result.setKeepCallback(true);
-            callbackContext.sendPluginResult(result);
-        }
 
-        Runnable init(FileTransfer transfer) {
-            this.transfer = transfer;
-            return (this);
-        }
-    }.init(fileTransfer));
+            Runnable init(FileTransfer filetransfer) {
+                this.filetransfer = filetransfer;
+                return (this);
+            }
 
-    PluginResult result = new PluginResult(PluginResult.Status.NO_RESULT);
-    result.setKeepCallback(true);
-    callbackContext.sendPluginResult(result);
-}
+        }.init(fileTransfer));
 
-    private void sendFileTransFinish(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
-        int fileTransferId = args.getInt(0);
-        String fileId = args.getString(1);
+        PluginResult result = new PluginResult(PluginResult.Status.NO_RESULT);
+        result.setKeepCallback(true);
+        callbackContext.sendPluginResult(result);
+    }
 
-        FileTransfer fileTransfer = null;
+    private void sendFileTransFinish(JSONArray args, CallbackContext callbackContext) {
+        int index = 0;
+        int tranferId = args.getInt(index++);
+        String fileId = args.getString(index++);
+        FileTransfer filetransfer;
+
         try {
-            fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getFileTransfer();
-        } catch (NullPointerException e) {
-        }
-        if (fileTransfer != null) {
-            fileTransfer.sendFinish(fileId);
+            filetransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(tranferId)).getFileTransfer()
+            filetransfer.sendFinish(fileId);
             callbackContext.success(SUCCESS);
-        } else {
+        } catch (NullPointerException | CarrierException e) {
             callbackContext.error(INVALID_ID);
         }
     }
 
-    private void cancelFileTrans(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
-        int fileTransferId = args.getInt(0);
-        String fileId = args.getString(1);
-        int status = args.getInt(2);
-        String reason = args.getString(3);
+    private void cancelFileTrans(JSONArray args, CallbackContext callbackContext) {
+        int index = 0;
+        int tranferId = args.getInt(index++);
+        String fileId = args.getString(index++);
+        int status = args.getInt(index++);
+        String reason = args.getString(index++);
+        FileTransfer filetransfer;
 
-        FileTransfer fileTransfer = null;
         try {
-            fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getFileTransfer();
-        } catch (NullPointerException e) {
-        }
-        if (fileTransfer != null) {
-            fileTransfer.cancelTransfer(fileId,status,reason);
+            filetransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(tranferId)).getFileTransfer();
+            filetransfer.cancelTransfer(fileId, status, reason);
             callbackContext.success(SUCCESS);
-        } else {
+        } catch (NullPointerException | CarrierException e) {
             callbackContext.error(INVALID_ID);
         }
     }
 
-    private void pendFileTrans(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
-        int fileTransferId = args.getInt(0);
-        String fileId = args.getString(1);
+    private void pendFileTrans(JSONArray args, CallbackContext callbackContext) {
+        int index = 0;
+        int tranferId = args.getInt(index++);
+        String fileId = args.getString(index++);
+        FileTransfer filetransfer;
 
-        FileTransfer fileTransfer = null;
         try {
-            fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getFileTransfer();
-        } catch (NullPointerException e) {
-        }
-        if (fileTransfer != null) {
-            fileTransfer.pendTransfer(fileId);
+            filetransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(tranferId)).getFileTransfer();
+            filetransfer.pendTransfer(fileId);
             callbackContext.success(SUCCESS);
-        } else {
+        } catch (NullPointerException e) {
             callbackContext.error(INVALID_ID);
         }
     }
 
-    private void resumeFileTrans(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
-        int fileTransferId = args.getInt(0);
-        String fileId = args.getString(1);
+    private void resumeFileTrans(JSONArray args, CallbackContext callbackContext) {
+        int index = 0;
+        int tranferId = args.getInt(index++);
+        String fileId = args.getString(index++);
+        FileTransfer filetransfer;
 
-        FileTransfer fileTransfer = null;
         try {
-            fileTransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(fileTransferId)).getFileTransfer();
-        } catch (NullPointerException e) {
-        }
-        if (fileTransfer != null) {
-            fileTransfer.resumeTransfer(fileId);
+            filetransfer = Objects.requireNonNull(mFileTransferHandlerMap.get(transferId)).getFileTransfer();
+            filetransfer.resumeTransfer(fileId);
             callbackContext.success(SUCCESS);
-        } else {
+        } catch (NullPointerException e) {
             callbackContext.error(INVALID_ID);
         }
     }
 
-    private void newFileTransfer(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
-        Integer id = args.getInt(0);
-        String to = args.getString(1);
-        JSONObject fileInfo = args.getJSONObject(2);
+    private void newFileTransfer(JSONArray args, CallbackContext callbackContext) throws JSONException {
+        int index = 0;
+        Integer id = args.getInt(index++);
+        String  to = args.getString(index++);
+        JSONObject fileInfo = args.getJSONObject(index++);
+
         PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
-        if (carrierHandler != null) {
-
-            PluginFileTransferHandler pluginFileTransferHandler = new PluginFileTransferHandler(mFileTransferCallbackContext);
-            FileTransfer fileTransfer = carrierHandler.getFileTransferManager()
-                    .newFileTransfer(to,decodeFileTransferInfo(fileInfo),pluginFileTransferHandler);
-
-            if (fileTransfer != null) {
-                Integer code = System.identityHashCode(fileTransfer);
-                pluginFileTransferHandler.setFileTransfer(fileTransfer);
-                pluginFileTransferHandler.setFileTransferId(code);
-
-                mFileTransferHandlerMap.put(code, pluginFileTransferHandler);
-                mFileTransferThreadMap.put(code, new HandlerThread("ftrans-" + code));
-                mFileTransferThreadMap.get(code).start();
-
-                JSONObject r = new JSONObject();
-                r.put("fileTransferId", code);
-                callbackContext.success(r);
-            } else {
-                callbackContext.error("error");
-            }
-        } else {
+        if (carrierHandler == null) {
             callbackContext.error(INVALID_ID);
+            return;
+        }
+
+        PluginFileTransferHandler pluginFileTransferHandler = new PluginFileTransferHandler(mFileTransferCallbackContext);
+        FileTransfer filetransfer = carrierHandler.getFileTransferManager()
+                .newFileTransfer(to, decodeFileTransferInfo(fileInfo),pluginFileTransferHandler);
+
+        if (filetransfer != null) {
+            Integer code = System.identityHashCode(fileTransfer);
+            pluginFileTransferHandler.setFileTransfer(fileTransfer);
+            pluginFileTransferHandler.setFileTransferId(code);
+
+            mFileTransferHandlerMap.put(code, pluginFileTransferHandler);
+            mFileTransferThreadMap.put(code, new HandlerThread("ftrans-" + code));
+            mFileTransferThreadMap.get(code).start();
+
+            JSONObject r = new JSONObject();
+            r.put("fileTransferId", code);
+            callbackContext.success(r);
+        } else {
+            callbackContext.error("error");
         }
     }
 
     private void generateFileTransFileId(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("fileId",FileTransfer.generateFileId());
+        jsonObject.put("fileId", FileTransfer.generateFileId());
         callbackContext.success(jsonObject);
     }
 
