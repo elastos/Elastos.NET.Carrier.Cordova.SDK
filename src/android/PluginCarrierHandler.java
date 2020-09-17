@@ -98,10 +98,10 @@ public class PluginCarrierHandler extends AbstractCarrierHandler implements Mana
 		Carrier.Options options = new Carrier.Options();
 		options.setPersistentLocation(dir + '/' + jsonObject.getString("persistentLocation"))
 				.setUdpEnabled(udpEnabled)
-				.setBootstrapNodes(bootstraps)
+				.setBootstrapNodes(bootstraps);
 
-		if jsonObject.optBoolean("expressEnabled", true) {
-				.setExpressNodes(expressNodes);
+		if (jsonObject.optBoolean("expressEnabled", true)) {
+			options.setExpressNodes(expressNodes);
 		}
 
 		String optionSecret = jsonObject.optString("secret_key", "");
