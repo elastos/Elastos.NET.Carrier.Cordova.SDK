@@ -1094,215 +1094,250 @@ private void sendFriendBinaryMessage(JSONArray args, CallbackContext callbackCon
         }
     }
 
-    private void createGroup(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
+    private void createGroup(JSONArray args, CallbackContext callbackContext) throws JSONException {
         int id = args.getInt(0);
-        PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
+        PluginCarrierHandler carrier;
+        Group group;
 
-        if (carrierHandler != null) {
-            Group group = carrierHandler.mCarrier.newGroup();
-            group.setTitle("Untitled");
-
-            carrierHandler.groups.put(group.getId(), group);
-
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("groupId", group.getId());
-
-            callbackContext.success(jsonObject);
-        } else {
-            callbackContext.error(INVALID_ID);
-        }
-    }
-
-    private void joinGroup(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
-        int id = args.getInt(0);
-        String friendId = args.getString(1);
-        String cookieBase58 = args.getString(2);
-
-        PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
-        byte[] cookie = Base58.decode(cookieBase58);
-        if (carrierHandler != null) {
-            Group group = carrierHandler.mCarrier.groupJoin(friendId, cookie);
-
-            carrierHandler.groups.put(group.getId(), group);
-
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("groupId", group.getId());
-
-            callbackContext.success(jsonObject);
-        } else {
-            callbackContext.error(INVALID_ID);
-        }
-    }
-
-    private void inviteGroup(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
-        int id = args.getInt(0);
-        String groupId = args.getString(1);
-        String friendId = args.getString(2);
-
-        PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
-        Group group = null;
         try {
-            group = Objects.requireNonNull(carrierHandler.groups.get(groupId));
-        } catch (NullPointerException e) {
+            carrier = Objects.requireNonNull(mCarrierMap.get(id));
+
+            group = carrier.mCarrier.newGroup();
+            group.setTitle("Untitled");
+            carrier.groups.put(group.getId(), group);
+
+            JSONObject json = new JSONObject();
+            json.put("groupId", group.getId());
+            callbackContext.success(json);
+
+        } catch (NullPointerException | CarrierException e) {
+            callbackContext.error(INVALID_ID);
         }
-        if (group != null) {
+    }
+
+    private void joinGroup(JSONArray args, CallbackContext callbackContext) throws JSONException {
+        int index = 0;
+        int id = args.getInt(index++);
+        String friendId = args.getString(index++);
+        String base58Cookie = args.getString(index++);
+
+        PluginCarrierHandler carrier;
+        Group group;
+
+        if (friendId == null || base58Cookie == null) {
+            callbackContext.error(INVALID_ID);
+            return;
+        }
+
+        try {
+            carrier = Objects.requireNonNull(mCarrierMap.get(id));
+
+            byte[] cookie = Base58.decode(base58Cookie);
+            group = carrier.mCarrier.groupJoin(friendId, cookie);
+            carrier.groups.put(group.getId(), group);
+
+            JSONObject json = new JSONObject();
+            json.put("groupId", group.getId());
+            callbackContext.success(json);
+
+        } catch (NullPointerException | CarrierException e) {
+            callbackContext.error(INVALID_ID);
+        }
+    }
+
+    private void inviteGroup(JSONArray args, CallbackContext callbackContext) throws JSONException {
+        int index = 0;
+        int id = args.getInt(index++);
+        String groupId  = args.getString(index++);
+        String friendId = args.getString(index++);
+
+        PluginCarrierHandler carrier;
+        Group group;
+
+        if (groupId == null || friendId == null) {
+            callbackContext.error(INVALID_ID);
+            return;
+        }
+
+        try {
+            carrier = Objects.requireNonNull(mCarrierMap.get(id));
+            group   = Objects.requireNonNull(carrier.groups.get(groupId));
+
             group.invite(friendId);
             callbackContext.success(SUCCESS);
-        } else {
+        } catch (NullPointerException | CarrierException e) {
             callbackContext.error(INVALID_ID);
         }
     }
 
-    private void leaveGroup(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
-        int id = args.getInt(0);
-        String groupId = args.getString(1);
+    private void leaveGroup(JSONArray args, CallbackContext callbackContext) throws JSONException {
+        int index = 0;
+        int id = args.getInt(index++);
+        String groupId = args.getString(index++);
 
-        PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
-        Group group = null;
-        try {
-            group = Objects.requireNonNull(carrierHandler.groups.get(groupId));
-        } catch (NullPointerException e) {
+        PluginCarrierHandler carrier;
+        Group group;
+
+        if (groupId == null) {
+            callbackContext.error(INVALID_ID);
+            return;
         }
-        if (carrierHandler != null && group != null) {
-            carrierHandler.mCarrier.groupLeave(group);
-            carrierHandler.groups.remove(groupId);
+
+        try {
+            carrier = Objects.requireNonNull(mCarrierMap.get(id));
+            group   = Objects.requireNonNull(carrier.groups.get(groupId));
+
+            carrier.mCarrier.groupLeave(group);
+            carrier.groups.remove(groupId);
 
             callbackContext.success(SUCCESS);
-        } else {
+        } catch (NullPointerException | CarrierException e) {
             callbackContext.error(INVALID_ID);
         }
     }
 
-    private void sendGroupMessage(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
-        int id = args.getInt(0);
-        String groupId = args.getString(1);
-        String messageData = args.getString(2);
+    private void sendGroupMessage(JSONArray args, CallbackContext callbackContext) throws JSONException {
+        int index = 0;
+        int id = args.getInt(index++);
+        String groupId = args.getString(index++);
+        String message = args.getString(index++);
 
-        PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
-        Group group = null;
+        PluginCarrierHandler carrier;
+        Group group;
+
         try {
-            group = Objects.requireNonNull(carrierHandler.groups.get(groupId));
-        } catch (NullPointerException e) {
-        }
-        byte[] message = messageData.getBytes(Charset.forName("UTF-8"));
+            carrier = Objects.requireNonNull(mCarrierMap.get(id));
+            group   = Objects.requireNonNull(carrier.groups.get(groupId));
 
-        if (group != null) {
-            group.sendMessage(message);
+            byte[] data = message.getBytes(Charset.forName("UTF-8"));
+            group.sendMessage(data);
+
             callbackContext.success(SUCCESS);
-        } else {
+        } catch (NullPointerException | CarrierException e) {
             callbackContext.error(INVALID_ID);
         }
     }
 
-    private void getGroupTitle(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
-        int id = args.getInt(0);
-        String groupId = args.getString(1);
-        PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
-        Group group = null;
+    private void getGroupTitle(JSONArray args, CallbackContext callbackContext) throws JSONException {
+        int index = 0;
+        int id = args.getInt(index++);
+        String groupId = args.getString(index++);
+
+        PluginCarrierHandler carrier;
+        Group group;
+
         try {
-            group = Objects.requireNonNull(carrierHandler.groups.get(groupId));
-        } catch (NullPointerException e) {
-        }
-        if (group != null) {
-            callbackContext.success(getGroupTitleJson(group));
-        } else {
+            carrier = Objects.requireNonNull(mCarrierMap.get(id));
+            group   = Objects.requireNonNull(carrier.groups.get(groupId));
+
+            callbackContext.success(getGroupTitleInJson(group));
+        } catch (NullPointerException | CarrierException e) {
             callbackContext.error(INVALID_ID);
         }
     }
 
-    private void setGroupTitle(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
-        int id = args.getInt(0);
-        String groupId = args.getString(1);
-        String groupTitle = args.getString(2);
+    private void setGroupTitle(JSONArray args, CallbackContext callbackContext) throws JSONException {
+        int index = 0;
+        int id = args.getInt(index++);
+        String groupId = args.getString(index++);
+        String title   = args.getString(index++);
 
-        PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
-        Group group = null;
+        PluginCarrierHandler carrier;
+        Group group;
+
         try {
-            group = Objects.requireNonNull(carrierHandler.groups.get(groupId));
-        } catch (NullPointerException e) {
-        }
-        if (group != null) {
-            group.setTitle(groupTitle);
-            callbackContext.success(getGroupTitleJson(group));
-        } else {
+            carrier = Objects.requireNonNull(mCarrierMap.get(id));
+            group   = Objects.requireNonNull(carrier.groups.get(groupId));
+
+            group.setTitle(title);
+            callbackContext.success(getGroupTitleInJson(group));
+
+        } catch (NullPointerException | CarrierException e) {
             callbackContext.error(INVALID_ID);
         }
     }
 
-    private void getGroupPeers(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
-        int id = args.getInt(0);
-        String groupId = args.getString(1);
+    private void getGroupPeers(JSONArray args, CallbackContext callbackContext) throws JSONException {
+        int index = 0;
+        int id = args.getInt(index++);
+        String groupId = args.getString(index++);
 
-        PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
-        Group group = null;
+        PluginCarrierHandler carrier;
+        Group group;
+
         try {
-            group = Objects.requireNonNull(carrierHandler.groups.get(groupId));
-        } catch (NullPointerException e) {
-        }
-        if (group != null) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("peers", getGroupPeersInfoJson(group));
-            callbackContext.success(jsonObject);
-        } else {
+            carrier = Objects.requireNonNull(mCarrierMap.get(id));
+            group   = Objects.requireNonNull(carrier.groups.get(groupId));
+
+            JSONObject json = new JSONObject();
+            json.put("peers", getGroupPeerList(group));
+            callbackContext.success(json);
+
+        } catch (NullPointerException | CarrierException e) {
             callbackContext.error(INVALID_ID);
+            return;
         }
     }
 
-    private void getGroupPeer(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
-        int id = args.getInt(0);
-        String groupId = args.getString(1);
-        String peerId = args.getString(2);
+    private void getGroupPeer(JSONArray args, CallbackContext callbackContext) throws JSONException {
+        int index = 0;
+        int id = args.getInt(index++);
+        String groupId = args.getString(index++);
+        String peerId  = args.getString(index++);
 
-        PluginCarrierHandler carrierHandler = mCarrierMap.get(id);
-        Group group = null;
+        PluginCarrierHandler carrier;
+        Group group;
+
+        if (peerId == null) {
+            callbackContext.error(INVALID_ID);
+            return;
+        }
+
         try {
-            group = Objects.requireNonNull(carrierHandler.groups.get(groupId));
-        } catch (NullPointerException e) {
-        }
-        if (group != null && peerId != null) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("peer", getGroupPeerInfoJson(group, peerId));
-            callbackContext.success(jsonObject);
-        } else {
+            carrier = Objects.requireNonNull(mCarrierMap.get(id));
+            group   = Objects.requireNonNull(carrier.groups.get(groupId));
+
+            JSONObject json = new JSONObject();
+            json.put("peer", getGroupPeerInfo(group, peerId));
+            callbackContext.success(json);
+
+        } catch (NullPointerException | CarrierException e) {
             callbackContext.error(INVALID_ID);
+            return;
         }
     }
 
-    private String randomUUID() {
-        return UUID.randomUUID().toString().replace("-", "");
-    }
-
-    private JSONObject getGroupPeersInfoJson(Group group) throws JSONException, CarrierException {
-        JSONObject jsonObject = new JSONObject();
+    private JSONObject getGroupPeerList(Group group) throws JSONException, CarrierException {
+        JSONObject json = new JSONObject();
 
         List<Group.PeerInfo> peerInfos = group.getPeers();
         for (Group.PeerInfo peerInfo : peerInfos) {
-            JSONObject peerObj = new JSONObject();
-            peerObj.put("peerName", peerInfo.getName());
-            peerObj.put("peerUserId", peerInfo.getUserId());
+            JSONObject peer = new JSONObject();
+            peer.put("peerName", peerInfo.getName());
+            peer.put("peerUserId", peerInfo.getUserId());
 
-            jsonObject.put(peerInfo.getUserId(), peerObj);
+            json.put(peerInfo.getUserId(), peer);
         }
-        return jsonObject;
+        return json;
     }
 
-    private JSONObject getGroupPeerInfoJson(Group group, String peerId) throws JSONException, CarrierException {
-        JSONObject peerObj = new JSONObject();
+    private JSONObject getGroupPeerInfo(Group group, String peerId) throws JSONException, CarrierException {
+        JSONObject json = new JSONObject();
 
         Group.PeerInfo peerInfo = group.getPeer(peerId);
-        peerObj.put("peerName", peerInfo.getName());
-        peerObj.put("peerUserId", peerInfo.getUserId());
+        json.put("peerName", peerInfo.getName());
+        json.put("peerUserId", peerInfo.getUserId());
 
-        return peerObj;
+        return json;
     }
 
-    private JSONObject getGroupTitleJson(Group group) throws JSONException, CarrierException {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("groupTitle", group.getTitle());
-        return jsonObject;
+    private JSONObject getGroupTitleInJson(Group group) throws JSONException, CarrierException {
+        JSONObject json = new JSONObject();
+        json.put("groupTitle", group.getTitle());
+        return json;
     }
 
-    private void closeFileTrans(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
+    private void closeFileTrans(JSONArray args, CallbackContext callbackContext) throws JSONException {
         int transferId = args.getInt(0);
 
         Runnable runnable = () -> {
