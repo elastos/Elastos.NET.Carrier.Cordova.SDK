@@ -84,7 +84,7 @@ class PluginCarrierHandler: CarrierDelegate {
                 options.bootstrapNodes?.append(bootstrapNode)
             }
 
-            let expressEnabled = decodedJsonDict["expressEnabled"] as ? Bool ?? false
+            let expressEnabled = decodedJsonDict["expressEnabled"] as? Bool ?? false
             if expressEnabled  {
                 let expressNodes = json["expressNodes"] as! Array<AnyObject>
                 for item in expressNodes {
