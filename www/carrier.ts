@@ -498,10 +498,7 @@ class CarrierImpl implements CarrierPlugin.Carrier {
             me.carrierManager.fileTransfers[fileTransfer.fileTransferId] = fileTransfer;
 
             if (typeof (callbacks) != "undefined" && callbacks != null) {
-                for (var i = 0; i < FILE_TRANSFER_CB_NAMES.length; i++) {
-                    var name = FILE_TRANSFER_CB_NAMES[i];
-                    me.carrierManager.fileTransfers[fileTransfer.fileTransferId].callbacks[name] = callbacks[name];
-                }
+                me.carrierManager.fileTransfers[fileTransfer.fileTransferId].callbacks = callbacks;
             }
             if (onSuccess) onSuccess(fileTransfer);
         };
