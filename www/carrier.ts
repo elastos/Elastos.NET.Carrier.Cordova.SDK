@@ -118,7 +118,7 @@ class StreamImpl implements CarrierPlugin.Stream {
 
     process(onSuccess, onError, name, args) {
         var me = this;
-        var _onSuccess = function (ret) {
+        var _onSuccess = (ret) => {
             if (typeof ret === 'object') ret.stream = me;
             if (onSuccess) onSuccess(ret);
         };
@@ -211,7 +211,7 @@ class SessionImpl implements CarrierPlugin.Session {
     addStream(type: CarrierPlugin.StreamType, options: Number, callbacks: CarrierPlugin.StreamCallbacks, onSuccess: (stream: CarrierPlugin.Stream) => void, onError?: (err: string) => void) {
         var stream = new StreamImpl();
         var me = this;
-        var _onSuccess = function (ret) {
+        var _onSuccess = (ret) => {
             stream.type = type;
             stream.objId = ret.objId;
             stream.id = ret.id;
@@ -237,7 +237,7 @@ class SessionImpl implements CarrierPlugin.Session {
     removeStream(stream: StreamImpl, onSuccess: (stream: CarrierPlugin.Stream) => void, onError?: (err: string) => void) {
         if (stream == this.streams[stream.id]) {
             var me = this;
-            var _onSuccess = function (ret) {
+            var _onSuccess = (ret) => {
                 ret.session = me;
                 me.streams[stream.id] = null;
                 me.carrierManager.streams[stream.objId] = null;
@@ -302,7 +302,7 @@ class CarrierImpl implements CarrierPlugin.Carrier {
     /** @property {number} nospam The nospam for Carrier address is used to eliminate spam friend. **/
     set nospam(value) {
         var me = this;
-        var success = function (ret) {
+        var success = (ret) => {
             me._nospam = value;
         };
         this.process(success, null, "setNospam", [this.objId, value]);
@@ -315,7 +315,7 @@ class CarrierImpl implements CarrierPlugin.Carrier {
     /** @property {number} presence Presence status. **/
     set presence(value) {
         var me = this;
-        var success = function (ret) {
+        var success = (ret) => {
             me._presence = value;
         };
         this.process(success, null, "setPresence", [this.objId, value]);
@@ -340,7 +340,7 @@ class CarrierImpl implements CarrierPlugin.Carrier {
 
     process(onSuccess, onError, name, args) {
         var me = this;
-        var _onSuccess = function (ret) {
+        var _onSuccess = (ret) => {
             if (typeof ret === 'object') ret.carrier = me;
             if (onSuccess) onSuccess(ret);
         };
@@ -449,7 +449,7 @@ class CarrierImpl implements CarrierPlugin.Carrier {
 
     newGroup(onSuccess: (group: CarrierPlugin.Group) => void, onError?: (err: string) => void) {
         var me = this;
-        var _onSuccess = function (ret) {
+        var _onSuccess = (ret) => {
             var group = new GroupImpl();
             group.groupId = ret.groupId;
             group.carrier = me;
@@ -462,7 +462,7 @@ class CarrierImpl implements CarrierPlugin.Carrier {
 
     groupJoin(friendId: string, cookieCode: string, onSuccess: (group: CarrierPlugin.Group) => void, onError?: (err: string) => void) {
         var me = this;
-        var _onSuccess = function (ret) {
+        var _onSuccess = (ret) => {
             var group = new GroupImpl();
             group.groupId = ret.groupId;
             group.carrier = me;
@@ -475,7 +475,7 @@ class CarrierImpl implements CarrierPlugin.Carrier {
 
     groupLeave(group: CarrierPlugin.Group, onSuccess: (group: CarrierPlugin.Group) => void, onError?: (err: string) => void) {
         var me = this;
-        var _onSuccess = function (ret) {
+        var _onSuccess = (ret) => {
             delete me.groups[group.groupId];
             if (onSuccess)
                 onSuccess(group);
@@ -492,7 +492,7 @@ class CarrierImpl implements CarrierPlugin.Carrier {
 
     newFileTransfer(to: string, fileTransferInfo: CarrierPlugin.FileTransferInfo, callbacks: any, onSuccess?: (fileTransfer: any) => void, onError?: (err: String) => void) {
         var me = this;
-        var _onSuccess = function (ret) {
+        var _onSuccess = (ret) => {
             var fileTransfer = new FileTransferImpl();
             fileTransfer.fileTransferId = ret.fileTransferId;
             me.carrierManager.fileTransfers[fileTransfer.fileTransferId] = fileTransfer;
@@ -509,7 +509,7 @@ class CarrierImpl implements CarrierPlugin.Carrier {
     }
 
     generateFileId(onSuccess: (fileId: Opaque<number, "Int">) => void) {
-        var _onSuccess = function (ret) {
+        var _onSuccess = (ret) => {
             if (onSuccess) onSuccess(ret.fileId);
         };
         this.process(_onSuccess, null, "generateFileTransFileId", []);
@@ -517,15 +517,15 @@ class CarrierImpl implements CarrierPlugin.Carrier {
 
     newSession(to: string, onSuccess: (session: CarrierPlugin.Session) => void, onError?: (err: string) => void) {
         var me = this;
-        var _onSuccess = function (ret) {
-            var session = new SessionImpl();
-            session.objId = ret.id;
-            session.peer = ret.peer;
-            session.carrier = me;
-            session.carrierManager = me.carrierManager;
-            if (onSuccess) onSuccess(session);
-        };
-        exec(_onSuccess, onError, 'CarrierPlugin', 'newSession', [this.objId, to]);
+           var _onSuccess = (ret) => {
+               var session = new SessionImpl();
+               session.objId = ret.id;
+               session.peer = ret.peer;
+               session.carrier = me;
+               session.carrierManager = me.carrierManager;
+               if (onSuccess) onSuccess(session);
+           };
+           exec(_onSuccess, onError, 'CarrierPlugin', 'newSession', [this.objId, to]);
     }
 
     destroy(onSuccess?: () => void, onError?: (err: string) => void) {
@@ -539,9 +539,9 @@ class GroupImpl implements CarrierPlugin.Group {
 
     process(onSuccess, onError, name, args) {
         var me = this;
-        var _onSuccess = function (ret) {
-            if (typeof ret === 'object') ret.group = me;
-            if (onSuccess) onSuccess(ret);
+        var _onSuccess = (ret) => {
+           if (typeof ret === 'object') ret.group = me;
+           if (onSuccess) onSuccess(ret);
         };
         exec(_onSuccess, onError, 'CarrierPlugin', name, args);
     }
@@ -555,7 +555,7 @@ class GroupImpl implements CarrierPlugin.Group {
     }
 
     getTitle(onSuccess: (groupTitle: string) => void, onError?: (err: string) => void) {
-        var _onSuccess = function (ret) {
+        var _onSuccess = (ret) => {
             var title = ret.groupTitle;
             if (onSuccess) onSuccess(title);
         };
@@ -563,7 +563,7 @@ class GroupImpl implements CarrierPlugin.Group {
     }
 
     setTitle(groupTitle: string, onSuccess: (groupTitle: string) => void, onError?: (err: string) => void) {
-        var _onSuccess = function (ret) {
+        var _onSuccess = (ret) => {
             var title = ret.groupTitle;
             if (onSuccess) onSuccess(title);
         };
@@ -571,7 +571,7 @@ class GroupImpl implements CarrierPlugin.Group {
     }
 
     getPeers(onSuccess: (peers: any) => void, onError?: (err: string) => void) {
-        var _onSuccess = function (ret) {
+        var _onSuccess = (ret) => {
             var peers = ret.peers;
             if (onSuccess) onSuccess(peers);
         };
@@ -579,7 +579,7 @@ class GroupImpl implements CarrierPlugin.Group {
     }
 
     getPeer(peerId: string, onSuccess: (peer: any) => void, onError?: (err: string) => void) {
-        var _onSuccess = function (ret) {
+        var _onSuccess = (ret) => {
             var peer = ret.peer;
             if (onSuccess) onSuccess(peer);
         };
@@ -603,7 +603,7 @@ class FileTransferImpl implements CarrierPlugin.FileTransfer {
 
     process(onSuccess, onError, name, args) {
         var me = this;
-        var _onSuccess = function (ret) {
+        var _onSuccess = (ret) => {
             if (typeof ret === 'object') ret.fileTransfer = me;
             if (onSuccess)
                 onSuccess(ret);
@@ -616,7 +616,7 @@ class FileTransferImpl implements CarrierPlugin.FileTransfer {
     }
 
     getFileId(filename: string, onSuccess?: (fileId: string) => void, onError?: (err: string) => void) {
-        var _onSuccess = function (ret) {
+        var _onSuccess = (ret) => {
             var fileId = ret.fileId;
             if (onSuccess) onSuccess(fileId);
         };
@@ -624,7 +624,7 @@ class FileTransferImpl implements CarrierPlugin.FileTransfer {
     }
 
     getFileName(fileId: string, onSuccess?: (filename: string) => void, onError?: (err: string) => void) {
-        var _onSuccess = function (ret) {
+        var _onSuccess = (ret) => {
             var filename = ret.filename;
             if (onSuccess)
                 onSuccess(filename);
@@ -840,7 +840,7 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
     }
 
     isValidId(id: string, onSuccess: (isValid: Boolean) => void, onError?: (err: string) => void) {
-        var _onSuccess = function (ret) {
+        var _onSuccess = (ret) => {
             if (onSuccess) onSuccess(ret == "true" ? true : false);
         };
 
@@ -848,7 +848,7 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
     }
 
     isValidAddress(address: string, onSuccess: (isValid: Boolean) => void, onError?: (err: string) => void) {
-        var _onSuccess = function (ret) {
+        var _onSuccess = (ret) => {
             if (onSuccess) onSuccess(ret == "true" ? true : false);
         };
 
