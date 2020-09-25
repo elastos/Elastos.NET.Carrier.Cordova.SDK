@@ -80,6 +80,7 @@ public class PluginStreamHandler extends AbstractStreamHandler {
 
 	private void sendEvent(JSONObject info) throws JSONException {
 		info.put("objId", mCode);
+		info.put("id", mStream.getStreamId());
 		if (mCallbackContext != null) {
 			PluginResult result = new PluginResult(PluginResult.Status.OK, info);
 			result.setKeepCallback(true);
