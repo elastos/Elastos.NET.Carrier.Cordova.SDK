@@ -729,36 +729,40 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
             this.setListener(CARRIER, (event) => {
                 event.carrier = this.carriers[event.id];
                 event.id = null
-                if (event.carrier) {
-                    if (event.name == "onFriendBinaryMessage") {
-                        let base64 = cordova.require("cordova/base64");
-                        var data = base64.toArrayBuffer(event.message);
-                        event.message = new Uint8Array(data);
-                    }
-                    if (event.carrier.callbacks[event.name]) {
-                        event.carrier.callbacks[event.name](event);
-                    }
+
+                if (!event.carrier) {
+                    console.log("Error: no associated carrier instance found");
+                    return;
                 }
-                else {
-                    alert(event.name);
+
+                if (event.name == "onFriendBinaryMessage") {
+                    let base64 = cordova.require("cordova/base64");
+                    var data = base64.toArrayBuffer(event.message);
+                    event.message = new Uint8Array(data);
+                }
+
+                if (event.carrier.callbacks[event.name]) {
+                    event.carrier.callbacks[event.name](event);
                 }
             });
 
             this.setListener(STREAM, (event) => {
                 event.stream = this.streams[event.id];
                 event.id = null;
-                if (event.stream) {
-                    if (event.name = "onStreamData" || event.name == "onChannelData") {
-                        let base64 = cordova.require("cordova/base64");
-                        var data = base64.toArrayBuffer(event.data);
-                        event.data = new Uint8Array(data);
-                    }
 
-                    if (event.stream.callbacks[event.name]) {
-                        event.stream.callbacks[event.name](event);
-                    }
-                } else {
-                    alert(event.name)
+                if (!event.stream) {
+                    console.log("Error: No associated stream found");
+                    return;
+                }
+
+                if (event.name = "onStreamData" || event.name == "onChannelData") {
+                    let base64 = cordova.require("cordova/base64");
+                    var data = base64.toArrayBuffer(event.data);
+                    event.data = new Uint8Array(data);
+                }
+
+                if (event.stream.callbacks[event.name]) {
+                    event.stream.callbacks[event.name](event);
                 }
             });
 
@@ -794,33 +798,35 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
                 var group;
 
                 if (!carrier) {
-                    alert(event.name);
+                    console.log("Error: no carrier instance assiciated");
                     return;
                 }
 
-                group = carrier[event.groupId];
-                if (group) {
-                    if (carrier.callbacks[event.name]) {
-                        carrier.callbacks[event.name](event);
-                    }
-                } else {
-                    alert(event.name);
+                group = carrier.groups[event.groupId];
+                if (!group) {
+                    console.log("Error: no group object found : "+ event.groupId);
+                    return;
+                }
+
+                if (carrier.callbacks[event.name]) {
+                    carrier.callbacks[event.name](event);
                 }
             });
 
             this.setListener(FILE_TRANSFER, (event) => {
                 var fileTransfer = this.fileTransfers[event.fileTransferId];
-                if (fileTransfer) {
-                    if (event.name == "onData") {
-                        let base64 = cordova.require("cordova/base64");
-                        var data = base64.toArrayBuffer(event.data);
-                        event.data = new Uint8Array(data);
-                    }
-                    if (fileTransfer.callbacks[event.name]) {
-                        fileTransfer.callbacks[event.name](event);
-                    }
-                } else {
-                    alert(event.name);
+                if (!fileTransfer) {
+                    console.log("Error: no filetransfer object associated: " + event.fileTransferId);
+                    return;
+                }
+
+                if (event.name == "onData") {
+                    let base64 = cordova.require("cordova/base64");
+                    var data = base64.toArrayBuffer(event.data);
+                    event.data = new Uint8Array(data);
+                }
+                if (fileTransfer.callbacks[event.name]) {
+                    fileTransfer.callbacks[event.name](event);
                 }
             });
 
