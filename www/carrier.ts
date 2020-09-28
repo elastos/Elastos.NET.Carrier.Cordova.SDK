@@ -747,7 +747,7 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
             });
 
             this.setListener(STREAM, (event) => {
-                event.stream = this.streams[event.id];
+                event.stream = this.streams[event.objId];
                 event.id = null;
 
                 if (!event.stream) {
@@ -755,7 +755,7 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
                     return;
                 }
 
-                if (event.name = "onStreamData" || event.name == "onChannelData") {
+                if (event.name == "onStreamData" || event.name == "onChannelData") {
                     let base64 = cordova.require("cordova/base64");
                     var data = base64.toArrayBuffer(event.data);
                     event.data = new Uint8Array(data);
