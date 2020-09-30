@@ -96,6 +96,9 @@ declare namespace CarrierPlugin {
         persistentLocation: string;
         /** Send/receive binary message */
         binaryUsed: Boolean;
+        /** set to use offline messaging mechanism or not. Setting this value to false will not enable offline
+            messaging. The offline mechanism is enabled defaultly. */
+        expressEnabled: Boolean;
     }
 
     /**
