@@ -42,7 +42,7 @@ public class PluginSessionRequestCompleteHandler implements SessionRequestComple
 		info.put("id", mHandlerId);
 		if (mCallbackContext != null) {
 			PluginResult result = new PluginResult(PluginResult.Status.OK, info);
-			// result.setKeepCallback(true);
+			result.setKeepCallback(true);
 			mCallbackContext.sendPluginResult(result);
 		}
 	}
