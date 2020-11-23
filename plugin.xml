@@ -47,7 +47,6 @@
                 <source url="https://cdn.cocoapods.org/"/>
             </config>
             <pods use-frameworks="true">
-                <pod name="SwiftJWT" spec="~> 3.5.3" swift-version="4"/>
                 <pod name="ElastosCarrierSDK" spec='~> 5.6.6'/>
             </pods>
         </podspec>
