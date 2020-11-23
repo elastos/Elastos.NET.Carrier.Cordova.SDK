@@ -41,6 +41,17 @@
                 <param name="ios-package" value="CarrierPlugin" />
             </feature>
         </config-file>
+
+        <podspec>
+            <config>
+                <source url="https://cdn.cocoapods.org/"/>
+            </config>
+            <pods use-frameworks="true">
+                <pod name="SwiftJWT" spec="~> 3.5.3" swift-version="4"/>
+                <pod name="ElastosCarrierSDK" spec='~> 5.6.6'/>
+            </pods>
+        </podspec>
+
         <!-- <dependency id="cordova-plugin-add-swift-support" version="1.7.2"/> -->
         <resource-file src="bootstraps.json" />
         <source-file src="src/ios/CarrierPlugin.swift" />
@@ -51,8 +62,7 @@
         <source-file src="src/ios/FIRHandler.swift" />
         <source-file src="src/ios/ReceiptHandler.swift" />
         <source-file src="src/ios/SRCHandler.swift" />
-        <framework src="src/ios/libs/ElastosCarrierSDK.framework" custom="true" embed="true" />
-        <!-- <source-file src="src/ios/libs/ElastosCarrier.framework" target-dir="src/libs" framework="true" /> -->
+        <!-- <framework src="src/ios/libs/ElastosCarrierSDK.framework" custom="true" embed="true" /> -->
     </platform>
 	<platform name="electron">
         <js-module src="src/electron/CarrierPluginProxy.js" name="CarrierPluginProxy">
