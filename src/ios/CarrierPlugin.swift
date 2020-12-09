@@ -54,7 +54,7 @@ class CarrierPlugin : TrinityPlugin {
     var mStreamDict = [Int: PluginStreamHandler]()
     var mFileTransferDict = [Int: PluginFileTransferHandler]()
     var mFileTransferThreadDict = [Int: DispatchQueue]()
-  
+
     var carrierCallbackId: String = ""
     var sessionCallbackId: String = ""
     var streamCallbackId: String = ""
@@ -72,6 +72,19 @@ class CarrierPlugin : TrinityPlugin {
     //    override init() {
     //        super.init();
     //    }
+
+    override func pluginInitialize() {
+        super.pluginInitialize()
+    }
+
+    override func dispose() {
+        var it = mCarrierDict.makeIterator()
+        while let carrierHandlerEntry = it.next() {
+            carrierHandlerEntry.value.mCarrier.kill()
+        }
+
+        super.dispose()
+    }
 
     @objc func success(_ command: CDVInvokedUrlCommand, retAsString: String) {
         let result = CDVPluginResult(status: CDVCommandStatus_OK,
@@ -1212,7 +1225,7 @@ class CarrierPlugin : TrinityPlugin {
             return
         }
 
-        
+
         let fileTransferThread = mFileTransferThreadDict[transferId];
         guard let _ = fileTransferThread else {
             self.error(command, retAsString: "Id invalid")
@@ -1349,7 +1362,7 @@ class CarrierPlugin : TrinityPlugin {
                 mFileTransferThreadDict[fileTransferCount] = DispatchQueue(label: "org.elastos.carrier",
                                                                            qos: .background,
                                                                            target: nil)
-              
+
                 let ret: NSDictionary = [
                     "fileTransferId": fileTransferCount,
                     ]
