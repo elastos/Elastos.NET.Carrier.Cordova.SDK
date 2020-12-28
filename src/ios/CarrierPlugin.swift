@@ -545,12 +545,15 @@ class CarrierPlugin : TrinityPlugin {
     @objc func sendFriendBinaryMessage(_ command: CDVInvokedUrlCommand) {
         let id = command.arguments[0] as? Int ?? 0
         let to = command.arguments[1] as? String ?? ""
-        let data = command.arguments[2] as? String ?? ""
-        let message = Data(base64Encoded: data)!
+        let message = command.arguments[2] as? Data
+        if message == nil {
+            self.error(command, retAsString: "the msg is nil.")
+            return
+        }
 
         if let carrierHandler: PluginCarrierHandler = mCarrierDict[id] {
             do {
-                _ = try carrierHandler.mCarrier.sendFriendMessage(to: to, withData: message);
+                _ = try carrierHandler.mCarrier.sendFriendMessage(to: to, withData: message!);
                 self.success(command, retAsString: "success!");
             }
             catch {
