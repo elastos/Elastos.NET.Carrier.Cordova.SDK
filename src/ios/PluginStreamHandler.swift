@@ -74,7 +74,9 @@ class PluginStreamHandler: CarrierStreamDelegate {
     }
 
     private func sendEvent(_ ret: NSMutableDictionary) {
-        ret["id"] = mCode
+        ret["objId"] = mCode
+        ret["id"] = mStream.getStreamId()
+        
         let result = CDVPluginResult(status: CDVCommandStatus_OK,
                                      messageAs: ret as? [AnyHashable : Any]);
         result!.setKeepCallbackAs(true);
