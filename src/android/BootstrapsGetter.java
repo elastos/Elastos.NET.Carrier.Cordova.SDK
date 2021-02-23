@@ -22,11 +22,9 @@
 
 package org.elastos.trinity.plugins.carrier;
 
-import android.content.res.Resources;
+import android.content.res.AssetManager;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
-
-import org.elastos.trinity.runtime.R;
 
 import java.util.ArrayList;
 import java.io.InputStream;
@@ -62,11 +60,11 @@ class BootstrapsGetter {
     }
 
     static public BootstrapsGetter getGetter(CarrierPlugin plugin) {
-        Resources resources = plugin.cordova.getActivity().getResources();
-        InputStream inputStream = resources.openRawResource(R.raw.bootstraps);
-        String jsonResName;
+        AssetManager am = plugin.cordova.getActivity().getAssets();
 
+        String jsonResName;
         try {
+            InputStream inputStream = am.open("bootstraps.json");
             byte[] bytes = new byte[inputStream.available()];
             inputStream.read(bytes, 0, bytes.length);
             jsonResName = new String(bytes);

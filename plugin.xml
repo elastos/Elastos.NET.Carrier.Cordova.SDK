@@ -23,7 +23,7 @@
                 <param name="android-package" value="org.elastos.trinity.plugins.carrier.CarrierPlugin" />
             </feature>
         </config-file>
-        <resource-file src="bootstraps.json" target="res/raw/bootstraps.json" />
+        <resource-file src="bootstraps.json" target="assets/bootstraps.json" />
         <source-file src="src/android/BootstrapsGetter.java" target-dir="src/org/elastos/trinity/plugins/carrier" />
         <source-file src="src/android/CarrierPlugin.java" target-dir="src/org/elastos/trinity/plugins/carrier" />
         <source-file src="src/android/PluginCarrierHandler.java" target-dir="src/org/elastos/trinity/plugins/carrier" />

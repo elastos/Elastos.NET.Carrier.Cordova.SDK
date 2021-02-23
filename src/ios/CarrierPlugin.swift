@@ -36,9 +36,7 @@ typealias Group = ElastosCarrierSDK.CarrierGroup
 }
 
 @objc(CarrierPlugin)
-class CarrierPlugin : TrinityPlugin {
-
-    //        let test = Test()
+class CarrierPlugin : CDVPlugin {
 
     let OK = 0;
     var CARRIER = 1;
@@ -186,7 +184,7 @@ class CarrierPlugin : TrinityPlugin {
         var dir = command.arguments[0] as? String ?? ""
         let config = command.arguments[1] as? String ?? ""
 
-        dir = getDataPath() + dir;
+        dir = NSHomeDirectory() + dir;
 
         do {
             let carrierHandler = try PluginCarrierHandler.createInstance(dir, config, carrierCallbackId,

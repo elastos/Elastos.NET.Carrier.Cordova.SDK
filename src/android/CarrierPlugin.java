@@ -26,12 +26,13 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Base64;
 import org.apache.cordova.CallbackContext;
+import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
 import org.elastos.carrier.filetransfer.FileTransfer;
 import org.elastos.carrier.filetransfer.FileTransferInfo;
 import org.elastos.carrier.session.PortForwardingProtocol;
 import org.elastos.carrier.session.Session;
-import org.elastos.trinity.runtime.TrinityPlugin;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,7 +50,7 @@ import org.elastos.carrier.exceptions.CarrierException;
 /**
  * This class echoes a string called from JavaScript.
  */
-public class CarrierPlugin extends TrinityPlugin {
+public class CarrierPlugin extends CordovaPlugin {
     private static String TAG = "CarrierPlugin";
 
     private static final int OK = 0;
@@ -392,7 +393,6 @@ public class CarrierPlugin extends TrinityPlugin {
             case FILE_TRANSFER:
                 mFileTransferCallbackContext = callbackContext;
                 break;
-
         }
         //  Don't return any result now
         PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
@@ -403,9 +403,7 @@ public class CarrierPlugin extends TrinityPlugin {
     private void createObject(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         String dir = args.getString(0);
         String config = args.getString(1);
-
-        dir = getDataPath() + dir;
-
+        dir = cordova.getActivity().getFilesDir() + dir;
         PluginCarrierHandler carrierHandler = PluginCarrierHandler.createInstance(dir, config,
                 mCarrierCallbackContext, mGroupCallbackContext, this);
 
@@ -684,8 +682,8 @@ public class CarrierPlugin extends TrinityPlugin {
         }
     }
 
-private void sendFriendBinaryMessage(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
-    Integer id = args.getInt(0);
+    private void sendFriendBinaryMessage(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
+        Integer id = args.getInt(0);
         String to = args.getString(1);
         String data = args.getString(2);
         byte[] message = Base64.decode(data, Base64.DEFAULT);
@@ -736,6 +734,7 @@ private void sendFriendBinaryMessage(JSONArray args, CallbackContext callbackCon
             callbackContext.error(INVALID_ID);
         }
     }
+
     private void inviteFriend(JSONArray args, CallbackContext callbackContext) throws JSONException, CarrierException {
         Integer id = args.getInt(0);
         String to = args.getString(1);
@@ -1109,7 +1108,6 @@ private void sendFriendBinaryMessage(JSONArray args, CallbackContext callbackCon
             JSONObject json = new JSONObject();
             json.put("groupId", group.getId());
             callbackContext.success(json);
-
         } catch (NullPointerException | CarrierException e) {
             callbackContext.error(INVALID_ID);
         }
@@ -1131,7 +1129,6 @@ private void sendFriendBinaryMessage(JSONArray args, CallbackContext callbackCon
 
         try {
             carrier = Objects.requireNonNull(mCarrierMap.get(id));
-
             byte[] cookie = Base58.decode(base58Cookie);
             group = carrier.mCarrier.groupJoin(friendId, cookie);
             carrier.groups.put(group.getId(), group);
@@ -1139,7 +1136,6 @@ private void sendFriendBinaryMessage(JSONArray args, CallbackContext callbackCon
             JSONObject json = new JSONObject();
             json.put("groupId", group.getId());
             callbackContext.success(json);
-
         } catch (NullPointerException | CarrierException e) {
             callbackContext.error(INVALID_ID);
         }
@@ -1162,7 +1158,6 @@ private void sendFriendBinaryMessage(JSONArray args, CallbackContext callbackCon
         try {
             carrier = Objects.requireNonNull(mCarrierMap.get(id));
             group   = Objects.requireNonNull(carrier.groups.get(groupId));
-
             group.invite(friendId);
             callbackContext.success(SUCCESS);
         } catch (NullPointerException | CarrierException e) {
@@ -1186,10 +1181,8 @@ private void sendFriendBinaryMessage(JSONArray args, CallbackContext callbackCon
         try {
             carrier = Objects.requireNonNull(mCarrierMap.get(id));
             group   = Objects.requireNonNull(carrier.groups.get(groupId));
-
             carrier.mCarrier.groupLeave(group);
             carrier.groups.remove(groupId);
-
             callbackContext.success(SUCCESS);
         } catch (NullPointerException | CarrierException e) {
             callbackContext.error(INVALID_ID);
@@ -1208,10 +1201,8 @@ private void sendFriendBinaryMessage(JSONArray args, CallbackContext callbackCon
         try {
             carrier = Objects.requireNonNull(mCarrierMap.get(id));
             group   = Objects.requireNonNull(carrier.groups.get(groupId));
-
             byte[] data = message.getBytes(Charset.forName("UTF-8"));
             group.sendMessage(data);
-
             callbackContext.success(SUCCESS);
         } catch (NullPointerException | CarrierException e) {
             callbackContext.error(INVALID_ID);
@@ -1229,7 +1220,6 @@ private void sendFriendBinaryMessage(JSONArray args, CallbackContext callbackCon
         try {
             carrier = Objects.requireNonNull(mCarrierMap.get(id));
             group   = Objects.requireNonNull(carrier.groups.get(groupId));
-
             callbackContext.success(getGroupTitleInJson(group));
         } catch (NullPointerException | CarrierException e) {
             callbackContext.error(INVALID_ID);
@@ -1251,7 +1241,6 @@ private void sendFriendBinaryMessage(JSONArray args, CallbackContext callbackCon
 
             group.setTitle(title);
             callbackContext.success(getGroupTitleInJson(group));
-
         } catch (NullPointerException | CarrierException e) {
             callbackContext.error(INVALID_ID);
         }
@@ -1272,7 +1261,6 @@ private void sendFriendBinaryMessage(JSONArray args, CallbackContext callbackCon
             JSONObject json = new JSONObject();
             json.put("peers", getGroupPeerList(group));
             callbackContext.success(json);
-
         } catch (NullPointerException | CarrierException e) {
             callbackContext.error(INVALID_ID);
             return;
@@ -1296,11 +1284,9 @@ private void sendFriendBinaryMessage(JSONArray args, CallbackContext callbackCon
         try {
             carrier = Objects.requireNonNull(mCarrierMap.get(id));
             group   = Objects.requireNonNull(carrier.groups.get(groupId));
-
             JSONObject json = new JSONObject();
             json.put("peer", getGroupPeerInfo(group, peerId));
             callbackContext.success(json);
-
         } catch (NullPointerException | CarrierException e) {
             callbackContext.error(INVALID_ID);
             return;
@@ -1309,13 +1295,11 @@ private void sendFriendBinaryMessage(JSONArray args, CallbackContext callbackCon
 
     private JSONObject getGroupPeerList(Group group) throws JSONException, CarrierException {
         JSONObject json = new JSONObject();
-
         List<Group.PeerInfo> peerInfos = group.getPeers();
         for (Group.PeerInfo peerInfo : peerInfos) {
             JSONObject peer = new JSONObject();
             peer.put("peerName", peerInfo.getName());
             peer.put("peerUserId", peerInfo.getUserId());
-
             json.put(peerInfo.getUserId(), peer);
         }
         return json;
@@ -1323,11 +1307,9 @@ private void sendFriendBinaryMessage(JSONArray args, CallbackContext callbackCon
 
     private JSONObject getGroupPeerInfo(Group group, String peerId) throws JSONException, CarrierException {
         JSONObject json = new JSONObject();
-
         Group.PeerInfo peerInfo = group.getPeer(peerId);
         json.put("peerName", peerInfo.getName());
         json.put("peerUserId", peerInfo.getUserId());
-
         return json;
     }
 
@@ -1348,7 +1330,6 @@ private void sendFriendBinaryMessage(JSONArray args, CallbackContext callbackCon
                 filetransferThread = Objects.requireNonNull(mFileTransferThreadMap.get(transferId));
                 filetransfer.close();
                 callbackContext.success(SUCCESS);
-
                 filetransferThread.quitSafely();
             } catch (NullPointerException e) {
                 callbackContext.error(INVALID_ID);
@@ -1480,7 +1461,6 @@ private void sendFriendBinaryMessage(JSONArray args, CallbackContext callbackCon
 
             public void run() {
                 PluginResult result;
-
                 try {
                     byte[] binData = Base64.decode(data, Base64.DEFAULT);
                     filetransfer.writeData(fileId, binData);
@@ -1496,7 +1476,6 @@ private void sendFriendBinaryMessage(JSONArray args, CallbackContext callbackCon
                 this.filetransfer = filetransfer;
                 return (this);
             }
-
         }.init(filetransfer));
 
         PluginResult result = new PluginResult(PluginResult.Status.NO_RESULT);
