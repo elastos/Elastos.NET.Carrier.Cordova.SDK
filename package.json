@@ -1,9 +1,9 @@
 {
-  "name": "elastos-trinity-plugins-carrier",
+  "name": "elastos-cordova-plugin-carrier",
   "version": "0.0.1",
   "description": "Elastos Carrier Plugin",
   "cordova": {
-    "id": "elastos-trinity-plugins-carrier",
+    "id": "elastos-cordova-plugin-carrier",
     "platforms": [
       "android",
       "ios"

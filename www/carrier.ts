@@ -912,4 +912,4 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
 }
 
 const carrierManager = new CarrierManagerImpl();
-export = carrierManager;
+export default carrierManager;

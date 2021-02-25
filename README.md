@@ -3,7 +3,7 @@ title: Carrier
 description: The carrier javascript API.
 ---
 
-# elastos-trinity-plugins-carrier
+# elastos-cordova-plugin-carrier
 
 This plugin defines a global `cordova.carrierPlugin` object, which provides an API for carrier library.
 
