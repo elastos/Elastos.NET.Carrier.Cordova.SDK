@@ -898,8 +898,8 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
             for (var i = 0; i < CARRIER_CB_NAMES.length; i++) {
                 var name = CARRIER_CB_NAMES[i];
                 carrier.callbacks[name] = callbacks[name];
-            }
 
+            }
             for (i = 0; i < GROUP_CB_NAMES.length; i++) {
                 name = GROUP_CB_NAMES[i];
                 carrier.callbacks[name] = callbacks[name];
@@ -912,4 +912,4 @@ class CarrierManagerImpl implements CarrierPlugin.CarrierManager {
 }
 
 const carrierManager = new CarrierManagerImpl();
-export default carrierManager;
+export = carrierManager;

@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package org.elastos.trinity.plugins.carrier;
+package org.elastos.essentials.plugins.carrier;
 
 import android.content.res.AssetManager;
 import com.google.gson.Gson;
