@@ -460,7 +460,7 @@ If the stream is in multiplexing mode, application can not call this function.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| onSuccess | <code>function</code> | The function to call when success, the param is a Number: Bytes of data sent. |
+| onSuccess | <code>function</code> | The function to call when success, the param is a number: Bytes of data sent. |
 | [onError] | <code>function</code> | The function to call when error, the param is a String. Or set to null. |
 | data | <code>base64</code> | The send data. |
 
@@ -474,7 +474,7 @@ If the stream is in multiplexing mode, application can not call this function.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| onSuccess | <code>function</code> | The function to call when success, the param is a Number: New channel ID. |
+| onSuccess | <code>function</code> | The function to call when success, the param is a number: New channel ID. |
 | [onError] | <code>function</code> | The function to call when error, the param is a String. Or set to null. |
 | cookie | <code>string</code> | The application defined data passed to remote peer |
 
@@ -502,7 +502,7 @@ If the stream is in multiplexing mode, application can not call this function.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| onSuccess | <code>function</code> | The function to call when success, the param is a Number: Bytes of data sent. |
+| onSuccess | <code>function</code> | The function to call when success, the param is a number: Bytes of data sent. |
 | [onError] | <code>function</code> | The function to call when error, the param is a String. Or set to null. |
 | channel | <code>number</code> | The current channel ID. |
 | data | <code>base64</code> | The send data. |
@@ -545,7 +545,7 @@ If the stream is in multiplexing mode, application can not call this function.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| onSuccess | <code>function</code> | The function to call when success, the param is a Number: Port forwarding ID. |
+| onSuccess | <code>function</code> | The function to call when success, the param is a number: Port forwarding ID. |
 | [onError] | <code>function</code> | The function to call when error, the param is a String. Or set to null. |
 | service | <code>string</code> | The remote service name |
 | protocol | <code>PortForwardingProtocol</code> | Port forwarding protocol |

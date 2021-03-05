@@ -46,7 +46,7 @@ declare namespace CarrierPlugin {
     * @param reason      The error message if status is error, or nil if session request error happened.
     * @param sdp         The remote users SDP. Reference: https://tools.ietf.org/html/rfc4566
     */
-    type OnSessionRequestComplete = (session: Session, status: Number, reason: string, sdp: string) => void;
+    type OnSessionRequestComplete = (session: Session, status: number, reason: string, sdp: string) => void;
 
     /**
     * The callback function to process to friend message receipt notification
@@ -56,7 +56,7 @@ declare namespace CarrierPlugin {
     * @param messageId  The message identifer
     * @param state      The message receipt state
     */
-    type OnFriendMessageReceipt = (messageId: number, state: Number) => void;
+    type OnFriendMessageReceipt = (messageId: number, state: number) => void;
 
     /**
     * The callback function to process the friend invite response.
@@ -68,7 +68,7 @@ declare namespace CarrierPlugin {
     * @param reason   The error message if status is error, otherwise null
     * @param data     The application defined data return by target user
     */
-    type OnFriendInviteResponse = (from: string, status: Number, reason: string, data: string) => void;
+    type OnFriendInviteResponse = (from: string, status: number, reason: string, data: string) => void;
 
     /**
     * The bootstrap node information.
@@ -163,7 +163,7 @@ declare namespace CarrierPlugin {
         /** The file ID. */
         fileId: string;
         /** The file size. */
-        size: Number;
+        size: number;
     }
 
     /**
@@ -214,7 +214,7 @@ declare namespace CarrierPlugin {
         * @param channel     The current channel ID.
         * @param cookie      Application defined string data receives from remote peer.
         */
-        onChannelOpen?(stream: Stream, channel: Number, cookie: string);
+        onChannelOpen?(stream: Stream, channel: number, cookie: string);
 
         /**
         * The callback function to be called when new multiplexing channel opened.
@@ -224,7 +224,7 @@ declare namespace CarrierPlugin {
         * @param stream      The carrier stream instance
         * @param channel     The current channel ID.
         */
-        onChannelOpened?(stream: Stream, channel: Number);
+        onChannelOpened?(stream: Stream, channel: number);
 
         /**
         * The callback function to be called when channel close.
@@ -235,7 +235,7 @@ declare namespace CarrierPlugin {
         * @param channel     The current channel ID.
         * @param reason      Channel close reason code, defined in CloseReason.
         */
-        onChannelClose?(stream: Stream, channel: Number, reason: string);
+        onChannelClose?(stream: Stream, channel: number, reason: string);
 
         /**
         * The callback function to be called when channel receives incoming data.
@@ -246,7 +246,7 @@ declare namespace CarrierPlugin {
         * @param channel     The current channel ID.
         * @param data        The received packet data.
         */
-        onChannelData?(stream: Stream, channel: Number, data: Uint8Array);
+        onChannelData?(stream: Stream, channel: number, data: Uint8Array);
 
         /**
         * The callback function to be called when remote peer asks to pend data sending.
@@ -256,7 +256,7 @@ declare namespace CarrierPlugin {
         * @param stream      The carrier stream instance
         * @param channel     The current channel ID.
         */
-        onChannelPending?(stream: Stream, channel: Number);
+        onChannelPending?(stream: Stream, channel: number);
 
         /**
         * The callback function to be called when remote peer ask to resume data sending.
@@ -266,7 +266,7 @@ declare namespace CarrierPlugin {
         * @param stream      The carrier stream instance
         * @param channel     The current channel ID.
         */
-        onChannelResume?(stream: Stream, channel: Number);
+        onChannelResume?(stream: Stream, channel: number);
     }
 
     /**
@@ -295,21 +295,21 @@ declare namespace CarrierPlugin {
         * Send outgoing data to remote peer.
         * If the stream is in multiplexing mode, application can not call this function.
         *
-        * @param onSuccess  The function to call when success, the param is a Number: Bytes of data sent.
+        * @param onSuccess  The function to call when success, the param is a number: Bytes of data sent.
         * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param data       The data to send.
         */
-        write(data: Uint8Array, onSuccess: (bytesSent: Number) => void, onError?: (err: string) => void);
+        write(data: Uint8Array, onSuccess: (bytesSent: number) => void, onError?: (err: string) => void);
 
         /**
         * Open a new channel on multiplexing stream.
         * If the stream is in multiplexing mode, application can not call this function.
         *
-        * @param onSuccess  The function to call when success, the param is a Number: New channel ID.
+        * @param onSuccess  The function to call when success, the param is a number: New channel ID.
         * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param cookie     The application defined data passed to remote peer
         */
-        openChannel(cookie: string, onSuccess: (channelId: Number) => void, onError?: (err: string) => void);
+        openChannel(cookie: string, onSuccess: (channelId: number) => void, onError?: (err: string) => void);
 
         /**
         * Close a new channel on multiplexing stream.
@@ -319,18 +319,18 @@ declare namespace CarrierPlugin {
         * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param channel    The channel ID to close
         */
-        closeChannel(channel: Number, onSuccess: () => void, onError?: (err: string) => void);
+        closeChannel(channel: number, onSuccess: () => void, onError?: (err: string) => void);
 
         /**
         * Send outgoing data to remote peer.
         * If the stream is in multiplexing mode, application can not call this function.
         *
-        * @param onSuccess  The function to call when success, the param is a Number: Bytes of data sent.
+        * @param onSuccess  The function to call when success, the param is a number: Bytes of data sent.
         * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param channel    The current channel ID.
         * @param data       The data to send.
         */
-        writeChannel(channel: Number, data: Uint8Array, onSuccess: (bytesSent: Number) => void, onError?: (err: string) => void);
+        writeChannel(channel: number, data: Uint8Array, onSuccess: (bytesSent: number) => void, onError?: (err: string) => void);
 
         /**
         * Request remote peer to pend channel data sending.
@@ -340,7 +340,7 @@ declare namespace CarrierPlugin {
         * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param channel    The current channel ID.
         */
-        pendChannel(channel: Number, onSuccess: () => void, onError?: (err: string) => void);
+        pendChannel(channel: number, onSuccess: () => void, onError?: (err: string) => void);
 
         /**
         * Request remote peer to resume channel data sending.
@@ -350,20 +350,20 @@ declare namespace CarrierPlugin {
         * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param channel    The current channel ID.
         */
-        resumeChannel(channel: Number, onSuccess: () => void, onError?: (err: string) => void);
+        resumeChannel(channel: number, onSuccess: () => void, onError?: (err: string) => void);
 
         /**
         * Open a port forwarding to remote service over multiplexing.
         * If the stream is in multiplexing mode, application can not call this function.
         *
-        * @param onSuccess  The function to call when success, the param is a Number: Port forwarding ID.
+        * @param onSuccess  The function to call when success, the param is a number: Port forwarding ID.
         * @param onError    The function to call when error, the param is a string. Or set to null.
         * @param service    The remote service name
         * @param protocol   Port forwarding protocol
         * @param host       Local host or IP address to binding. If host is null, port forwarding will bind to localhost
         * @param port       Local port to binding.
         */
-        openPortForwarding(service: string, protocol: PortForwardingProtocol, host: string, port: Number, onSuccess: (portForwardingId: Number) => void, onError?: (err: string) => void);
+        openPortForwarding(service: string, protocol: PortForwardingProtocol, host: string, port: number, onSuccess: (portForwardingId: number) => void, onError?: (err: string) => void);
 
         /**
         * Close a port forwarding.
@@ -373,7 +373,7 @@ declare namespace CarrierPlugin {
         * @param onError         The function to call when error, the param is a string. Or set to null.
         * @param portForwarding  The portforwarding ID.
         */
-        closePortForwarding(portForwarding: Number, onSuccess: () => void, onError?: (err: string) => void);
+        closePortForwarding(portForwarding: number, onSuccess: () => void, onError?: (err: string) => void);
     }
 
     /**
@@ -409,7 +409,7 @@ declare namespace CarrierPlugin {
         * @param status     The status code of the response. 0 is success, otherwise is error
         * @param reason     The error message if status is error, or null if success
         */
-        replyRequest(status: Number, reason: string, onSuccess: () => void, onError?: (err: string) => void);
+        replyRequest(status: number, reason: string, onSuccess: () => void, onError?: (err: string) => void);
 
         /**
         * Begin to start a session.
@@ -438,7 +438,7 @@ declare namespace CarrierPlugin {
         * @param options    The stream mode options. Options are constructed by a bitwise-inclusive OR of flags
         * @param callbacks  The stream callbacks.
         */
-        addStream(type: StreamType, options: Number, callbacks: StreamCallbacks, onSuccess: (stream: Stream) => void, onError?: (err: string) => void);
+        addStream(type: StreamType, options: number, callbacks: StreamCallbacks, onSuccess: (stream: Stream) => void, onError?: (err: string) => void);
 
         /**
         * Remove a stream from session.
@@ -460,7 +460,7 @@ declare namespace CarrierPlugin {
         * @param host      The host name or IP address of the service.
         * @param port      The port of the service.
         */
-        addService(service: string, protocol: PortForwardingProtocol, host: string, port: Number, onSuccess: () => void, onError?: (err: string) => void);
+        addService(service: string, protocol: PortForwardingProtocol, host: string, port: number, onSuccess: () => void, onError?: (err: string) => void);
 
         /**
         * Remove a portforwarding server to session.
@@ -681,7 +681,7 @@ declare namespace CarrierPlugin {
         * @param onError         The function to call when error, the param is a string. Or set to null.
         * @param iterateInterval Internal loop interval, in milliseconds.
         */
-        start(iterateInterval: Number, onSuccess: () => void, onError?: (err: string) => void);
+        start(iterateInterval: number, onSuccess: () => void, onError?: (err: string) => void);
 
         /**
         * Get self user information.
@@ -860,7 +860,7 @@ declare namespace CarrierPlugin {
         * @param reason     The error message if status is error, or null if success
         * @param data       The application defined data sent to target user. If the status is error, this will be ignored
         */
-        replyFriendInvite(to: string, status: Number, reason: string, data: string, onSuccess: () => void, onError?: (err: string) => void);
+        replyFriendInvite(to: string, status: number, reason: string, data: string, onSuccess: () => void, onError?: (err: string) => void);
 
         /**
         * Create a new group request.

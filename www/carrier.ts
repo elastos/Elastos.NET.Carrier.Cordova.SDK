@@ -129,34 +129,34 @@ class StreamImpl implements CarrierPlugin.Stream {
         this.process(onSuccess, onError, "getTransportInfo", [this.objId]);
     }
 
-    write(data: Uint8Array, onSuccess: (bytesSent: Number) => void, onError?: (err: string) => void) {
+    write(data: Uint8Array, onSuccess: (bytesSent: number) => void, onError?: (err: string) => void) {
         this.process(onSuccess, onError, "streamWrite", [this.objId, data]);
     }
 
-    openChannel(cookie: string, onSuccess: (channelId: Number) => void, onError?: (err: string) => void) {
+    openChannel(cookie: string, onSuccess: (channelId: number) => void, onError?: (err: string) => void) {
         this.process(onSuccess, onError, "openChannel", [this.objId, cookie]);
     }
 
-    closeChannel(channel: Number, onSuccess: () => void, onError?: (err: string) => void) {
+    closeChannel(channel: number, onSuccess: () => void, onError?: (err: string) => void) {
         this.process(onSuccess, onError, "closeChannel", [this.objId, channel]);
     }
 
-    writeChannel(channel: Number, data: Uint8Array, onSuccess: (bytesSent: Number) => void, onError?: (err: string) => void) {
+    writeChannel(channel: number, data: Uint8Array, onSuccess: (bytesSent: number) => void, onError?: (err: string) => void) {
         this.process(onSuccess, onError, "writeChannel", [this.objId, channel, data]);
     }
 
-    pendChannel(channel: Number, onSuccess: () => void, onError?: (err: string) => void) {
+    pendChannel(channel: number, onSuccess: () => void, onError?: (err: string) => void) {
         this.process(onSuccess, onError, "pendChannel", [this.objId, channel]);
     }
-    resumeChannel(channel: Number, onSuccess: () => void, onError?: (err: string) => void) {
+    resumeChannel(channel: number, onSuccess: () => void, onError?: (err: string) => void) {
         this.process(onSuccess, onError, "resumeChannel", [this.objId, channel]);
     }
 
-    openPortForwarding(service: string, protocol: CarrierPlugin.PortForwardingProtocol, host: string, port: Number, onSuccess: (portForwardingId: Number) => void, onError?: (err: string) => void) {
+    openPortForwarding(service: string, protocol: CarrierPlugin.PortForwardingProtocol, host: string, port: number, onSuccess: (portForwardingId: number) => void, onError?: (err: string) => void) {
         this.process(onSuccess, onError, "openPortForwarding", [this.objId, service, protocol, host, port]);
     }
 
-    closePortForwarding(portForwarding: Number, onSuccess: () => void, onError?: (err: string) => void) {
+    closePortForwarding(portForwarding: number, onSuccess: () => void, onError?: (err: string) => void) {
         this.process(onSuccess, onError, "closePortForwarding", [this.objId, portForwarding]);
     }
 }
@@ -200,7 +200,7 @@ class SessionImpl implements CarrierPlugin.Session {
         this.process(onSuccess, onError, "sessionRequest", [this.objId, handlerId]);
     }
 
-    replyRequest(status: Number, reason: string, onSuccess: () => void, onError?: (err: string) => void) {
+    replyRequest(status: number, reason: string, onSuccess: () => void, onError?: (err: string) => void) {
         this.process(onSuccess, onError, "sessionReplyRequest", [this.objId, status, reason]);
     }
 
@@ -208,7 +208,7 @@ class SessionImpl implements CarrierPlugin.Session {
         this.process(onSuccess, onError, "sessionStart", [this.objId, sdp]);
     }
 
-    addStream(type: CarrierPlugin.StreamType, options: Number, callbacks: CarrierPlugin.StreamCallbacks, onSuccess: (stream: CarrierPlugin.Stream) => void, onError?: (err: string) => void) {
+    addStream(type: CarrierPlugin.StreamType, options: number, callbacks: CarrierPlugin.StreamCallbacks, onSuccess: (stream: CarrierPlugin.Stream) => void, onError?: (err: string) => void) {
         var stream = new StreamImpl();
         var me = this;
         var _onSuccess = (ret) => {
@@ -251,7 +251,7 @@ class SessionImpl implements CarrierPlugin.Session {
         }
     }
 
-    addService(service: string, protocol: CarrierPlugin.PortForwardingProtocol, host: string, port: Number, onSuccess: () => void, onError?: (err: string) => void) {
+    addService(service: string, protocol: CarrierPlugin.PortForwardingProtocol, host: string, port: number, onSuccess: () => void, onError?: (err: string) => void) {
         this.process(onSuccess, onError, "addService", [this.objId, service, protocol, host, port]);
     }
 
@@ -347,7 +347,7 @@ class CarrierImpl implements CarrierPlugin.Carrier {
         exec(_onSuccess, onError, 'CarrierPlugin', name, args);
     }
 
-    start(iterateInterval: Number, onSuccess: () => void, onError?: (err: string) => void) {
+    start(iterateInterval: number, onSuccess: () => void, onError?: (err: string) => void) {
         this.process(onSuccess, onError, "carrierStart", [this.objId, iterateInterval]);
     }
 
@@ -443,7 +443,7 @@ class CarrierImpl implements CarrierPlugin.Carrier {
         this.process(onSuccess, onError, "inviteFriend", [this.objId, to, data, handlerId]);
     }
 
-    replyFriendInvite(to: string, status: Number, reason: string, data: string, onSuccess: () => void, onError?: (err: string) => void) {
+    replyFriendInvite(to: string, status: number, reason: string, data: string, onSuccess: () => void, onError?: (err: string) => void) {
         this.process(onSuccess, onError, "replyFriendInvite", [this.objId, to, status, reason, data]);
     }
 
