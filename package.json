@@ -1,6 +1,6 @@
 {
-  "name": "elastos-cordova-plugin-carrier",
-  "version": "0.0.1",
+  "name": "@elastosfoundation/elastos-cordova-plugin-carrier",
+  "version": "1.0.0",
   "description": "Elastos Carrier Plugin",
   "cordova": {
     "id": "elastos-cordova-plugin-carrier",
