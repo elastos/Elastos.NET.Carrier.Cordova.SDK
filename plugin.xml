@@ -20,7 +20,7 @@
     <platform name="android">
         <config-file target="config.xml" parent="/*">
             <feature name="CarrierPlugin">
-                <param name="android-package" value="org.elastos.essentials.plugins.carrier.CarrierPlugin" />
+                <param name="android-package" value="org.elastos.plugins.carrier.CarrierPlugin" />
             </feature>
         </config-file>
         <resource-file src="bootstraps.json" target="assets/bootstraps.json" />

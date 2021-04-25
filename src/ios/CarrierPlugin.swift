@@ -1,5 +1,5 @@
  /*
-  * Copyright (c) 2018 Elastos Foundation
+  * Copyright (c) 2021 Elastos Foundation
   *
   * Permission is hereby granted, free of charge, to any person obtaining a copy
   * of this software and associated documentation files (the "Software"), to deal
@@ -67,12 +67,33 @@ class CarrierPlugin : CDVPlugin {
 
     var count: Int = 1;
 
-    //    override init() {
-    //        super.init();
-    //    }
-
     override func pluginInitialize() {
         super.pluginInitialize()
+
+        // Why can not be initialized in up code?
+        OK = 0;
+        CARRIER = 1;
+        SESSION = 2;
+        STREAM = 3;
+        FRIEND_INVITE = 4;
+        GROUP = 5;
+        FILETRANSFER = 6 ;
+        MESSAGE_RECEIPT = 7
+        mCarrierDict = [Int: PluginCarrierHandler]()
+        mSessionDict = [Int: Session]()
+        mStreamDict = [Int: PluginStreamHandler]()
+        mFileTransferDict = [Int: PluginFileTransferHandler]()
+        mFileTransferThreadDict = [Int: DispatchQueue]()
+        carrierCallbackId = ""
+        sessionCallbackId = ""
+        streamCallbackId = ""
+        FIRCallbackId = ""
+        receiptCallbackId = ""
+        fileTransferCallbackId = ""
+        fileTransferCount = 0;
+        groupCallbackId = ""
+        groupCount = 0;
+        count = 1;
     }
 
     override func dispose() {

@@ -1,5 +1,5 @@
  /*
-  * Copyright (c) 2018 Elastos Foundation
+  * Copyright (c) 2021 Elastos Foundation
   *
   * Permission is hereby granted, free of charge, to any person obtaining a copy
   * of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,7 @@
 
 import Foundation
 import ElastosCarrierSDK
- 
+
 //@objc(PluginGroupHelper)
 class PluginGroupHelper {
 
@@ -34,7 +34,7 @@ class PluginGroupHelper {
         }
         return peerDicts;
     }
-    
+
     class func getGroupPeerInfoDict(_ peer: CarrierGroupPeer)-> NSMutableDictionary {
         let ret: NSMutableDictionary = [
             "peerName" : peer.name ?? "",
