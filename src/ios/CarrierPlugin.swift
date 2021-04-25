@@ -38,7 +38,6 @@ typealias Group = ElastosCarrierSDK.CarrierGroup
 @objc(CarrierPlugin)
 class CarrierPlugin : CDVPlugin {
 
-    let OK = 0;
     var CARRIER = 1;
     var SESSION = 2;
     var STREAM = 3;
@@ -71,7 +70,6 @@ class CarrierPlugin : CDVPlugin {
         super.pluginInitialize()
 
         // Why can not be initialized in up code?
-        OK = 0;
         CARRIER = 1;
         SESSION = 2;
         STREAM = 3;
