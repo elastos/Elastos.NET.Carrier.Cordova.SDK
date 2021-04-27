@@ -203,7 +203,7 @@ class CarrierPlugin : CDVPlugin {
         var dir = command.arguments[0] as? String ?? ""
         let config = command.arguments[1] as? String ?? ""
 
-        dir = NSHomeDirectory() + dir;
+        dir = NSHomeDirectory() +  + "/Documents/data/carrier/" + dir;
 
         do {
             let carrierHandler = try PluginCarrierHandler.createInstance(dir, config, carrierCallbackId,
