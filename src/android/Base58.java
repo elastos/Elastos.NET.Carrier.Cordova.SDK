@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package org.elastos.essentials.plugins.carrier;
+package org.elastos.plugins.carrier;
 
 class Base58 {
     private static final char[] ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz".toCharArray();

@@ -20,7 +20,7 @@
   * SOFTWARE.
   */
 
-package org.elastos.essentials.plugins.carrier;
+package org.elastos.plugins.carrier;
 
 import android.os.Handler;
 import android.os.HandlerThread;
